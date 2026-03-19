@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "SenangBah 2.0",
-  description: "A premium multi-subject learning platform for student growth."
+  title: "SenangBah",
+  description: "AI-powered SPM English writing, grammar, and vocabulary training for students who want better results."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,19 +14,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a className="brand" href="/">
               <span className="brand-mark">S</span>
               <span className="brand-copy">
-                <strong>SenangBah 2.0</strong>
-                <span>Vercel + Supabase rebuild</span>
+                <strong>SenangBah</strong>
+                <span>SPM English Upgrade</span>
               </span>
             </a>
             <nav className="topnav">
-              <a href="/blueprint">Blueprint</a>
-              <a href="/schema">Schema</a>
-              <a href="/dashboard">Dashboard</a>
-              <a href="/avatar">Avatar</a>
-              <a href="/subjects">Subjects</a>
-              <a href="/pricing">Pricing</a>
+              <a href="/#how-it-works">How It Works</a>
+              <a href="/#features">Features</a>
+              <a href="/#progress">Progress</a>
               <a href="/login">Login</a>
-              <a href="/register">Register</a>
+              <a className="topnav-cta" href="/register">Start Now</a>
             </nav>
           </header>
           {children}

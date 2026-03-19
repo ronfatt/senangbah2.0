@@ -1,5 +1,11 @@
 import { AvatarClosetClient } from "../../components/avatar-closet-client";
-import { avatarCatalog, avatarClosetSlots } from "../../lib/avatar-catalog";
+import {
+  avatarCatalog,
+  avatarClosetSlots,
+  getCollectionMission,
+  getWeeklyDrop,
+  getWeeklyDropUrgency
+} from "../../lib/avatar-catalog";
 
 const collectionHighlights = [
   "Study Core",
@@ -10,6 +16,9 @@ const collectionHighlights = [
 ];
 
 export default function AvatarPage() {
+  const weeklyDrop = getWeeklyDrop();
+  const weeklyDropUrgency = weeklyDrop ? getWeeklyDropUrgency(weeklyDrop.endIso) : null;
+
   return (
     <main className="page-shell">
       <section className="subject-hero">
@@ -31,18 +40,11 @@ export default function AvatarPage() {
         </div>
 
         <aside className="feature-panel alt avatar-preview-card">
-          <p className="eyebrow">MVP preview</p>
-          <h2>First avatar loop</h2>
-          <div className="avatar-figure">
-            <div className="avatar-head" />
-            <div className="avatar-top" />
-            <div className="avatar-bottom" />
-            <div className="avatar-shoes" />
-            <div className="avatar-accessory" />
-          </div>
+          <p className="eyebrow">Closet goal</p>
+          <h2>Make progress visible on the character, not only on charts.</h2>
           <p className="dashboard-helper">
-            This is a placeholder preview for the first release. The next implementation step is to bind equipped items
-            from inventory and render them slot by slot.
+            The live preview below now changes from equipped items. This top block stays focused on the product idea:
+            students should feel that stronger study results make their avatar more interesting.
           </p>
         </aside>
       </section>
@@ -72,6 +74,67 @@ export default function AvatarPage() {
             <p className="dashboard-helper">Use points to unlock items that make the profile feel more personal.</p>
           </article>
         </div>
+      </section>
+
+      <section className="section">
+        <div className="table-head">
+          <div>
+            <p className="eyebrow">Weekly drop</p>
+            <h2>This week&apos;s featured item gives students one more reason to come back.</h2>
+          </div>
+        </div>
+
+        {weeklyDrop ? (
+          <div className="dashboard-mission-grid">
+            <article className="feature-panel">
+              <p className="eyebrow">{weeklyDrop.headline}</p>
+              <h2>{weeklyDrop.name}</h2>
+              <p className="dashboard-helper">{weeklyDrop.helper}</p>
+              <div className="momentum-stack">
+                <div className="momentum-item">
+                  <span className="dashboard-label">Urgency</span>
+                  <strong>{weeklyDropUrgency?.label}</strong>
+                  <p className="dashboard-helper">{weeklyDropUrgency?.helper}</p>
+                </div>
+                <div className="momentum-item">
+                  <span className="dashboard-label">Collection</span>
+                  <strong>{weeklyDrop.collectionName}</strong>
+                </div>
+                <div className="momentum-item">
+                  <span className="dashboard-label">Price</span>
+                  <strong>{weeklyDrop.pricePoints} pts</strong>
+                </div>
+                <div className="momentum-item">
+                  <span className="dashboard-label">Ends this week</span>
+                  <strong>{new Date(weeklyDrop.endIso).toLocaleDateString("en-MY")}</strong>
+                </div>
+              </div>
+            </article>
+
+            <article className="feature-panel alt">
+              <p className="eyebrow">Best mission for this drop</p>
+              <h2>{weeklyDrop.mission?.title || "Open a focused mission"}</h2>
+              <p className="dashboard-helper">
+                {weeklyDrop.mission?.helper || "Use this week&apos;s featured item to pull students into a specific subject lane."}
+              </p>
+              <p className="dashboard-helper">
+                {weeklyDropUrgency?.label === "Ends today"
+                  ? "This is a good place to add end-of-week urgency without feeling too aggressive."
+                  : "The featured mission gives students a simple answer to what they should do next."}
+              </p>
+              {weeklyDrop.mission ? (
+                <div className="hero-actions">
+                  <a className="btn btn-primary" href={weeklyDrop.mission.href}>
+                    {weeklyDrop.mission.subject}: {weeklyDrop.mission.title}
+                  </a>
+                  <a className="btn btn-secondary" href="/subjects">
+                    Browse all subjects
+                  </a>
+                </div>
+              ) : null}
+            </article>
+          </div>
+        ) : null}
       </section>
 
       <section className="section">
@@ -120,6 +183,11 @@ export default function AvatarPage() {
               <p className="dashboard-helper">
                 Each collection can later connect to subjects, badges, and limited drops without changing the core economy.
               </p>
+              {getCollectionMission(collection) ? (
+                <a className="mini-link" href={getCollectionMission(collection)?.href}>
+                  {getCollectionMission(collection)?.subject}: {getCollectionMission(collection)?.title}
+                </a>
+              ) : null}
             </article>
           ))}
         </div>

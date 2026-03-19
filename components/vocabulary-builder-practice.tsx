@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import { vocabularyBuilderSet } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
@@ -12,6 +13,11 @@ export function VocabularyBuilderPractice() {
     accuracyPercent: number;
     stars: number;
     correctCount: number;
+    starPoints?: number;
+    bonusPoints?: number;
+    weeklyDropHeadline?: string | null;
+    totalPoints?: number | null;
+    unlockedAvatarItems?: { code: string; name: string; badgeCode: string | null }[];
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -76,8 +82,19 @@ export function VocabularyBuilderPractice() {
         throw new Error(payload?.error || "vocabulary_save_failed");
       }
 
+      setResult({
+        accuracyPercent,
+        stars,
+        correctCount,
+        starPoints: Number(payload?.starPoints || 0),
+        bonusPoints: Number(payload?.bonusPoints || 0),
+        weeklyDropHeadline: payload?.weeklyDropHeadline || null,
+        totalPoints: typeof payload?.totalPoints === "number" ? payload.totalPoints : null,
+        unlockedAvatarItems: Array.isArray(payload?.unlockedAvatarItems) ? payload.unlockedAvatarItems : []
+      });
+
       setStatus(
-        `Saved ${correctCount}/${vocabularyBuilderSet.questions.length} correct. Vocabulary Builder added ${stars} star(s) to your dashboard signal.`
+        `Saved ${correctCount}/${vocabularyBuilderSet.questions.length} correct. Vocabulary Builder added ${stars} star(s) and ${Number(payload?.starPoints || 0)} pts.`
       );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Unable to save this vocabulary result.");
@@ -160,6 +177,20 @@ export function VocabularyBuilderPractice() {
       </div>
 
       <p className="auth-status">{status}</p>
+      {result?.starPoints ? (
+        <RewardBurst
+          subjectSlug="english"
+          moduleSlug="vocabulary-builder"
+          accuracyPercent={result.accuracyPercent}
+          moduleName={vocabularyBuilderSet.title}
+          starPoints={result.starPoints}
+          bonusPoints={result.bonusPoints}
+          stars={result.stars}
+          weeklyDropHeadline={result.weeklyDropHeadline}
+          totalPoints={result.totalPoints}
+          unlockedAvatarItems={result.unlockedAvatarItems}
+        />
+      ) : null}
     </section>
   );
 }

@@ -1,4 +1,12 @@
 import { NextResponse } from "next/server";
+import {
+  buildAchievements,
+  computeStreak,
+  formatDateOnly,
+  getAchievementTitle,
+  getMonday
+} from "../../../../lib/achievements";
+import { resolveAccessSnapshot } from "../../../../lib/access";
 import { ensureAvatarBootstrapForUser } from "../../../../lib/avatar";
 import { hasPublicSupabaseEnv } from "../../../../lib/env";
 import { getSupabaseServerClient } from "../../../../lib/supabase/server";
@@ -171,7 +179,7 @@ export async function POST(request: Request) {
       await Promise.all([
         supabase
           .from("avatar_items")
-          .select("id, code, name, rarity, price_points, unlock_type, collection_name, avatar_item_categories(code, name)")
+          .select("id, code, name, rarity, price_points, unlock_type, collection_name, required_badge_code, avatar_item_categories(code, name)")
           .eq("is_active", true)
           .order("sort_order", { ascending: true }),
         supabase
@@ -193,6 +201,110 @@ export async function POST(request: Request) {
     const inventoryByItemId = new Map((inventoryRows || []).map((row) => [row.item_id, row]));
     const totalPoints = (ledgerRows || []).reduce((sum, row) => sum + Number(row.delta_points || 0), 0);
     const spentPoints = (inventoryRows || []).reduce((sum, row) => sum + Number(row.points_spent || 0), 0);
+    const [{ data: completedAttempts }, { data: progressRows }] = await Promise.all([
+      supabase
+        .from("attempts")
+        .select("stars, accuracy_percent, status")
+        .eq("user_id", user.id)
+        .eq("status", "completed"),
+      supabase
+        .from("progress_snapshots")
+        .select("snapshot_date, metrics")
+        .eq("user_id", user.id)
+        .eq("snapshot_type", "daily_rollup")
+        .gte("snapshot_date", formatDateOnly(new Date(Date.now() - 13 * 24 * 60 * 60 * 1000)))
+    ]);
+    const completedCount = (completedAttempts || []).length;
+    const totalStars = (completedAttempts || []).reduce((sum, attempt) => sum + Number(attempt.stars || 0), 0);
+    const averageAccuracy = completedCount
+      ? Math.round(
+          (completedAttempts || []).reduce((sum, attempt) => sum + Number(attempt.accuracy_percent || 0), 0) /
+            completedCount
+        )
+      : 0;
+    const activeDates = (progressRows || [])
+      .filter((row) => {
+        const metrics =
+          row.metrics && typeof row.metrics === "object" && !Array.isArray(row.metrics)
+            ? (row.metrics as Record<string, unknown>)
+            : {};
+        return Number(metrics.completed_today || 0) > 0 || Number(metrics.started_today || 0) > 0;
+      })
+      .map((row) => row.snapshot_date);
+    const streakDays = computeStreak(activeDates);
+    const monday = getMonday(new Date());
+    const weekKeys = new Set(
+      Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(monday);
+        date.setUTCDate(monday.getUTCDate() + index);
+        return formatDateOnly(date);
+      })
+    );
+    const weeklyCompletedCount = (progressRows || []).reduce((sum, row) => {
+      if (!weekKeys.has(row.snapshot_date)) return sum;
+      const metrics =
+        row.metrics && typeof row.metrics === "object" && !Array.isArray(row.metrics)
+          ? (row.metrics as Record<string, unknown>)
+          : {};
+      return sum + Number(metrics.completed_today || 0);
+    }, 0);
+    const access = await resolveAccessSnapshot({
+      authUserId: authUserId || undefined,
+      email: user.email || email
+    });
+    const unlockedBadgeCodes = new Set(
+      buildAchievements({
+        completedCount,
+        totalStars,
+        streakDays,
+        weeklyCompletedCount,
+        averageAccuracy,
+        unlockedCount: access.unlockedSubjectCodes.length || 2
+      })
+        .filter((achievement) => achievement.unlocked)
+        .map((achievement) => achievement.code)
+    );
+    const normalizedItems = (itemRows || []).map((item) => {
+      const category = Array.isArray(item.avatar_item_categories)
+        ? item.avatar_item_categories[0]
+        : item.avatar_item_categories;
+
+      return {
+        code: item.code,
+        name: item.name,
+        rarity: item.rarity,
+        pricePoints: Number(item.price_points || 0),
+        unlockType: item.unlock_type,
+        collectionName: item.collection_name,
+        requiredBadgeCode: item.required_badge_code,
+        requiredBadgeTitle: getAchievementTitle(item.required_badge_code),
+        badgeUnlocked: item.required_badge_code ? unlockedBadgeCodes.has(item.required_badge_code) : true,
+        slot: category?.code || "unknown",
+        slotName: category?.name || "Unknown",
+        owned: inventoryByItemId.has(item.id)
+      };
+    });
+    const collectionProgress = Object.values(
+      normalizedItems.reduce<Record<string, { collectionName: string; ownedCount: number; totalCount: number }>>(
+        (acc, item) => {
+          const key = item.collectionName;
+          const current = acc[key] || { collectionName: key, ownedCount: 0, totalCount: 0 };
+          current.totalCount += 1;
+          if (item.owned) current.ownedCount += 1;
+          acc[key] = current;
+          return acc;
+        },
+        {}
+      )
+    )
+      .map((collection) => ({
+        ...collection,
+        progressPercent: Math.round((collection.ownedCount / collection.totalCount) * 100)
+      }))
+      .sort((a, b) => {
+        if (b.progressPercent !== a.progressPercent) return b.progressPercent - a.progressPercent;
+        return a.totalCount - b.totalCount;
+      });
 
     return NextResponse.json({
       ok: true,
@@ -200,23 +312,8 @@ export async function POST(request: Request) {
         totalPoints,
         spentPoints,
         availablePoints: totalPoints - spentPoints,
-        items: (itemRows || []).map((item) => {
-          const category = Array.isArray(item.avatar_item_categories)
-            ? item.avatar_item_categories[0]
-            : item.avatar_item_categories;
-
-          return {
-            code: item.code,
-            name: item.name,
-            rarity: item.rarity,
-            pricePoints: Number(item.price_points || 0),
-            unlockType: item.unlock_type,
-            collectionName: item.collection_name,
-            slot: category?.code || "unknown",
-            slotName: category?.name || "Unknown",
-            owned: inventoryByItemId.has(item.id)
-          };
-        }),
+        collectionProgress,
+        items: normalizedItems,
         equipped: (equippedRows || []).map((row) => {
           const category = Array.isArray(row.avatar_item_categories)
             ? row.avatar_item_categories[0]

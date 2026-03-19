@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AvatarPreviewFigure } from "./avatar-preview-figure";
+import {
+  getCollectionMission,
+  getWeeklyDrop,
+  getWeeklyDropUrgency
+} from "../lib/avatar-catalog";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import { planDefinitions } from "../lib/plans";
@@ -174,6 +180,24 @@ type SessionState = {
   snapshot: DashboardSnapshot | null;
 };
 
+type ClosetSummary = {
+  totalPoints: number;
+  spentPoints: number;
+  availablePoints: number;
+  collectionProgress: {
+    collectionName: string;
+    ownedCount: number;
+    totalCount: number;
+    progressPercent: number;
+  }[];
+  equipped: {
+    slot: string;
+    slotName: string;
+    itemCode: string;
+    itemName: string;
+  }[];
+};
+
 export function DashboardOverview({
   billingPlan,
   billingStatus
@@ -186,6 +210,7 @@ export function DashboardOverview({
     status: hasPublicSupabaseEnv() ? "signed_out" : "env_missing",
     snapshot: null
   });
+  const [closetSummary, setClosetSummary] = useState<ClosetSummary | null>(null);
 
   useEffect(() => {
     if (!hasPublicSupabaseEnv()) return;
@@ -203,25 +228,39 @@ export function DashboardOverview({
           status: "signed_out",
           snapshot: null
         });
+        setClosetSummary(null);
         return;
       }
 
-      const response = await fetch("/api/dashboard-snapshot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          authUserId: session.user.id,
-          email
+      const [dashboardResponse, closetResponse] = await Promise.all([
+        fetch("/api/dashboard-snapshot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authUserId: session.user.id,
+            email
+          })
+        }),
+        fetch("/api/avatar/closet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authUserId: session.user.id,
+            email,
+            action: "snapshot"
+          })
         })
-      });
+      ]);
 
-      const result = await response.json().catch(() => ({}));
+      const result = await dashboardResponse.json().catch(() => ({}));
+      const closetResult = await closetResponse.json().catch(() => ({}));
 
       setSessionState({
         email,
         status: "signed_in",
         snapshot: result?.snapshot || null
       });
+      setClosetSummary(closetResult?.closet || null);
     }
 
     syncState();
@@ -237,24 +276,36 @@ export function DashboardOverview({
           status: "signed_out",
           snapshot: null
         });
+        setClosetSummary(null);
         return;
       }
 
-      fetch("/api/dashboard-snapshot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          authUserId: session.user.id,
-          email
-        })
-      })
-        .then((response) => response.json())
-        .then((result) => {
+      Promise.all([
+        fetch("/api/dashboard-snapshot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authUserId: session.user.id,
+            email
+          })
+        }).then((response) => response.json()),
+        fetch("/api/avatar/closet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authUserId: session.user.id,
+            email,
+            action: "snapshot"
+          })
+        }).then((response) => response.json())
+      ])
+        .then(([result, closetResult]) => {
           setSessionState({
             email,
             status: "signed_in",
             snapshot: result?.snapshot || null
           });
+          setClosetSummary(closetResult?.closet || null);
         })
         .catch(() => {
           setSessionState({
@@ -262,6 +313,7 @@ export function DashboardOverview({
             status: "signed_in",
             snapshot: null
           });
+          setClosetSummary(null);
         });
     });
 
@@ -448,8 +500,17 @@ export function DashboardOverview({
       : billingPlan === "humanities_pack"
         ? "/subjects/sejarah"
         : billingPlan === "math_pack"
-          ? "/subjects/math"
-          : "/subjects";
+      ? "/subjects/math"
+      : "/subjects";
+  const topCollection = closetSummary?.collectionProgress?.[0] || null;
+  const topCollectionMission = topCollection ? getCollectionMission(topCollection.collectionName) : null;
+  const weeklyDrop = getWeeklyDrop();
+  const weeklyDropUrgency = weeklyDrop ? getWeeklyDropUrgency(weeklyDrop.endIso) : null;
+  const leadMission = missions[0] || null;
+  const unlockedLabel =
+    sessionState.status === "signed_in" && sessionState.snapshot
+      ? sessionState.snapshot.unlockedSubjectNames.slice(0, 3).join(", ")
+      : "English, Bahasa Melayu, Sejarah";
 
   return (
     <>
@@ -474,6 +535,219 @@ export function DashboardOverview({
           </div>
         </section>
       ) : null}
+
+      <section className="section dashboard-command-section">
+        <div className="dashboard-command-grid">
+          <article className="dashboard-command-card dashboard-command-card-primary">
+            <div className="dashboard-command-copy">
+              <p className="eyebrow">Today&apos;s focus</p>
+              <h2>
+                {leadMission
+                  ? `${leadMission.subject}: ${leadMission.title}`
+                  : "One clear mission beats a messy dashboard."}
+              </h2>
+              <p className="dashboard-helper">
+                {leadMission?.helper ||
+                  "The top card should always answer one question for students: what should I do first?"}
+              </p>
+            </div>
+            <div className="dashboard-command-stats">
+              <div className="dashboard-chip">
+                <span className="dashboard-label">Streak</span>
+                <strong>
+                  {sessionState.snapshot
+                    ? `${sessionState.snapshot.streakDays} day${sessionState.snapshot.streakDays === 1 ? "" : "s"}`
+                    : "Start today"}
+                </strong>
+              </div>
+              <div className="dashboard-chip">
+                <span className="dashboard-label">Today</span>
+                <strong>
+                  {sessionState.snapshot
+                    ? `${sessionState.snapshot.todayCompletedCount} done · ${sessionState.snapshot.todayStars} stars`
+                    : "1 win ready"}
+                </strong>
+              </div>
+            </div>
+            <div className="hero-actions">
+              {leadMission ? (
+                <a className="btn btn-primary" href={leadMission.href}>
+                  Start this mission
+                </a>
+              ) : null}
+              <a className="btn btn-secondary" href="/subjects">
+                Browse subjects
+              </a>
+            </div>
+          </article>
+
+          <div className="dashboard-command-stack">
+            <article className="dashboard-command-card dashboard-command-card-accent">
+              <p className="eyebrow">Progress pulse</p>
+              <h3>
+                {sessionState.snapshot
+                  ? `${sessionState.snapshot.weeklyCompletedCount}/${sessionState.snapshot.weeklyTarget} weekly missions`
+                  : "Your weekly target lives here"}
+              </h3>
+              <div className="target-progress">
+                <div
+                  className="target-progress-bar"
+                  style={{ width: `${sessionState.snapshot?.weeklyProgressPercent || 0}%` }}
+                />
+              </div>
+              <p className="dashboard-helper">
+                {sessionState.snapshot
+                  ? `${sessionState.snapshot.nextFocus} is your next recommended lane.`
+                  : "Once students log in, this becomes their progress heartbeat."}
+              </p>
+            </article>
+
+            <article className="dashboard-command-card dashboard-command-card-soft">
+              <p className="eyebrow">Avatar + packs</p>
+              <h3>
+                {sessionState.snapshot
+                  ? `${closetSummary?.availablePoints ?? sessionState.snapshot.totalStarPoints} pts ready to spend`
+                  : "Closet rewards make study points feel real"}
+              </h3>
+              <p className="dashboard-helper">
+                {sessionState.snapshot
+                  ? `Unlocked now: ${unlockedLabel || "Starter track"}`
+                  : "Keep avatar and bundles visible so the reward loop never feels hidden."}
+              </p>
+              <div className="hero-actions">
+                <a className="btn btn-primary" href="/avatar">
+                  Open closet
+                </a>
+                <a className="btn btn-secondary" href="/pricing">
+                  View bundles
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {sessionState.status === "signed_in" && sessionState.snapshot ? (
+        <section className="section">
+          <div className="table-head">
+            <div>
+              <p className="eyebrow">Your avatar</p>
+              <h2>Let the dashboard show the character you are building.</h2>
+            </div>
+          </div>
+
+          <div className="dashboard-mission-grid">
+            <article className="feature-panel avatar-live-preview">
+              <p className="eyebrow">Live identity</p>
+              <h2>{sessionState.snapshot.rank}</h2>
+              <AvatarPreviewFigure
+                compact
+                equippedBySlot={new Map((closetSummary?.equipped || []).map((item) => [item.slot, item]))}
+              />
+              <p className="dashboard-helper">
+                Your avatar now lives in the same place as your streak, badges, and Star Points.
+              </p>
+            </article>
+
+            <article className="feature-panel alt">
+              <p className="eyebrow">Closet summary</p>
+              <h2>{closetSummary?.availablePoints ?? sessionState.snapshot.totalStarPoints} pts ready to style</h2>
+              <div className="momentum-stack">
+                <div className="momentum-item">
+                  <span className="dashboard-label">Equipped slots</span>
+                  <strong>{(closetSummary?.equipped || []).length}/5 active</strong>
+                </div>
+                <div className="momentum-item">
+                  <span className="dashboard-label">Starter target</span>
+                  <strong>Daily Runner shoes · 280 pts</strong>
+                </div>
+                {topCollection ? (
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Closest collection</span>
+                    <strong>
+                      {topCollection.collectionName} · {topCollection.ownedCount}/{topCollection.totalCount}
+                    </strong>
+                    <p className="dashboard-helper">{topCollection.progressPercent}% complete</p>
+                    {topCollectionMission ? (
+                      <a className="mini-link" href={topCollectionMission.href}>
+                        {topCollectionMission.subject}: {topCollectionMission.title}
+                      </a>
+                    ) : null}
+                  </div>
+                ) : null}
+                <div className="momentum-item">
+                  <span className="dashboard-label">Next move</span>
+                  <strong>Open the closet and turn today&apos;s points into style.</strong>
+                </div>
+              </div>
+              <div className="hero-actions">
+                <a className="btn btn-primary" href="/avatar">
+                  Open avatar closet
+                </a>
+              </div>
+            </article>
+          </div>
+        </section>
+      ) : null}
+
+      <section className="section">
+        <div className="table-head">
+          <div>
+            <p className="eyebrow">Weekly drop</p>
+            <h2>Give students one featured unlock to chase this week.</h2>
+          </div>
+        </div>
+
+        <div className="dashboard-mission-grid">
+          <article className="feature-panel">
+            <p className="eyebrow">{weeklyDrop?.headline || "Weekly drop"}</p>
+            <h2>{weeklyDrop?.name || "Featured closet item"}</h2>
+            <p className="dashboard-helper">
+              {weeklyDrop?.helper || "A rotating item helps students feel that this week has its own target."}
+            </p>
+            <div className="momentum-stack">
+              <div className="momentum-item">
+                <span className="dashboard-label">Urgency</span>
+                <strong>{weeklyDropUrgency?.label || "This week only"}</strong>
+                <p className="dashboard-helper">
+                  {weeklyDropUrgency?.helper || "A featured drop works best when it clearly tells students not to wait."}
+                </p>
+              </div>
+              <div className="momentum-item">
+                <span className="dashboard-label">Collection</span>
+                <strong>{weeklyDrop?.collectionName || "Rotation"}</strong>
+              </div>
+              <div className="momentum-item">
+                <span className="dashboard-label">Price</span>
+                <strong>{weeklyDrop ? `${weeklyDrop.pricePoints} pts` : "TBD"}</strong>
+              </div>
+              <div className="momentum-item">
+                <span className="dashboard-label">Ends</span>
+                <strong>{weeklyDrop ? new Date(weeklyDrop.endIso).toLocaleDateString("en-MY") : "This week"}</strong>
+              </div>
+            </div>
+          </article>
+
+          <article className="feature-panel alt">
+            <p className="eyebrow">Mission tie-in</p>
+            <h2>{weeklyDrop?.mission?.title || "Open a linked mission"}</h2>
+            <p className="dashboard-helper">
+              {weeklyDrop?.mission?.helper ||
+                "The weekly drop works best when it points students back into a focused subject lane."}
+            </p>
+            <div className="hero-actions">
+              {weeklyDrop?.mission ? (
+                <a className="btn btn-primary" href={weeklyDrop.mission.href}>
+                  {weeklyDrop.mission.subject}: {weeklyDrop.mission.title}
+                </a>
+              ) : null}
+              <a className="btn btn-secondary" href="/avatar">
+                View all closet drops
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
 
       <section className="dashboard-card-grid">
         {cards.map((card) => (
@@ -526,121 +800,6 @@ export function DashboardOverview({
       <section className="section">
         <div className="table-head">
           <div>
-            <p className="eyebrow">Avatar Closet</p>
-            <h2>Use learning wins to build a style that feels personal.</h2>
-          </div>
-        </div>
-
-        <div className="dashboard-mission-grid">
-          <article className="feature-panel">
-            <p className="eyebrow">Style economy</p>
-            <h2>
-              {sessionState.snapshot
-                ? `${sessionState.snapshot.totalStarPoints} Star Points ready to shape your look.`
-                : "A study-powered closet makes points feel worth collecting."}
-            </h2>
-            <div className="momentum-stack">
-              <div className="momentum-item">
-                <span className="dashboard-label">Current rank</span>
-                <strong>{sessionState.snapshot?.rank || "Launch Pad"}</strong>
-              </div>
-              <div className="momentum-item">
-                <span className="dashboard-label">Starter slots</span>
-                <strong>Hair, Top, Bottom, Shoes, Accessory</strong>
-              </div>
-              <div className="momentum-item">
-                <span className="dashboard-label">First purchase target</span>
-                <strong>Daily Runner shoes · 280 pts</strong>
-                <p className="dashboard-helper">Make the first unlock easy so the reward loop feels real early.</p>
-              </div>
-            </div>
-          </article>
-
-          <article className="feature-panel alt">
-            <p className="eyebrow">What students unlock</p>
-            <h2>Not just more studying. More identity.</h2>
-            <p className="dashboard-helper">
-              The closet is where badges, Star Points, and subject progress start to feel collectible. Stronger work
-              should unlock better-looking choices, not just another chart.
-            </p>
-            <div className="hero-actions">
-              <a className="btn btn-primary" href="/avatar">
-                Open Avatar Closet
-              </a>
-              <a className="btn btn-secondary" href="/subjects">
-                Earn more points
-              </a>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      {sessionState.status === "signed_in" && sessionState.snapshot ? (
-        <section className="section">
-          <div className="table-head">
-            <div>
-              <p className="eyebrow">Mission rhythm</p>
-              <h2>Make today count, then keep the week moving.</h2>
-            </div>
-          </div>
-
-          <div className="dashboard-mission-grid">
-            <article className="feature-panel">
-              <p className="eyebrow">Today</p>
-              <h2>
-                {sessionState.snapshot.todayCompletedCount
-                  ? `${sessionState.snapshot.todayCompletedCount} mission(s) completed today`
-                  : "Today still needs one clear win"}
-              </h2>
-              <div className="momentum-stack">
-                <div className="momentum-item">
-                  <span className="dashboard-label">Completed today</span>
-                  <strong>{sessionState.snapshot.todayCompletedCount}</strong>
-                </div>
-                <div className="momentum-item">
-                  <span className="dashboard-label">Started today</span>
-                  <strong>{sessionState.snapshot.todayStartedCount}</strong>
-                </div>
-                <div className="momentum-item">
-                  <span className="dashboard-label">Stars today</span>
-                  <strong>{sessionState.snapshot.todayStars}</strong>
-                  <p className="dashboard-helper">
-                    Big star points grow fastest when AI gives 2-3 stars for stronger work.
-                  </p>
-                </div>
-              </div>
-            </article>
-
-            <article className="feature-panel alt">
-              <p className="eyebrow">Weekly target</p>
-              <h2>
-                {sessionState.snapshot.weeklyCompletedCount >= sessionState.snapshot.weeklyTarget
-                  ? "This week's mission target is already hit."
-                  : `${sessionState.snapshot.weeklyTarget - sessionState.snapshot.weeklyCompletedCount} more mission(s) to hit this week.`}
-              </h2>
-              <div className="target-progress">
-                <div
-                  className="target-progress-bar"
-                  style={{ width: `${sessionState.snapshot.weeklyProgressPercent}%` }}
-                />
-              </div>
-              <p className="dashboard-helper">
-                {sessionState.snapshot.weeklyCompletedCount}/{sessionState.snapshot.weeklyTarget} completed this week
-                · {sessionState.snapshot.weeklyStars} star(s) earned
-              </p>
-              <p className="dashboard-helper">
-                {sessionState.snapshot.onboardingCompleted
-                  ? `Next recommended lane: ${sessionState.snapshot.nextFocus}`
-                  : "Finish onboarding to personalize this target more tightly."}
-              </p>
-            </article>
-          </div>
-        </section>
-      ) : null}
-
-      <section className="section">
-        <div className="table-head">
-          <div>
             <p className="eyebrow">Bundle access</p>
             <h2>See your packs the way the product is actually sold.</h2>
           </div>
@@ -669,31 +828,17 @@ export function DashboardOverview({
         </div>
       </section>
 
-      <section className="session-banner">
-        <p className="eyebrow">Session status</p>
-        {sessionState.status === "env_missing" ? (
-          <h2>Supabase env missing. Auth UI is scaffolded but not connected yet.</h2>
-        ) : sessionState.status === "signed_in" ? (
-          <>
-            <h2>
-              {sessionState.snapshot?.displayName || "Student"} is signed in as {sessionState.email}
-            </h2>
-            <p className="dashboard-helper">
-              {sessionState.snapshot?.trialActive
-                ? "Your 7-day full access window is active."
-                : sessionState.snapshot?.activePlanCodes.length
-                  ? `Active plans: ${sessionState.snapshot.activePlanCodes.join(", ")}`
-                  : "You are on the free starter track."}
-            </p>
-          </>
-        ) : (
-          <h2>Signed out. You can test the flow from Login or Register.</h2>
-        )}
-      </section>
+      <section className="section">
+        <div className="table-head">
+          <div>
+            <p className="eyebrow">Study flow</p>
+            <h2>Start one mission, then keep the streak moving.</h2>
+          </div>
+        </div>
 
-      <section className="dashboard-mission-grid">
+        <div className="dashboard-mission-grid">
         <article className="feature-panel">
-          <p className="eyebrow">Today&apos;s queue</p>
+          <p className="eyebrow">Start now</p>
           <h2>Start with one focused mission.</h2>
           {sessionState.status === "signed_in" && sessionState.snapshot ? (
             <p className="dashboard-helper">
@@ -717,32 +862,43 @@ export function DashboardOverview({
         </article>
 
         <article className="feature-panel alt">
-          <p className="eyebrow">Momentum</p>
-          <h2>Keep the learning rhythm visible.</h2>
+          <p className="eyebrow">Your progress</p>
+          <h2>Keep one clear view of today and this week.</h2>
           {sessionState.status === "signed_in" && sessionState.snapshot ? (
             <div className="momentum-stack">
               <div className="momentum-item">
-                <span className="dashboard-label">Trial window</span>
+                <span className="dashboard-label">Today</span>
                 <strong>
-                  {sessionState.snapshot.trialActive
-                    ? `${sessionState.snapshot.trialDaysRemaining} day(s) remaining`
-                    : "Starter access active"}
+                  {sessionState.snapshot.todayCompletedCount
+                    ? `${sessionState.snapshot.todayCompletedCount} mission(s) done`
+                    : "Still waiting for first win"}
                 </strong>
+                <p className="dashboard-helper">{sessionState.snapshot.todayStars} star(s) earned today</p>
               </div>
               <div className="momentum-item">
-                <span className="dashboard-label">Unlocked path</span>
-                <strong>{sessionState.snapshot.unlockedSubjectNames.slice(0, 3).join(", ")}</strong>
+                <span className="dashboard-label">Weekly target</span>
+                <strong>
+                  {sessionState.snapshot.weeklyCompletedCount}/{sessionState.snapshot.weeklyTarget} missions
+                </strong>
+                <div className="target-progress compact">
+                  <div
+                    className="target-progress-bar"
+                    style={{ width: `${sessionState.snapshot.weeklyProgressPercent}%` }}
+                  />
+                </div>
               </div>
               <div className="momentum-item">
                 <span className="dashboard-label">Next recommended lane</span>
                 <strong>{sessionState.snapshot.nextFocus}</strong>
               </div>
               <div className="momentum-item">
-                <span className="dashboard-label">Weekly progress</span>
-                <strong>
-                  {sessionState.snapshot.weeklyCompletedCount}/{sessionState.snapshot.weeklyTarget} missions
-                </strong>
-                <p className="dashboard-helper">{sessionState.snapshot.weeklyStars} star(s) earned this week</p>
+                <span className="dashboard-label">Unlocked now</span>
+                <strong>{sessionState.snapshot.unlockedSubjectNames.slice(0, 3).join(", ")}</strong>
+                <p className="dashboard-helper">
+                  {sessionState.snapshot.trialActive
+                    ? `${sessionState.snapshot.trialDaysRemaining} day(s) left in full access`
+                    : "Starter or paid access is active"}
+                </p>
               </div>
               {sessionState.snapshot.recentActivity.slice(0, 2).map((activity) => (
                 <div className="momentum-item" key={`${activity.createdAt}-${activity.moduleName}`}>
@@ -775,7 +931,19 @@ export function DashboardOverview({
             </div>
           )}
         </article>
+        </div>
       </section>
+
+      {sessionState.status !== "signed_in" ? (
+        <section className="session-banner">
+          <p className="eyebrow">Session status</p>
+          {sessionState.status === "env_missing" ? (
+            <h2>Supabase env missing. Auth UI is scaffolded but not connected yet.</h2>
+          ) : (
+            <h2>Signed out. You can test the flow from Login or Register.</h2>
+          )}
+        </section>
+      ) : null}
 
       {sessionState.status === "signed_in" && sessionState.snapshot?.showTrialSummary ? (
         <section className="section">

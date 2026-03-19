@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import { getRotatingWritingPrompt, writingCoachPrompt } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
@@ -53,6 +54,13 @@ export function WritingCoachPractice() {
   const [status, setStatus] = useState("Write a short response, then submit for quick coaching.");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [reward, setReward] = useState<{
+    starPoints: number;
+    bonusPoints: number;
+    weeklyDropHeadline: string | null;
+    totalPoints: number | null;
+    unlockedAvatarItems: { code: string; name: string; badgeCode: string | null }[];
+  } | null>(null);
   const feedback = useMemo(() => scoreDraft(draft), [draft]);
 
   async function handleSubmit() {
@@ -108,9 +116,16 @@ export function WritingCoachPractice() {
       if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || "writing_save_failed");
       }
+      setReward({
+        starPoints: Number(payload?.starPoints || 0),
+        bonusPoints: Number(payload?.bonusPoints || 0),
+        weeklyDropHeadline: payload?.weeklyDropHeadline || null,
+        totalPoints: typeof payload?.totalPoints === "number" ? payload.totalPoints : null,
+        unlockedAvatarItems: Array.isArray(payload?.unlockedAvatarItems) ? payload.unlockedAvatarItems : []
+      });
 
       setStatus(
-        `Saved writing result: ${feedback.words} words, ${feedback.accuracyPercent}% quality signal, ${feedback.stars} star(s).`
+        `Saved writing result: ${feedback.words} words, ${feedback.accuracyPercent}% quality signal, ${feedback.stars} star(s), ${Number(payload?.starPoints || 0)} pts.`
       );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Unable to save this writing result.");
@@ -186,6 +201,20 @@ export function WritingCoachPractice() {
       </div>
 
       <p className="auth-status">{status}</p>
+      {reward?.starPoints ? (
+        <RewardBurst
+          subjectSlug="english"
+          moduleSlug="writing-coach"
+          accuracyPercent={feedback.accuracyPercent}
+          moduleName={promptSet.title}
+          starPoints={reward.starPoints}
+          bonusPoints={reward.bonusPoints}
+          stars={feedback.stars}
+          weeklyDropHeadline={reward.weeklyDropHeadline}
+          totalPoints={reward.totalPoints}
+          unlockedAvatarItems={reward.unlockedAvatarItems}
+        />
+      ) : null}
     </section>
   );
 }

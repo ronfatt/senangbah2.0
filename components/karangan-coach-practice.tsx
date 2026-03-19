@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import { getRotatingWritingPrompt, karanganCoachPrompt } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
@@ -51,6 +52,13 @@ export function KaranganCoachPractice() {
   const [status, setStatus] = useState("Tulis satu perenggan ringkas, kemudian hantar untuk semakan pantas.");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [reward, setReward] = useState<{
+    starPoints: number;
+    bonusPoints: number;
+    weeklyDropHeadline: string | null;
+    totalPoints: number | null;
+    unlockedAvatarItems: { code: string; name: string; badgeCode: string | null }[];
+  } | null>(null);
   const feedback = useMemo(() => scoreKarangan(draft), [draft]);
 
   async function handleSubmit() {
@@ -106,9 +114,16 @@ export function KaranganCoachPractice() {
       if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || "karangan_save_failed");
       }
+      setReward({
+        starPoints: Number(payload?.starPoints || 0),
+        bonusPoints: Number(payload?.bonusPoints || 0),
+        weeklyDropHeadline: payload?.weeklyDropHeadline || null,
+        totalPoints: typeof payload?.totalPoints === "number" ? payload.totalPoints : null,
+        unlockedAvatarItems: Array.isArray(payload?.unlockedAvatarItems) ? payload.unlockedAvatarItems : []
+      });
 
       setStatus(
-        `Keputusan karangan disimpan: ${feedback.words} patah perkataan, ${feedback.accuracyPercent}% signal, ${feedback.stars} bintang.`
+        `Keputusan karangan disimpan: ${feedback.words} patah perkataan, ${feedback.accuracyPercent}% signal, ${feedback.stars} bintang, ${Number(payload?.starPoints || 0)} pts.`
       );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Tidak dapat menyimpan keputusan karangan.");
@@ -184,6 +199,20 @@ export function KaranganCoachPractice() {
       </div>
 
       <p className="auth-status">{status}</p>
+      {reward?.starPoints ? (
+        <RewardBurst
+          subjectSlug="bahasa-melayu"
+          moduleSlug="karangan-coach"
+          accuracyPercent={feedback.accuracyPercent}
+          moduleName={promptSet.title}
+          starPoints={reward.starPoints}
+          bonusPoints={reward.bonusPoints}
+          stars={feedback.stars}
+          weeklyDropHeadline={reward.weeklyDropHeadline}
+          totalPoints={reward.totalPoints}
+          unlockedAvatarItems={reward.unlockedAvatarItems}
+        />
+      ) : null}
     </section>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import type { ObjectiveQuestion } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
@@ -29,6 +30,11 @@ export function ObjectivePractice({
     accuracyPercent: number;
     stars: number;
     correctCount: number;
+    starPoints?: number;
+    bonusPoints?: number;
+    weeklyDropHeadline?: string | null;
+    totalPoints?: number | null;
+    unlockedAvatarItems?: { code: string; name: string; badgeCode: string | null }[];
   } | null>(null);
   const [status, setStatus] = useState("Complete the set, then submit once for a scored result.");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,7 +104,20 @@ export function ObjectivePractice({
         throw new Error(payload?.error || "practice_save_failed");
       }
 
-      setStatus(`Saved ${correctCount}/${questions.length} correct. Dashboard updated with ${stars} star(s).`);
+      setResult({
+        accuracyPercent,
+        stars,
+        correctCount,
+        starPoints: Number(payload?.starPoints || 0),
+        bonusPoints: Number(payload?.bonusPoints || 0),
+        weeklyDropHeadline: payload?.weeklyDropHeadline || null,
+        totalPoints: typeof payload?.totalPoints === "number" ? payload.totalPoints : null,
+        unlockedAvatarItems: Array.isArray(payload?.unlockedAvatarItems) ? payload.unlockedAvatarItems : []
+      });
+
+      setStatus(
+        `Saved ${correctCount}/${questions.length} correct. Dashboard updated with ${stars} star(s) and ${Number(payload?.starPoints || 0)} pts.`
+      );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Unable to save this practice result.");
     } finally {
@@ -164,6 +183,20 @@ export function ObjectivePractice({
       </div>
 
       <p className="auth-status">{status}</p>
+      {result?.starPoints ? (
+        <RewardBurst
+          subjectSlug={subjectSlug}
+          moduleSlug={moduleSlug}
+          accuracyPercent={result.accuracyPercent}
+          moduleName={title}
+          starPoints={result.starPoints}
+          bonusPoints={result.bonusPoints}
+          stars={result.stars}
+          weeklyDropHeadline={result.weeklyDropHeadline}
+          totalPoints={result.totalPoints}
+          unlockedAvatarItems={result.unlockedAvatarItems}
+        />
+      ) : null}
     </section>
   );
 }

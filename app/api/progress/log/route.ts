@@ -1,4 +1,13 @@
 import { NextResponse } from "next/server";
+import {
+  buildAchievements,
+  computeStreak,
+  formatDateOnly,
+  getMonday
+} from "../../../../lib/achievements";
+import { resolveAccessSnapshot } from "../../../../lib/access";
+import { getWeeklyDropBonusForMission } from "../../../../lib/avatar-catalog";
+import { syncAchievementAvatarUnlocks } from "../../../../lib/avatar";
 import { hasPublicSupabaseEnv } from "../../../../lib/env";
 import { getStarPointsForStars } from "../../../../lib/rewards";
 import { getModuleBySlugs } from "../../../../lib/subjects";
@@ -82,7 +91,16 @@ export async function POST(request: Request) {
       eventType === "completed"
         ? Math.max(1, Math.min(3, Number.isFinite(requestedStars) ? requestedStars : 1))
         : 0;
-    const earnedPoints = eventType === "completed" ? getStarPointsForStars(stars) : 0;
+    const baseStarPoints = eventType === "completed" ? getStarPointsForStars(stars) : 0;
+    const weeklyDropBonus =
+      eventType === "completed"
+        ? getWeeklyDropBonusForMission({
+            subjectSlug,
+            moduleSlug
+          })
+        : null;
+    const bonusPoints = weeklyDropBonus?.bonusPoints || 0;
+    const earnedPoints = baseStarPoints + bonusPoints;
 
     const { data: attemptRows, error: attemptError } = await supabase
       .from("attempts")
@@ -176,7 +194,11 @@ export async function POST(request: Request) {
           module_slug: moduleSlug,
           module_name: match.module.name,
           stars,
-          accuracy_percent: normalizedAccuracy
+          accuracy_percent: normalizedAccuracy,
+          base_star_points: baseStarPoints,
+          bonus_points: bonusPoints,
+          weekly_drop_headline: weeklyDropBonus?.headline || null,
+          weekly_drop_item_name: weeklyDropBonus?.itemName || null
         }
       });
 
@@ -188,13 +210,114 @@ export async function POST(request: Request) {
       }
     }
 
+    let totalPoints: number | null = null;
+    let unlockedAvatarItems: { code: string; name: string; badgeCode: string | null }[] = [];
+    if (earnedPoints > 0) {
+      const { data: pointRows, error: pointRowsError } = await supabase
+        .from("point_ledger")
+        .select("delta_points")
+        .eq("user_id", user.id);
+
+      if (!pointRowsError) {
+        totalPoints = (pointRows || []).reduce((sum, row) => sum + Number(row.delta_points || 0), 0);
+      }
+    }
+
+    if (eventType === "completed") {
+      const [{ data: completedAttempts }, { data: progressRows }] = await Promise.all([
+        supabase
+          .from("attempts")
+          .select("stars, accuracy_percent, status")
+          .eq("user_id", user.id)
+          .eq("status", "completed"),
+        supabase
+          .from("progress_snapshots")
+          .select("snapshot_date, metrics")
+          .eq("user_id", user.id)
+          .eq("snapshot_type", "daily_rollup")
+          .gte("snapshot_date", formatDateOnly(new Date(Date.now() - 13 * 24 * 60 * 60 * 1000)))
+      ]);
+
+      const completedCount = (completedAttempts || []).length;
+      const totalStars = (completedAttempts || []).reduce((sum, attempt) => sum + Number(attempt.stars || 0), 0);
+      const averageAccuracy = completedCount
+        ? Math.round(
+            (completedAttempts || []).reduce((sum, attempt) => sum + Number(attempt.accuracy_percent || 0), 0) /
+              completedCount
+          )
+        : 0;
+
+      const activeDates = (progressRows || [])
+        .filter((row) => {
+          const metrics =
+            row.metrics && typeof row.metrics === "object" && !Array.isArray(row.metrics)
+              ? (row.metrics as Record<string, unknown>)
+              : {};
+
+          return Number(metrics.completed_today || 0) > 0 || Number(metrics.started_today || 0) > 0;
+        })
+        .map((row) => row.snapshot_date);
+
+      const streakDays = computeStreak(activeDates);
+      const monday = getMonday(new Date());
+      const weekKeys = new Set(
+        Array.from({ length: 7 }, (_, index) => {
+          const date = new Date(monday);
+          date.setUTCDate(monday.getUTCDate() + index);
+          return formatDateOnly(date);
+        })
+      );
+      const weeklyCompletedCount = (progressRows || []).reduce((sum, row) => {
+        if (!weekKeys.has(row.snapshot_date)) return sum;
+        const metrics =
+          row.metrics && typeof row.metrics === "object" && !Array.isArray(row.metrics)
+            ? (row.metrics as Record<string, unknown>)
+            : {};
+        return sum + Number(metrics.completed_today || 0);
+      }, 0);
+
+      const access = await resolveAccessSnapshot({
+        authUserId: authUserId || undefined,
+        email: user.email || email
+      });
+
+      const achievements = buildAchievements({
+        completedCount,
+        totalStars,
+        streakDays,
+        weeklyCompletedCount,
+        averageAccuracy,
+        unlockedCount: access.unlockedSubjectCodes.length || 2
+      });
+
+      const unlockedBadgeCodes = achievements.filter((achievement) => achievement.unlocked).map((achievement) => achievement.code);
+      try {
+        unlockedAvatarItems = await syncAchievementAvatarUnlocks({
+          userId: user.id,
+          unlockedBadgeCodes
+        });
+      } catch (avatarUnlockError) {
+        const avatarUnlockMessage =
+          avatarUnlockError instanceof Error ? avatarUnlockError.message : "avatar_unlock_failed";
+        if (!avatarUnlockMessage.includes("avatar_")) {
+          throw avatarUnlockError;
+        }
+      }
+    }
+
     return NextResponse.json({
       ok: true,
       status,
       subjectName: match.subject.name,
       moduleName: match.module.name,
       stars,
+      baseStarPoints,
+      bonusPoints,
+      weeklyDropHeadline: weeklyDropBonus?.headline || null,
+      weeklyDropItemName: weeklyDropBonus?.itemName || null,
       starPoints: earnedPoints,
+      totalPoints,
+      unlockedAvatarItems,
       accuracyPercent: normalizedAccuracy
     });
   } catch (error) {

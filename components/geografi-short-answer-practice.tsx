@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import { geografiShortAnswerPrompt, getRotatingWritingPrompt } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
@@ -53,6 +54,13 @@ export function GeografiShortAnswerPractice() {
   const [status, setStatus] = useState("Tulis satu jawapan ringkas, kemudian hantar untuk semakan pantas.");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [reward, setReward] = useState<{
+    starPoints: number;
+    bonusPoints: number;
+    weeklyDropHeadline: string | null;
+    totalPoints: number | null;
+    unlockedAvatarItems: { code: string; name: string; badgeCode: string | null }[];
+  } | null>(null);
   const feedback = useMemo(() => scoreResponse(draft), [draft]);
 
   async function handleSubmit() {
@@ -109,9 +117,16 @@ export function GeografiShortAnswerPractice() {
       if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || "geografi_short_answer_save_failed");
       }
+      setReward({
+        starPoints: Number(payload?.starPoints || 0),
+        bonusPoints: Number(payload?.bonusPoints || 0),
+        weeklyDropHeadline: payload?.weeklyDropHeadline || null,
+        totalPoints: typeof payload?.totalPoints === "number" ? payload.totalPoints : null,
+        unlockedAvatarItems: Array.isArray(payload?.unlockedAvatarItems) ? payload.unlockedAvatarItems : []
+      });
 
       setStatus(
-        `Jawapan disimpan: ${feedback.words} patah perkataan, ${feedback.accuracyPercent}% signal, ${feedback.stars} bintang.`
+        `Jawapan disimpan: ${feedback.words} patah perkataan, ${feedback.accuracyPercent}% signal, ${feedback.stars} bintang, ${Number(payload?.starPoints || 0)} pts.`
       );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Tidak dapat menyimpan jawapan Geografi.");
@@ -187,6 +202,20 @@ export function GeografiShortAnswerPractice() {
       </div>
 
       <p className="auth-status">{status}</p>
+      {reward?.starPoints ? (
+        <RewardBurst
+          subjectSlug="geografi"
+          moduleSlug="short-answer-practice"
+          accuracyPercent={feedback.accuracyPercent}
+          moduleName={promptSet.title}
+          starPoints={reward.starPoints}
+          bonusPoints={reward.bonusPoints}
+          stars={feedback.stars}
+          weeklyDropHeadline={reward.weeklyDropHeadline}
+          totalPoints={reward.totalPoints}
+          unlockedAvatarItems={reward.unlockedAvatarItems}
+        />
+      ) : null}
     </section>
   );
 }
