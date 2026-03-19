@@ -6,8 +6,11 @@ export default async function PricingPage() {
   return (
     <main className="page-shell">
       <section className="section-heading">
-        <p className="eyebrow">Pricing Direction</p>
-        <h1 className="dashboard-title">7 days full access, then clear bundle upgrades.</h1>
+        <p className="eyebrow">Choose your study path</p>
+        <h1 className="dashboard-title">Start with 7 days free, then unlock the subjects you need most.</h1>
+        <p className="landing-lead">
+          SenangBah is a multi-subject AI learning platform. Start with full access first, then continue with the bundle that matches the subjects you want to improve.
+        </p>
       </section>
 
       <section className="pricing-grid">
@@ -23,10 +26,10 @@ export default async function PricingPage() {
             </ul>
             <div className="hero-actions">
               <a className="btn btn-primary" href={`/upgrade?plan=${plan.code}`}>
-                Choose {plan.name}
+                {plan.code === "trial_full_access" ? "Start Free Trial" : `Register for ${plan.name}`}
               </a>
-              <a className="btn btn-secondary" href="/dashboard">
-                Back to dashboard
+              <a className="btn btn-secondary" href="/login">
+                Login to Continue
               </a>
             </div>
           </article>

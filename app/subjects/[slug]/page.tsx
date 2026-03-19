@@ -23,11 +23,11 @@ export default async function SubjectHubPage({
       <section className="subject-hero">
         <div className="subject-hero-copy">
           <p className="eyebrow">{subject.group}</p>
-          <h1 className="dashboard-title">{subject.name} Hub</h1>
+          <h1 className="dashboard-title">{subject.name}</h1>
           <p className="hero-text">{subject.summary}</p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="/pricing">
-              View bundle access
+            <a className="btn btn-primary" href={`/subjects/${subject.slug}/${subject.modules[0].slug}`}>
+              Start this subject
             </a>
             <a className="btn btn-secondary" href="/subjects">
               Back to subjects
@@ -36,8 +36,8 @@ export default async function SubjectHubPage({
         </div>
 
         <div className="hero-panel">
-          <p className="panel-label">Access</p>
-          <h2>{subject.launchState}</h2>
+          <p className="panel-label">Best for</p>
+          <h2>{subject.bundle}</h2>
           <p className="hero-text">{subject.access}</p>
         </div>
       </section>

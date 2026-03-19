@@ -41,7 +41,7 @@ type CheckoutSessionPreview = {
 export function UpgradeIntentPanel({ planCode, planName, priceLabel }: UpgradeIntentPanelProps) {
   const [intent, setIntent] = useState<CheckoutIntent | null>(null);
   const [checkoutSession, setCheckoutSession] = useState<CheckoutSessionPreview | null>(null);
-  const [status, setStatus] = useState("Create a checkout placeholder to confirm the upgrade path.");
+  const [status, setStatus] = useState("Choose this membership when you are ready to continue learning with full access.");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handlePrepare() {
@@ -90,9 +90,9 @@ export function UpgradeIntentPanel({ planCode, planName, priceLabel }: UpgradeIn
       }
 
       setCheckoutSession(sessionPayload.session);
-      setStatus(`Checkout placeholder ready for ${payload.intent.planName}.`);
+      setStatus(`${payload.intent.planName} is ready. You can continue into the payment step when you want.`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to prepare checkout placeholder.");
+      setStatus(error instanceof Error ? error.message : "Unable to prepare your membership step right now.");
     } finally {
       setIsSubmitting(false);
     }
@@ -100,40 +100,40 @@ export function UpgradeIntentPanel({ planCode, planName, priceLabel }: UpgradeIn
 
   return (
     <section className="feature-panel">
-      <p className="eyebrow">Checkout intent</p>
-      <h2>Prepare {planName} for payment wiring.</h2>
+      <p className="eyebrow">Next step</p>
+      <h2>Get {planName} ready.</h2>
       <p className="dashboard-helper">
-        {priceLabel} placeholder flow. This is where Stripe or another payment provider will hook in later.
+        {priceLabel} membership path. This will confirm the plan, your account, and the next payment step.
       </p>
 
       <div className="hero-actions">
         <button className="btn btn-primary" disabled={isSubmitting} onClick={handlePrepare} type="button">
-          {isSubmitting ? "Preparing..." : `Prepare ${planName}`}
+          {isSubmitting ? "Getting it ready..." : `Continue with ${planName}`}
         </button>
       </div>
 
       {intent ? (
         <div className="momentum-stack">
           <div className="momentum-item">
-            <span className="dashboard-label">Intent status</span>
+            <span className="dashboard-label">Status</span>
             <strong>{intent.status}</strong>
             <p className="dashboard-helper">{intent.nextStep}</p>
           </div>
           <div className="momentum-item">
-            <span className="dashboard-label">Plan</span>
+            <span className="dashboard-label">Membership</span>
             <strong>
               {intent.planName} · {intent.priceLabel}
             </strong>
             <p className="dashboard-helper">{intent.summary.detail}</p>
           </div>
           <div className="momentum-item">
-            <span className="dashboard-label">Identity</span>
+            <span className="dashboard-label">Account</span>
             <strong>{intent.email || "Guest preview"}</strong>
-            <p className="dashboard-helper">When real checkout starts, this will attach to the payment customer.</p>
+            <p className="dashboard-helper">Your membership will attach to this account when checkout is complete.</p>
           </div>
           {checkoutSession ? (
             <div className="momentum-item">
-              <span className="dashboard-label">Checkout session</span>
+              <span className="dashboard-label">Payment step</span>
               <strong>{checkoutSession.provider}</strong>
               <p className="dashboard-helper">{checkoutSession.message}</p>
               {checkoutSession.sessionId ? (
@@ -142,7 +142,7 @@ export function UpgradeIntentPanel({ planCode, planName, priceLabel }: UpgradeIn
               <p className="dashboard-helper">Success: {checkoutSession.successUrl}</p>
               <p className="dashboard-helper">Cancel: {checkoutSession.cancelUrl}</p>
               <a className="mini-link" href={checkoutSession.checkoutUrl}>
-                Open checkout target
+                Open payment step
               </a>
             </div>
           ) : null}

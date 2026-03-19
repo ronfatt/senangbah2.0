@@ -80,15 +80,15 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
   return (
     <>
       <section className="session-banner subject-access-banner">
-        <p className="eyebrow">Live access state</p>
+        <p className="eyebrow">Subject access</p>
         <h2>{access.loading ? "Checking access..." : access.label}</h2>
         <p className="dashboard-helper">{access.detail}</p>
       </section>
 
       <section className="section section-split">
         <article className="feature-panel">
-          <p className="eyebrow">Modules</p>
-          <h2>{subject.isCore ? "Core module lineup" : "Premium module lineup"}</h2>
+          <p className="eyebrow">Start here</p>
+          <h2>{subject.isCore ? "Choose one short mission and keep moving." : "Pick the strongest next module in this subject."}</h2>
           <div className="module-card-grid">
             {subject.modules.map((module) => {
               const visualState =
@@ -131,8 +131,8 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
         </article>
 
         <article className="feature-panel alt">
-          <p className="eyebrow">Focus Areas</p>
-          <h2>What this hub should help students improve</h2>
+          <p className="eyebrow">Why this subject matters</p>
+          <h2>What students should improve in this lane</h2>
           <ul className="feature-list">
             {subject.focusAreas.map((focus) => (
               <li key={focus}>{focus}</li>

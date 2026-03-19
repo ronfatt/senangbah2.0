@@ -66,36 +66,36 @@ export default async function SubjectModulePage({
               Back to dashboard
             </a>
             <a className="btn btn-secondary" href={`/subjects/${subject.slug}`}>
-              Back to {subject.name}
+              More {subject.name}
             </a>
           </div>
         </div>
 
         <div className="hero-panel">
-          <p className="panel-label">Module format</p>
+          <p className="panel-label">Today&apos;s task</p>
           <h2>{module.lessonFormat}</h2>
           <p className="hero-text">{module.mission}</p>
         </div>
       </section>
 
-      <section className="section section-split">
+      <section className="section section-split practice-intro-grid">
         <article className="feature-panel">
-          <p className="eyebrow">Starter flow</p>
-          <h2>What this module should feel like in 2.0</h2>
+          <p className="eyebrow">What to do</p>
+          <h2>Finish one short mission and get instant feedback.</h2>
           <ul className="feature-list">
-            <li>Short, focused daily entry point</li>
-            <li>Fast feedback with clear next action</li>
-            <li>Visible progress back into the dashboard</li>
+            <li>Read the task first</li>
+            <li>Answer or write clearly</li>
+            <li>Check the result and follow the next step</li>
           </ul>
         </article>
 
         <article className="feature-panel alt">
-          <p className="eyebrow">Build target</p>
-          <h2>First usable product pass</h2>
+          <p className="eyebrow">What you get</p>
+          <h2>One mission updates your stars, points, and progress.</h2>
           <ul className="feature-list">
-            <li>Readable mobile-first task layout</li>
-            <li>One clear submit and review loop</li>
-            <li>Metrics ready for stars, streaks, and accuracy tracking</li>
+            <li>AI-style feedback</li>
+            <li>Progress back to dashboard</li>
+            <li>Clear next move after you finish</li>
           </ul>
         </article>
       </section>

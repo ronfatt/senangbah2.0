@@ -2,7 +2,8 @@ import "./globals.css";
 
 export const metadata = {
   title: "SenangBah",
-  description: "AI-powered SPM English writing, grammar, and vocabulary training for students who want better results."
+  description:
+    "AI-powered SPM study platform for English, Bahasa Melayu, Sejarah, Geografi, Math, and Add Math with clear missions, feedback, and trackable progress."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="brand-mark">S</span>
               <span className="brand-copy">
                 <strong>SenangBah</strong>
-                <span>SPM English Upgrade</span>
+                <span>AI Study Platform</span>
               </span>
             </a>
             <nav className="topnav">
@@ -23,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/#features">Features</a>
               <a href="/#progress">Progress</a>
               <a href="/login">Login</a>
-              <a className="topnav-cta" href="/register">Start Now</a>
+              <a className="topnav-cta" href="/register">Register</a>
             </nav>
           </header>
           {children}

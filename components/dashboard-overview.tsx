@@ -7,6 +7,7 @@ import {
   getWeeklyDrop,
   getWeeklyDropUrgency
 } from "../lib/avatar-catalog";
+import { subjectDefinitions } from "../lib/subjects";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import { planDefinitions } from "../lib/plans";
@@ -172,6 +173,11 @@ function renderModulePerformanceCard(module: ModulePerformance, key: string) {
       </div>
     </a>
   );
+}
+
+function averageMastery(modules: ModulePerformance[]) {
+  if (!modules.length) return 0;
+  return Math.round(modules.reduce((sum, module) => sum + module.masteryPercent, 0) / modules.length);
 }
 
 type SessionState = {
@@ -511,6 +517,60 @@ export function DashboardOverview({
     sessionState.status === "signed_in" && sessionState.snapshot
       ? sessionState.snapshot.unlockedSubjectNames.slice(0, 3).join(", ")
       : "English, Bahasa Melayu, Sejarah";
+  const signedInSnapshot = sessionState.status === "signed_in" ? sessionState.snapshot : null;
+  const sejarahModules = signedInSnapshot?.humanitiesModules.filter((module) => module.href.includes("/subjects/sejarah/")) || [];
+  const geografiModules = signedInSnapshot?.humanitiesModules.filter((module) => module.href.includes("/subjects/geografi/")) || [];
+  const subjectLanes = subjectDefinitions.map((subject) => {
+    const modulesForSubject =
+      subject.slug === "english"
+        ? signedInSnapshot?.englishModules || []
+        : subject.slug === "bahasa-melayu"
+          ? signedInSnapshot?.bahasaMelayuModules || []
+          : subject.slug === "sejarah"
+            ? sejarahModules
+            : subject.slug === "geografi"
+              ? geografiModules
+              : subject.slug === "math"
+                ? signedInSnapshot?.mathModules || []
+                : signedInSnapshot?.addMathModules || [];
+
+    const bestNext =
+      subject.slug === "english"
+        ? signedInSnapshot?.coachSignal?.weakest
+        : subject.slug === "bahasa-melayu"
+          ? signedInSnapshot?.bahasaMelayuCoachSignal?.weakest
+          : subject.slug === "math"
+            ? signedInSnapshot?.mathCoachSignal?.weakest
+            : subject.slug === "add-math"
+              ? signedInSnapshot?.addMathCoachSignal?.weakest
+              : null;
+
+    const unlocked = signedInSnapshot
+      ? signedInSnapshot.trialActive || signedInSnapshot.unlockedSubjectCodes.includes(subject.code)
+      : subject.isCore;
+
+    const firstModule = subject.modules.find((module) => module.status === "ready") || subject.modules[0];
+
+    return {
+      code: subject.code,
+      slug: subject.slug,
+      name: subject.name,
+      href: `/subjects/${subject.slug}`,
+      tone:
+        subject.bundle === "Language Pack"
+          ? "tone-language"
+          : subject.bundle === "Humanities Pack"
+            ? "tone-humanities"
+            : "tone-math",
+      bundle: subject.bundle,
+      summary: subject.summary,
+      unlocked,
+      readyCount: subject.modules.filter((module) => module.status === "ready").length,
+      masteryPercent: modulesForSubject.length ? averageMastery(modulesForSubject) : 0,
+      nextLabel: bestNext?.name || firstModule?.name || "Open subject",
+      nextHref: bestNext?.href || `/subjects/${subject.slug}/${firstModule?.slug || ""}`
+    };
+  });
 
   return (
     <>
@@ -526,10 +586,10 @@ export function DashboardOverview({
             </div>
             <div className="hero-actions">
               <a className="btn btn-primary" href={postPaymentHref}>
-                Open unlocked subjects
+                Open Your Unlocked Subjects
               </a>
               <a className="btn btn-secondary" href="/pricing">
-                View plans
+                View Memberships
               </a>
             </div>
           </div>
@@ -576,7 +636,7 @@ export function DashboardOverview({
                 </a>
               ) : null}
               <a className="btn btn-secondary" href="/subjects">
-                Browse subjects
+                Browse Subjects
               </a>
             </div>
           </article>
@@ -597,8 +657,8 @@ export function DashboardOverview({
               </div>
               <p className="dashboard-helper">
                 {sessionState.snapshot
-                  ? `${sessionState.snapshot.nextFocus} is your next recommended lane.`
-                  : "Once students log in, this becomes their progress heartbeat."}
+                  ? `Next lane: ${sessionState.snapshot.nextFocus}.`
+                  : "Your weekly target will show here."}
               </p>
             </article>
 
@@ -611,15 +671,15 @@ export function DashboardOverview({
               </h3>
               <p className="dashboard-helper">
                 {sessionState.snapshot
-                  ? `Unlocked now: ${unlockedLabel || "Starter track"}`
-                  : "Keep avatar and bundles visible so the reward loop never feels hidden."}
+                  ? `Open now: ${unlockedLabel || "Starter track"}`
+                  : "Points, closet, and memberships stay here."}
               </p>
               <div className="hero-actions">
                 <a className="btn btn-primary" href="/avatar">
-                  Open closet
+                  Open Avatar Closet
                 </a>
                 <a className="btn btn-secondary" href="/pricing">
-                  View bundles
+                  View Memberships
                 </a>
               </div>
             </article>
@@ -627,79 +687,130 @@ export function DashboardOverview({
         </div>
       </section>
 
-      {sessionState.status === "signed_in" && sessionState.snapshot ? (
-        <section className="section">
-          <div className="table-head">
-            <div>
-              <p className="eyebrow">Your avatar</p>
-              <h2>Let the dashboard show the character you are building.</h2>
-            </div>
+      <section className="section">
+        <div className="table-head">
+          <div>
+            <p className="eyebrow">Your subjects</p>
+            <h2>Choose a subject first, then jump into one clear mission.</h2>
           </div>
+        </div>
 
-          <div className="dashboard-mission-grid">
-            <article className="feature-panel avatar-live-preview">
-              <p className="eyebrow">Live identity</p>
-              <h2>{sessionState.snapshot.rank}</h2>
-              <AvatarPreviewFigure
-                compact
-                equippedBySlot={new Map((closetSummary?.equipped || []).map((item) => [item.slot, item]))}
-              />
-              <p className="dashboard-helper">
-                Your avatar now lives in the same place as your streak, badges, and Star Points.
-              </p>
-            </article>
-
-            <article className="feature-panel alt">
-              <p className="eyebrow">Closet summary</p>
-              <h2>{closetSummary?.availablePoints ?? sessionState.snapshot.totalStarPoints} pts ready to style</h2>
+        <div className="subject-lane-grid">
+          {subjectLanes.map((subject) => (
+            <article className={`subject-lane-card ${subject.tone}`} key={subject.code}>
+              <div className="module-card-head">
+                <div>
+                  <p className="dashboard-label">{subject.bundle}</p>
+                  <h3>{subject.name}</h3>
+                </div>
+                <span className={`module-state ${subject.unlocked ? "state-ready" : "state-locked"}`}>
+                  {subject.unlocked ? "Open" : "Locked"}
+                </span>
+              </div>
+              <p className="dashboard-helper">{subject.summary}</p>
               <div className="momentum-stack">
                 <div className="momentum-item">
-                  <span className="dashboard-label">Equipped slots</span>
-                  <strong>{(closetSummary?.equipped || []).length}/5 active</strong>
+                  <span className="dashboard-label">Ready modules</span>
+                  <strong>{subject.readyCount}</strong>
                 </div>
                 <div className="momentum-item">
-                  <span className="dashboard-label">Starter target</span>
-                  <strong>Daily Runner shoes · 280 pts</strong>
+                  <span className="dashboard-label">Mastery</span>
+                  <strong>{subject.masteryPercent}%</strong>
                 </div>
-                {topCollection ? (
-                  <div className="momentum-item">
-                    <span className="dashboard-label">Closest collection</span>
-                    <strong>
-                      {topCollection.collectionName} · {topCollection.ownedCount}/{topCollection.totalCount}
-                    </strong>
-                    <p className="dashboard-helper">{topCollection.progressPercent}% complete</p>
-                    {topCollectionMission ? (
-                      <a className="mini-link" href={topCollectionMission.href}>
-                        {topCollectionMission.subject}: {topCollectionMission.title}
-                      </a>
-                    ) : null}
-                  </div>
-                ) : null}
                 <div className="momentum-item">
-                  <span className="dashboard-label">Next move</span>
-                  <strong>Open the closet and turn today&apos;s points into style.</strong>
+                  <span className="dashboard-label">Start here</span>
+                  <strong>{subject.nextLabel}</strong>
                 </div>
               </div>
               <div className="hero-actions">
-                <a className="btn btn-primary" href="/avatar">
-                  Open avatar closet
+                <a className="btn btn-primary" href={subject.unlocked ? subject.nextHref : "/pricing"}>
+                  {subject.unlocked ? `Start ${subject.name}` : "View Memberships"}
+                </a>
+                <a className="btn btn-secondary" href={subject.href}>
+                  Open {subject.name}
                 </a>
               </div>
             </article>
-          </div>
+          ))}
+        </div>
+      </section>
+
+      {sessionState.status === "signed_in" && sessionState.snapshot ? (
+        <section className="section">
+          <details className="dashboard-foldout">
+            <summary className="dashboard-foldout-summary">
+              <div>
+                <p className="eyebrow">Your avatar</p>
+                <h2>See your style, points, and closet progress.</h2>
+              </div>
+            </summary>
+
+            <div className="dashboard-mission-grid dashboard-foldout-body">
+              <article className="feature-panel avatar-live-preview">
+                <p className="eyebrow">Live identity</p>
+                <h2>{sessionState.snapshot.rank}</h2>
+                <AvatarPreviewFigure
+                  compact
+                  equippedBySlot={new Map((closetSummary?.equipped || []).map((item) => [item.slot, item]))}
+                />
+                <p className="dashboard-helper">
+                  Your avatar now lives in the same place as your streak, badges, and Star Points.
+                </p>
+              </article>
+
+              <article className="feature-panel alt">
+                <p className="eyebrow">Closet summary</p>
+                <h2>{closetSummary?.availablePoints ?? sessionState.snapshot.totalStarPoints} pts ready to style</h2>
+                <div className="momentum-stack">
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Equipped slots</span>
+                    <strong>{(closetSummary?.equipped || []).length}/5 active</strong>
+                  </div>
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Starter target</span>
+                    <strong>Daily Runner shoes · 280 pts</strong>
+                  </div>
+                  {topCollection ? (
+                    <div className="momentum-item">
+                      <span className="dashboard-label">Closest collection</span>
+                      <strong>
+                        {topCollection.collectionName} · {topCollection.ownedCount}/{topCollection.totalCount}
+                      </strong>
+                      <p className="dashboard-helper">{topCollection.progressPercent}% complete</p>
+                      {topCollectionMission ? (
+                        <a className="mini-link" href={topCollectionMission.href}>
+                          {topCollectionMission.subject}: {topCollectionMission.title}
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Next move</span>
+                    <strong>Open the closet and turn today&apos;s points into style.</strong>
+                  </div>
+                </div>
+                <div className="hero-actions">
+                  <a className="btn btn-primary" href="/avatar">
+                    Open Avatar Closet
+                  </a>
+                </div>
+              </article>
+            </div>
+          </details>
         </section>
       ) : null}
 
       <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">Weekly drop</p>
-            <h2>Give students one featured unlock to chase this week.</h2>
-          </div>
-        </div>
+        <details className="dashboard-foldout">
+          <summary className="dashboard-foldout-summary">
+            <div>
+              <p className="eyebrow">Weekly drop</p>
+              <h2>See this week&apos;s featured reward.</h2>
+            </div>
+          </summary>
 
-        <div className="dashboard-mission-grid">
-          <article className="feature-panel">
+          <div className="dashboard-mission-grid dashboard-foldout-body">
+            <article className="feature-panel">
             <p className="eyebrow">{weeklyDrop?.headline || "Weekly drop"}</p>
             <h2>{weeklyDrop?.name || "Featured closet item"}</h2>
             <p className="dashboard-helper">
@@ -726,9 +837,9 @@ export function DashboardOverview({
                 <strong>{weeklyDrop ? new Date(weeklyDrop.endIso).toLocaleDateString("en-MY") : "This week"}</strong>
               </div>
             </div>
-          </article>
+            </article>
 
-          <article className="feature-panel alt">
+            <article className="feature-panel alt">
             <p className="eyebrow">Mission tie-in</p>
             <h2>{weeklyDrop?.mission?.title || "Open a linked mission"}</h2>
             <p className="dashboard-helper">
@@ -738,15 +849,16 @@ export function DashboardOverview({
             <div className="hero-actions">
               {weeklyDrop?.mission ? (
                 <a className="btn btn-primary" href={weeklyDrop.mission.href}>
-                  {weeklyDrop.mission.subject}: {weeklyDrop.mission.title}
+                  Start {weeklyDrop.mission.subject}: {weeklyDrop.mission.title}
                 </a>
               ) : null}
               <a className="btn btn-secondary" href="/avatar">
-                View all closet drops
+                View Weekly Drops
               </a>
             </div>
-          </article>
-        </div>
+            </article>
+          </div>
+        </details>
       </section>
 
       <section className="dashboard-card-grid">
@@ -761,177 +873,183 @@ export function DashboardOverview({
 
       {sessionState.status === "signed_in" && sessionState.snapshot ? (
         <section className="section">
-          <div className="table-head">
-            <div>
-              <p className="eyebrow">Achievements</p>
-              <h2>Make progress feel collectible, not invisible.</h2>
-            </div>
-          </div>
+          <details className="dashboard-foldout">
+            <summary className="dashboard-foldout-summary">
+              <div>
+                <p className="eyebrow">Achievements</p>
+                <h2>See badges and reward progress.</h2>
+              </div>
+            </summary>
 
-          <div className="achievement-grid">
-            {sessionState.snapshot.achievements.map((achievement) => (
-              <article
-                className={`achievement-card ${achievement.unlocked ? "is-unlocked" : ""}`}
-                key={achievement.code}
-              >
-                <div className="achievement-head">
-                  <span className="achievement-icon">{achievement.icon}</span>
-                  <div>
-                    <p className="dashboard-label">{achievement.unlocked ? "Unlocked" : "In progress"}</p>
-                    <h3>{achievement.title}</h3>
+            <div className="achievement-grid dashboard-foldout-body">
+              {sessionState.snapshot.achievements.map((achievement) => (
+                <article
+                  className={`achievement-card ${achievement.unlocked ? "is-unlocked" : ""}`}
+                  key={achievement.code}
+                >
+                  <div className="achievement-head">
+                    <span className="achievement-icon">{achievement.icon}</span>
+                    <div>
+                      <p className="dashboard-label">{achievement.unlocked ? "Unlocked" : "In progress"}</p>
+                      <h3>{achievement.title}</h3>
+                    </div>
                   </div>
-                </div>
-                <p className="dashboard-helper">{achievement.helper}</p>
-                <div className="mastery-stack">
-                  <div className="mastery-meta">
-                    <span className="dashboard-label">Badge progress</span>
-                    <strong>{achievement.progressPercent}%</strong>
+                  <p className="dashboard-helper">{achievement.helper}</p>
+                  <div className="mastery-stack">
+                    <div className="mastery-meta">
+                      <span className="dashboard-label">Badge progress</span>
+                      <strong>{achievement.progressPercent}%</strong>
+                    </div>
+                    <div className="mastery-bar">
+                      <div className="mastery-bar-fill" style={{ width: `${achievement.progressPercent}%` }} />
+                    </div>
                   </div>
-                  <div className="mastery-bar">
-                    <div className="mastery-bar-fill" style={{ width: `${achievement.progressPercent}%` }} />
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          </details>
         </section>
       ) : null}
 
       <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">Bundle access</p>
-            <h2>See your packs the way the product is actually sold.</h2>
-          </div>
-        </div>
+        <details className="dashboard-foldout">
+          <summary className="dashboard-foldout-summary">
+            <div>
+              <p className="eyebrow">Memberships</p>
+              <h2>See your active plans only when you need them.</h2>
+            </div>
+          </summary>
 
-        <div className="bundle-grid">
-          {bundleCards.map((bundle) => (
-            <a className="bundle-card" href={bundle.href} key={bundle.code}>
-              <div className="module-card-head">
-                <div>
-                  <p className="dashboard-label">{bundle.priceLabel}</p>
-                  <h3>{bundle.name}</h3>
+          <div className="bundle-grid dashboard-foldout-body">
+            {bundleCards.map((bundle) => (
+              <a className="bundle-card" href={bundle.href} key={bundle.code}>
+                <div className="module-card-head">
+                  <div>
+                    <p className="dashboard-label">{bundle.priceLabel}</p>
+                    <h3>{bundle.name}</h3>
+                  </div>
+                  <span
+                    className={`module-state ${
+                      bundle.status === "Active" ? "state-ready" : bundle.status === "Preview" ? "state-coming_soon" : "state-locked"
+                    }`}
+                  >
+                    {bundle.status}
+                  </span>
                 </div>
-                <span
-                  className={`module-state ${
-                    bundle.status === "Active" ? "state-ready" : bundle.status === "Preview" ? "state-coming_soon" : "state-locked"
-                  }`}
-                >
-                  {bundle.status}
-                </span>
-              </div>
-              <p className="dashboard-helper">{bundle.detail}</p>
-              <p className="dashboard-helper">{bundle.helper}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">Study flow</p>
-            <h2>Start one mission, then keep the streak moving.</h2>
-          </div>
-        </div>
-
-        <div className="dashboard-mission-grid">
-        <article className="feature-panel">
-          <p className="eyebrow">Start now</p>
-          <h2>Start with one focused mission.</h2>
-          {sessionState.status === "signed_in" && sessionState.snapshot ? (
-            <p className="dashboard-helper">
-              {sessionState.snapshot.todayCompletedCount
-                ? `You already banked ${sessionState.snapshot.todayCompletedCount} mission(s) today. One more will strengthen the streak.`
-                : "The first mission today is the easiest way to protect your streak."}
-            </p>
-          ) : null}
-          <div className="mission-list">
-            {missions.map((mission) => (
-              <a className="mission-card" href={mission.href} key={`${mission.subject}-${mission.title}`}>
-                <div className="mission-copy">
-                  <p className="dashboard-label">{mission.subject}</p>
-                  <h3>{mission.title}</h3>
-                  <p className="dashboard-helper">{mission.helper}</p>
-                </div>
-                <span className="mini-link">Open</span>
+                <p className="dashboard-helper">{bundle.detail}</p>
+                <p className="dashboard-helper">{bundle.helper}</p>
               </a>
             ))}
           </div>
-        </article>
+        </details>
+      </section>
 
-        <article className="feature-panel alt">
-          <p className="eyebrow">Your progress</p>
-          <h2>Keep one clear view of today and this week.</h2>
-          {sessionState.status === "signed_in" && sessionState.snapshot ? (
-            <div className="momentum-stack">
-              <div className="momentum-item">
-                <span className="dashboard-label">Today</span>
-                <strong>
-                  {sessionState.snapshot.todayCompletedCount
-                    ? `${sessionState.snapshot.todayCompletedCount} mission(s) done`
-                    : "Still waiting for first win"}
-                </strong>
-                <p className="dashboard-helper">{sessionState.snapshot.todayStars} star(s) earned today</p>
-              </div>
-              <div className="momentum-item">
-                <span className="dashboard-label">Weekly target</span>
-                <strong>
-                  {sessionState.snapshot.weeklyCompletedCount}/{sessionState.snapshot.weeklyTarget} missions
-                </strong>
-                <div className="target-progress compact">
-                  <div
-                    className="target-progress-bar"
-                    style={{ width: `${sessionState.snapshot.weeklyProgressPercent}%` }}
-                  />
-                </div>
-              </div>
-              <div className="momentum-item">
-                <span className="dashboard-label">Next recommended lane</span>
-                <strong>{sessionState.snapshot.nextFocus}</strong>
-              </div>
-              <div className="momentum-item">
-                <span className="dashboard-label">Unlocked now</span>
-                <strong>{sessionState.snapshot.unlockedSubjectNames.slice(0, 3).join(", ")}</strong>
+      <section className="section">
+        <details className="dashboard-foldout">
+          <summary className="dashboard-foldout-summary">
+            <div>
+              <p className="eyebrow">Study flow</p>
+              <h2>See today&apos;s missions and this week&apos;s progress.</h2>
+            </div>
+          </summary>
+
+          <div className="dashboard-mission-grid dashboard-foldout-body">
+            <article className="feature-panel">
+              <p className="eyebrow">Start now</p>
+              <h2>Start with one focused mission.</h2>
+              {sessionState.status === "signed_in" && sessionState.snapshot ? (
                 <p className="dashboard-helper">
-                  {sessionState.snapshot.trialActive
-                    ? `${sessionState.snapshot.trialDaysRemaining} day(s) left in full access`
-                    : "Starter or paid access is active"}
+                  {sessionState.snapshot.todayCompletedCount
+                    ? `You already banked ${sessionState.snapshot.todayCompletedCount} mission(s) today. One more will strengthen the streak.`
+                    : "The first mission today is the easiest way to protect your streak."}
                 </p>
+              ) : null}
+              <div className="mission-list">
+                {missions.map((mission) => (
+                  <a className="mission-card" href={mission.href} key={`${mission.subject}-${mission.title}`}>
+                    <div className="mission-copy">
+                      <p className="dashboard-label">{mission.subject}</p>
+                      <h3>{mission.title}</h3>
+                      <p className="dashboard-helper">{mission.helper}</p>
+                    </div>
+                    <span className="mini-link">Start</span>
+                  </a>
+                ))}
               </div>
-              {sessionState.snapshot.recentActivity.slice(0, 2).map((activity) => (
-                <div className="momentum-item" key={`${activity.createdAt}-${activity.moduleName}`}>
-                  <span className="dashboard-label">
-                    {activity.subjectName} · {activity.status}
-                  </span>
-                  <strong>{activity.moduleName}</strong>
-                  {activity.status === "completed" ? (
+            </article>
+
+            <article className="feature-panel alt">
+              <p className="eyebrow">Your progress</p>
+              <h2>Keep one clear view of today and this week.</h2>
+              {sessionState.status === "signed_in" && sessionState.snapshot ? (
+                <div className="momentum-stack">
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Today</span>
+                    <strong>
+                      {sessionState.snapshot.todayCompletedCount
+                        ? `${sessionState.snapshot.todayCompletedCount} mission(s) done`
+                        : "Still waiting for first win"}
+                    </strong>
+                    <p className="dashboard-helper">{sessionState.snapshot.todayStars} star(s) earned today</p>
+                  </div>
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Weekly target</span>
+                    <strong>
+                      {sessionState.snapshot.weeklyCompletedCount}/{sessionState.snapshot.weeklyTarget} missions
+                    </strong>
+                    <div className="target-progress compact">
+                      <div
+                        className="target-progress-bar"
+                        style={{ width: `${sessionState.snapshot.weeklyProgressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Next recommended lane</span>
+                    <strong>{sessionState.snapshot.nextFocus}</strong>
+                  </div>
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Unlocked now</span>
+                    <strong>{sessionState.snapshot.unlockedSubjectNames.slice(0, 3).join(", ")}</strong>
                     <p className="dashboard-helper">
-                      {activity.stars} star(s) · {activity.accuracyPercent}% accuracy
+                      {sessionState.snapshot.trialActive
+                        ? `${sessionState.snapshot.trialDaysRemaining} day(s) left in full access`
+                        : "Starter or paid access is active"}
                     </p>
-                  ) : null}
+                  </div>
+                  {sessionState.snapshot.recentActivity.slice(0, 2).map((activity) => (
+                    <div className="momentum-item" key={`${activity.createdAt}-${activity.moduleName}`}>
+                      <span className="dashboard-label">
+                        {activity.subjectName} · {activity.status}
+                      </span>
+                      <strong>{activity.moduleName}</strong>
+                      {activity.status === "completed" ? (
+                        <p className="dashboard-helper">
+                          {activity.stars} star(s) · {activity.accuracyPercent}% accuracy
+                        </p>
+                      ) : null}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="momentum-stack">
-              <div className="momentum-item">
-                <span className="dashboard-label">Starter path</span>
-                <strong>English and Bahasa Melayu</strong>
-              </div>
-              <div className="momentum-item">
-                <span className="dashboard-label">Premium preview</span>
-                <strong>Sejarah, Geografi, Math, Add Math</strong>
-              </div>
-              <div className="momentum-item">
-                <span className="dashboard-label">Best next step</span>
-                <strong>Create an account to activate your 7-day full trial.</strong>
-              </div>
-            </div>
-          )}
-        </article>
-        </div>
+              ) : (
+                <div className="momentum-stack">
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Starter path</span>
+                    <strong>English and Bahasa Melayu</strong>
+                  </div>
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Premium preview</span>
+                    <strong>Sejarah, Geografi, Math, Add Math</strong>
+                  </div>
+                  <div className="momentum-item">
+                    <span className="dashboard-label">Best next step</span>
+                    <strong>Create an account to activate your 7-day full trial.</strong>
+                  </div>
+                </div>
+              )}
+            </article>
+          </div>
+        </details>
       </section>
 
       {sessionState.status !== "signed_in" ? (
@@ -940,7 +1058,7 @@ export function DashboardOverview({
           {sessionState.status === "env_missing" ? (
             <h2>Supabase env missing. Auth UI is scaffolded but not connected yet.</h2>
           ) : (
-            <h2>Signed out. You can test the flow from Login or Register.</h2>
+            <h2>Signed out. Login or register to continue learning.</h2>
           )}
         </section>
       ) : null}
@@ -995,7 +1113,7 @@ export function DashboardOverview({
                   Continue with {sessionState.snapshot.trialSummary.recommendedUpgradeLabel}
                 </a>
                 <a className="btn btn-secondary" href="/pricing">
-                  Compare all plans
+                  View Memberships
                 </a>
               </div>
             </article>
@@ -1003,373 +1121,6 @@ export function DashboardOverview({
         </section>
       ) : null}
 
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">English performance</p>
-            <h2>See which core modules are moving.</h2>
-          </div>
-        </div>
-
-        {sessionState.snapshot?.coachSignal ? (
-          <div className="coach-signal-grid">
-            {sessionState.snapshot.coachSignal.strongest ? (
-              <a className="english-module-card tone-primary" href={sessionState.snapshot.coachSignal.strongest.href}>
-                <p className="dashboard-label">Strongest module</p>
-                <h3>{sessionState.snapshot.coachSignal.strongest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.coachSignal.strongest.insight}</p>
-              </a>
-            ) : null}
-            {sessionState.snapshot.coachSignal.weakest ? (
-              <a className="english-module-card tone-accent" href={sessionState.snapshot.coachSignal.weakest.href}>
-                <p className="dashboard-label">Best next fix</p>
-                <h3>{sessionState.snapshot.coachSignal.weakest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.coachSignal.weakest.insight}</p>
-              </a>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="english-module-grid">
-          {(sessionState.snapshot?.englishModules.length
-            ? sessionState.snapshot.englishModules
-            : [
-                {
-                  slug: "writing-coach",
-                  name: "Writing Coach",
-                  href: "/subjects/english/writing-coach",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "grammar-lab",
-                  name: "Grammar Lab",
-                  href: "/subjects/english/grammar-lab",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "reading-decoder",
-                  name: "Reading Decoder",
-                  href: "/subjects/english/reading-decoder",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "vocabulary-builder",
-                  name: "Vocabulary Builder",
-                  href: "/subjects/english/vocabulary-builder",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                }
-              ]
-          ).map((module) => renderModulePerformanceCard(module, module.slug))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">Bahasa Melayu performance</p>
-            <h2>Track the BM core lane the same way.</h2>
-          </div>
-        </div>
-
-        {sessionState.snapshot?.bahasaMelayuCoachSignal ? (
-          <div className="coach-signal-grid">
-            {sessionState.snapshot.bahasaMelayuCoachSignal.strongest ? (
-              <a
-                className="english-module-card tone-primary"
-                href={sessionState.snapshot.bahasaMelayuCoachSignal.strongest.href}
-              >
-                <p className="dashboard-label">Strongest module</p>
-                <h3>{sessionState.snapshot.bahasaMelayuCoachSignal.strongest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.bahasaMelayuCoachSignal.strongest.insight}</p>
-              </a>
-            ) : null}
-            {sessionState.snapshot.bahasaMelayuCoachSignal.weakest ? (
-              <a
-                className="english-module-card tone-accent"
-                href={sessionState.snapshot.bahasaMelayuCoachSignal.weakest.href}
-              >
-                <p className="dashboard-label">Best next fix</p>
-                <h3>{sessionState.snapshot.bahasaMelayuCoachSignal.weakest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.bahasaMelayuCoachSignal.weakest.insight}</p>
-              </a>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="english-module-grid">
-          {(sessionState.snapshot?.bahasaMelayuModules.length
-            ? sessionState.snapshot.bahasaMelayuModules
-            : [
-                {
-                  slug: "tatabahasa",
-                  name: "Tatabahasa",
-                  href: "/subjects/bahasa-melayu/tatabahasa",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "pemahaman-drill",
-                  name: "Pemahaman Drill",
-                  href: "/subjects/bahasa-melayu/pemahaman-drill",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "karangan-coach",
-                  name: "Karangan Coach",
-                  href: "/subjects/bahasa-melayu/karangan-coach",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                }
-              ]
-          ).map((module) => renderModulePerformanceCard(module, `bm-${module.slug}`))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">Humanities performance</p>
-            <h2>Watch Sejarah and Geografi usage in one pack view.</h2>
-          </div>
-        </div>
-
-        {sessionState.snapshot?.humanitiesCoachSignal ? (
-          <div className="coach-signal-grid">
-            {sessionState.snapshot.humanitiesCoachSignal.strongest ? (
-              <a
-                className="english-module-card tone-primary"
-                href={sessionState.snapshot.humanitiesCoachSignal.strongest.href}
-              >
-                <p className="dashboard-label">Strongest module</p>
-                <h3>{sessionState.snapshot.humanitiesCoachSignal.strongest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.humanitiesCoachSignal.strongest.insight}</p>
-              </a>
-            ) : null}
-            {sessionState.snapshot.humanitiesCoachSignal.weakest ? (
-              <a
-                className="english-module-card tone-accent"
-                href={sessionState.snapshot.humanitiesCoachSignal.weakest.href}
-              >
-                <p className="dashboard-label">Best next fix</p>
-                <h3>{sessionState.snapshot.humanitiesCoachSignal.weakest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.humanitiesCoachSignal.weakest.insight}</p>
-              </a>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="english-module-grid">
-          {(sessionState.snapshot?.humanitiesModules.length
-            ? sessionState.snapshot.humanitiesModules
-            : [
-                {
-                  slug: "timeline-recall",
-                  name: "Timeline Recall",
-                  href: "/subjects/sejarah/timeline-recall",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "source-question-drill",
-                  name: "Source Question Drill",
-                  href: "/subjects/sejarah/source-question-drill",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "topic-revision-set",
-                  name: "Topic Revision Set",
-                  href: "/subjects/sejarah/topic-revision-set",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "map-and-data-drill",
-                  name: "Map and Data Drill",
-                  href: "/subjects/geografi/map-and-data-drill",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "concept-review",
-                  name: "Concept Review",
-                  href: "/subjects/geografi/concept-review",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "short-answer-practice",
-                  name: "Short Answer Practice",
-                  href: "/subjects/geografi/short-answer-practice",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                }
-              ]
-          ).map((module) => renderModulePerformanceCard(module, `hum-${module.slug}`))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">Math performance</p>
-            <h2>Start the Math Pack with one visible progress lane.</h2>
-          </div>
-        </div>
-
-        {sessionState.snapshot?.mathCoachSignal ? (
-          <div className="coach-signal-grid">
-            {sessionState.snapshot.mathCoachSignal.strongest ? (
-              <a className="english-module-card tone-primary" href={sessionState.snapshot.mathCoachSignal.strongest.href}>
-                <p className="dashboard-label">Strongest module</p>
-                <h3>{sessionState.snapshot.mathCoachSignal.strongest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.mathCoachSignal.strongest.insight}</p>
-              </a>
-            ) : null}
-            {sessionState.snapshot.mathCoachSignal.weakest ? (
-              <a className="english-module-card tone-accent" href={sessionState.snapshot.mathCoachSignal.weakest.href}>
-                <p className="dashboard-label">Best next fix</p>
-                <h3>{sessionState.snapshot.mathCoachSignal.weakest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.mathCoachSignal.weakest.insight}</p>
-              </a>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="english-module-grid">
-          {(sessionState.snapshot?.mathModules.length
-            ? sessionState.snapshot.mathModules
-            : [
-                {
-                  slug: "topic-practice",
-                  name: "Topic Practice",
-                  href: "/subjects/math/topic-practice",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "worked-solution-review",
-                  name: "Worked Solution Review",
-                  href: "/subjects/math/worked-solution-review",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                },
-                {
-                  slug: "error-pattern-tracker",
-                  name: "Error Pattern Tracker",
-                  href: "/subjects/math/error-pattern-tracker",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                }
-              ]
-          ).map((module) => renderModulePerformanceCard(module, `math-${module.slug}`))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">Add Math performance</p>
-            <h2>Track higher-difficulty working, not just final answers.</h2>
-          </div>
-        </div>
-
-        {sessionState.snapshot?.addMathCoachSignal ? (
-          <div className="coach-signal-grid">
-            {sessionState.snapshot.addMathCoachSignal.strongest ? (
-              <a
-                className="english-module-card tone-primary"
-                href={sessionState.snapshot.addMathCoachSignal.strongest.href}
-              >
-                <p className="dashboard-label">Strongest module</p>
-                <h3>{sessionState.snapshot.addMathCoachSignal.strongest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.addMathCoachSignal.strongest.insight}</p>
-              </a>
-            ) : null}
-            {sessionState.snapshot.addMathCoachSignal.weakest ? (
-              <a
-                className="english-module-card tone-accent"
-                href={sessionState.snapshot.addMathCoachSignal.weakest.href}
-              >
-                <p className="dashboard-label">Best next fix</p>
-                <h3>{sessionState.snapshot.addMathCoachSignal.weakest.name}</h3>
-                <p className="dashboard-helper">{sessionState.snapshot.addMathCoachSignal.weakest.insight}</p>
-              </a>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="english-module-grid">
-          {(sessionState.snapshot?.addMathModules.length
-            ? sessionState.snapshot.addMathModules
-            : [
-                {
-                  slug: "step-check-drill",
-                  name: "Step Check Drill",
-                  href: "/subjects/add-math/step-check-drill",
-                  attemptsCount: 0,
-                  totalStars: 0,
-                  averageAccuracy: 0,
-                  masteryPercent: 0,
-                  statusLabel: "Not started"
-                }
-              ]
-          ).map((module) => renderModulePerformanceCard(module, `add-math-${module.slug}`))}
-        </div>
-      </section>
     </>
   );
 }

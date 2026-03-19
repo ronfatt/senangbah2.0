@@ -9,13 +9,17 @@ type AuthMode = "login" | "register";
 
 const formCopy = {
   login: {
-    title: "Welcome back",
-    button: "Sign in",
-    success: "Signed in. Your student profile is ready."
+    eyebrow: "Welcome back",
+    title: "Continue your AI learning journey.",
+    helper: "Jump back into English, Bahasa Melayu, Sejarah, Geografi, Math, and Add Math with your saved progress waiting.",
+    button: "Login to Continue Learning",
+    success: "Signed in. Your learning dashboard is ready."
   },
   register: {
-    title: "Create your account",
-    button: "Create account",
+    eyebrow: "Start your account",
+    title: "Start your 7-day full access trial.",
+    helper: "Get instant access to the SenangBah AI learning platform and try missions across all six subjects.",
+    button: "Register and Start Trial",
     success: "Account created and your 7-day full trial has been prepared."
   }
 };
@@ -112,8 +116,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   return (
     <section className="auth-card">
       <div className="section-heading auth-heading">
-        <p className="eyebrow">Auth Foundation</p>
+        <p className="eyebrow">{formCopy[mode].eyebrow}</p>
         <h1>{formCopy[mode].title}</h1>
+        <p className="dashboard-helper auth-helper">{formCopy[mode].helper}</p>
       </div>
 
       <form className="auth-form" onSubmit={handleSubmit}>
@@ -158,7 +163,12 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         </button>
       </form>
 
-      <p className="auth-status">{status || "Ready for Supabase Auth wiring."}</p>
+      <p className="auth-status">
+        {status ||
+          (mode === "register"
+            ? "Create your account to unlock your 7-day full trial."
+            : "Login to continue your missions, points, and progress.")}
+      </p>
     </section>
   );
 }
