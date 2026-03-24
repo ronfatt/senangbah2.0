@@ -1,4 +1,5 @@
 import "./globals.css";
+import { TopbarShell } from "../components/topbar-shell";
 
 export const metadata = {
   title: "SenangBah",
@@ -11,22 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <div className="site-frame">
-          <header className="topbar">
-            <a className="brand" href="/">
-              <span className="brand-mark">S</span>
-              <span className="brand-copy">
-                <strong>SenangBah</strong>
-                <span>AI Study Platform</span>
-              </span>
-            </a>
-            <nav className="topnav">
-              <a href="/#how-it-works">How It Works</a>
-              <a href="/#features">Features</a>
-              <a href="/#progress">Progress</a>
-              <a href="/login">Login</a>
-              <a className="topnav-cta" href="/register">Register</a>
-            </nav>
-          </header>
+          <TopbarShell />
           {children}
         </div>
       </body>

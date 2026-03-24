@@ -26,11 +26,11 @@ export default async function SubjectHubPage({
           <h1 className="dashboard-title">{subject.name}</h1>
           <p className="hero-text">{subject.summary}</p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href={`/subjects/${subject.slug}/${subject.modules[0].slug}`}>
-              Start this subject
+            <a className="btn btn-primary" href="#subject-guide">
+              See best path
             </a>
-            <a className="btn btn-secondary" href="/subjects">
-              Back to subjects
+            <a className="btn btn-secondary" href="/progress">
+              Open Progress Report
             </a>
           </div>
         </div>

@@ -19,6 +19,83 @@ const SUBJECT_NAME_MAP: Record<string, string> = {
   add_math: "Add Math"
 };
 
+function buildReportSummary({
+  strongestSubject,
+  weakestTarget,
+  recommendedMissions,
+  averageAccuracy,
+  weeklyCompletedCount,
+  streakDays
+}: {
+  strongestSubject: { code: string; label: string; score: number } | null;
+  weakestTarget: {
+    name: string;
+    href: string;
+    insight: string;
+  } | null;
+  recommendedMissions: {
+    subject: string;
+    title: string;
+    helper: string;
+    href: string;
+  }[];
+  averageAccuracy: number;
+  weeklyCompletedCount: number;
+  streakDays: number;
+}) {
+  const headline = strongestSubject && weakestTarget
+    ? `${strongestSubject.label} is moving well. ${weakestTarget.name} needs the next push.`
+    : strongestSubject
+      ? `${strongestSubject.label} is currently your strongest lane. Keep the next mission focused.`
+      : recommendedMissions[0]
+        ? `Your first wins will show up fast once you finish ${recommendedMissions[0].title}.`
+        : "Your study report will sharpen as soon as a few short missions are saved.";
+
+  const strongestNow = [
+    strongestSubject ? `${strongestSubject.label} is leading your current progress.` : null,
+    weeklyCompletedCount > 0 ? `You already finished ${weeklyCompletedCount} mission(s) this week.` : null,
+    averageAccuracy >= 70 ? `Your average accuracy is ${averageAccuracy}%, which shows cleaner checking before submit.` : null,
+    streakDays >= 2 ? `Your ${streakDays}-day streak is helping you build consistency.` : null
+  ].filter(Boolean) as string[];
+
+  const needsWorkNow = [
+    weakestTarget ? `${weakestTarget.name} is the clearest place to improve next.` : null,
+    weakestTarget?.insight || null,
+    averageAccuracy > 0 && averageAccuracy < 70
+      ? `Slow down for one extra check. Your average accuracy is ${averageAccuracy}%, so small corrections will lift results fast.`
+      : null,
+    recommendedMissions[0]
+      ? `Open ${recommendedMissions[0].title} next if you want the fastest improvement signal today.`
+      : null
+  ].filter(Boolean) as string[];
+
+  return {
+    headline,
+    strongestNow,
+    needsWorkNow,
+    aiAdvice: [
+      weakestTarget
+        ? `Open ${weakestTarget.name} first. That is your clearest improvement lane right now.`
+        : recommendedMissions[0]
+          ? `Start with ${recommendedMissions[0].title}. The fastest progress comes from taking the next ready mission, not waiting for a perfect plan.`
+          : "Start one short mission first so the report can begin giving sharper advice.",
+      strongestSubject
+        ? `Keep one mission a day in ${strongestSubject.label}. It is your strongest subject now, so small wins there will keep confidence high.`
+        : "Once one subject starts moving, keep returning to it for a few days so your progress feels real.",
+      averageAccuracy >= 80
+        ? "Your checking habit is working. Push one slightly harder mission next."
+        : averageAccuracy >= 60
+          ? "Before you submit, slow down for one extra check. That is the easiest way to turn 2-star work into 3-star work."
+          : "Do not rush the next mission. Focus on one weak detail, fix it, then move on."
+    ],
+    nextActions: recommendedMissions.map((mission) => ({
+      label: `Start ${mission.subject}: ${mission.title}`,
+      helper: mission.helper,
+      href: mission.href
+    }))
+  };
+}
+
 function buildSubjectPerformance({
   subjectCode,
   completedAttempts
@@ -177,7 +254,7 @@ export async function POST(request: Request) {
     const supabase = getSupabaseServerClient();
     let query = supabase
       .from("users")
-      .select("id, email, profiles(display_name, full_name, onboarding_completed)")
+      .select("id, email, profiles(display_name, full_name, onboarding_completed, preferences)")
       .limit(1);
 
     if (authUserId) {
@@ -413,8 +490,21 @@ export async function POST(request: Request) {
           : totalStarPoints >= 700
             ? "Comet Chaser"
             : totalStarPoints >= 250
-              ? "Star Starter"
+          ? "Star Starter"
               : "Launch Pad";
+    const reportSummary = buildReportSummary({
+      strongestSubject,
+      weakestTarget,
+      recommendedMissions,
+      averageAccuracy,
+      weeklyCompletedCount,
+      streakDays
+    });
+    const nextFocus = weakestTarget?.name
+      ? `${weakestTarget.name} is your clearest next fix.`
+      : recommendedMissions[0]
+        ? `${recommendedMissions[0].subject}: ${recommendedMissions[0].title}`
+        : "English and Bahasa Melayu starter missions";
 
     return NextResponse.json({
       ok: true,
@@ -427,8 +517,7 @@ export async function POST(request: Request) {
         unlockedSubjectCodes: unlockedCodes,
         unlockedSubjectNames: unlockedNames,
         unlockedCount: unlockedCodes.length,
-        nextFocus:
-          unlockedNames.slice(0, 2).join(" and ") || "English and Bahasa Melayu starter missions",
+        nextFocus,
         membershipLabel: access.trialActive
           ? "7-day full access trial"
           : access.activePlanCodes.length
@@ -458,6 +547,7 @@ export async function POST(request: Request) {
         achievements,
         completedCount: completedAttempts.length,
         averageAccuracy,
+        reportSummary,
         trialEndsAt,
         trialDaysRemaining,
         recommendedMissions,

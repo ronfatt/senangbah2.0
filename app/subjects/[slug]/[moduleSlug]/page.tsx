@@ -62,11 +62,11 @@ export default async function SubjectModulePage({
           <h1 className="dashboard-title">{module.name}</h1>
           <p className="hero-text">{module.summary}</p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="/dashboard">
-              Back to dashboard
+            <a className="btn btn-primary" href="#practice-task">
+              Start mission
             </a>
             <a className="btn btn-secondary" href={`/subjects/${subject.slug}`}>
-              More {subject.name}
+              Back to {subject.name}
             </a>
           </div>
         </div>
@@ -106,6 +106,7 @@ export default async function SubjectModulePage({
         subjectCode={subject.code}
         subjectName={subject.name}
       >
+      <div id="practice-task">
       {subject.slug === "english" && module.slug === "writing-coach" ? (
         <section className="section">
           <WritingCoachPractice />
@@ -287,6 +288,7 @@ export default async function SubjectModulePage({
           <ModuleActionPanel moduleSlug={module.slug} subjectSlug={subject.slug} />
         </section>
       )}
+      </div>
       </SubjectModuleAccessGate>
     </main>
   );

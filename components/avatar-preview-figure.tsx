@@ -19,17 +19,28 @@ export function AvatarPreviewFigure({
         <div className="avatar-spark avatar-spark-left" />
         <div className="avatar-spark avatar-spark-right" />
         <div className="avatar-body">
-          <div className={`avatar-head ${hairTone ? `avatar-hair-${hairTone}` : ""}`}>
+          <div className="avatar-head">
+            <div className={`avatar-hair ${hairTone ? `avatar-hair-${hairTone}` : ""}`} />
             <div className="avatar-face">
               <span className="avatar-eye" />
               <span className="avatar-eye" />
+              <span className="avatar-mouth" />
             </div>
           </div>
           <div className="avatar-arm avatar-arm-left" />
-          <div className={`avatar-top ${topTone ? `avatar-top-${topTone}` : ""}`} />
           <div className="avatar-arm avatar-arm-right" />
+          <div className={`avatar-top ${topTone ? `avatar-top-${topTone}` : ""}`}>
+            <div className="avatar-top-badge" />
+          </div>
           <div className={`avatar-bottom ${bottomTone ? `avatar-bottom-${bottomTone}` : ""}`} />
-          <div className={`avatar-shoes ${shoesTone ? `avatar-shoes-${shoesTone}` : ""}`} />
+          <div className="avatar-legs">
+            <div className="avatar-leg avatar-leg-left" />
+            <div className="avatar-leg avatar-leg-right" />
+          </div>
+          <div className="avatar-shoes-row">
+            <div className={`avatar-shoe avatar-shoe-left ${shoesTone ? `avatar-shoes-${shoesTone}` : ""}`} />
+            <div className={`avatar-shoe avatar-shoe-right ${shoesTone ? `avatar-shoes-${shoesTone}` : ""}`} />
+          </div>
           <div className={`avatar-accessory ${accessoryTone ? `avatar-accessory-${accessoryTone}` : ""}`} />
         </div>
         <div className="avatar-shadow" />

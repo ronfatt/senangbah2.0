@@ -1,5 +1,6 @@
 import {
   getBadgeNudge,
+  getLearningFeedback,
   getMasteryGain,
   getNextStep,
   getRewardHeadline,
@@ -33,6 +34,7 @@ export function RewardBurst({
   const masteryGain = getMasteryGain({ stars, accuracyPercent });
   const tone = getRewardTone(stars);
   const nextStep = getNextStep({ subjectSlug, moduleSlug });
+  const learningFeedback = getLearningFeedback({ subjectSlug, moduleSlug, stars, accuracyPercent });
   const closetSpendHint = typeof totalPoints === "number" ? getClosetSpendHint(totalPoints) : null;
 
   return (
@@ -48,6 +50,12 @@ export function RewardBurst({
       <p className="dashboard-helper">
         {moduleName} just fed your dashboard, rewards loop, and avatar economy in one move.
       </p>
+
+      <div className="reward-unlock-list">
+        <p className="dashboard-label">Learning feedback</p>
+        <strong>{learningFeedback.headline}</strong>
+        <p className="dashboard-helper">{learningFeedback.focus}</p>
+      </div>
 
       <div className="reward-burst-grid">
         <div className="reward-chip">

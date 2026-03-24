@@ -103,7 +103,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       }
 
       setStatus(formCopy[mode].success);
-      router.push("/dashboard");
+      router.push(mode === "register" ? "/welcome" : "/dashboard");
       router.refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Something went wrong.";

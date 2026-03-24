@@ -99,7 +99,7 @@ export default function HomePage() {
               Register as Member
             </a>
             <a className="btn btn-secondary" href="/pricing">
-              Start Free Trial
+              See Memberships
             </a>
           </div>
         </div>
