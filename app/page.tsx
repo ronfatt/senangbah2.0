@@ -262,29 +262,61 @@ export default function HomePage() {
         <div className="section-heading landing-heading">
           <p className="eyebrow">How it works</p>
           <h2>Simple enough to start today.</h2>
+          <p className="landing-how-lead">One short task. One clear fix. One obvious next step.</p>
         </div>
-        <div className="steps-row">
-          <article className="step-card">
+        <div className="steps-row steps-row-enhanced">
+          <article className="step-card step-card-diagnose">
             <div className="step-badge">1</div>
+            <p className="dashboard-label">Diagnose</p>
             <h3>Do 1 short task</h3>
             <p>Start one mission instead of feeling buried by too much work.</p>
+            <span className="step-hint">5-15 minutes only</span>
           </article>
-          <article className="step-card">
+          <article className="step-card step-card-analyze">
             <div className="step-badge">2</div>
+            <p className="dashboard-label">Analyze</p>
             <h3>AI shows what's wrong</h3>
             <p>See the exact weak point instead of guessing what happened.</p>
+            <span className="step-hint">Weak point becomes clear</span>
           </article>
-          <article className="step-card">
+          <article className="step-card step-card-fix">
             <div className="step-badge">3</div>
+            <p className="dashboard-label">Fix</p>
             <h3>You fix it</h3>
             <p>Get a clearer answer, stronger wording, or cleaner method.</p>
+            <span className="step-hint">See the better version</span>
           </article>
-          <article className="step-card">
+          <article className="step-card step-card-improve">
             <div className="step-badge">4</div>
+            <p className="dashboard-label">Improve</p>
             <h3>You improve</h3>
             <p>Come back tomorrow and keep building one daily win at a time.</p>
+            <span className="step-hint">Repeat with confidence</span>
           </article>
         </div>
+        <article className="how-summary-card">
+          <div className="how-summary-copy">
+            <p className="dashboard-label">What one mission gives you</p>
+            <h3>You leave every session knowing exactly what got better.</h3>
+            <p>
+              SenangBah does not just tell you to practise more. It shows the mistake, gives the fix, and points you to the next move.
+            </p>
+          </div>
+          <div className="how-summary-metrics">
+            <div className="how-summary-metric">
+              <span className="dashboard-label">Task</span>
+              <strong>1 clear mission</strong>
+            </div>
+            <div className="how-summary-metric">
+              <span className="dashboard-label">Feedback</span>
+              <strong>AI + better answer</strong>
+            </div>
+            <div className="how-summary-metric">
+              <span className="dashboard-label">Result</span>
+              <strong>Next step unlocked</strong>
+            </div>
+          </div>
+        </article>
       </section>
 
       <section className="section" id="subjects">

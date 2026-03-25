@@ -630,6 +630,13 @@ a {
   max-width: 14ch;
 }
 
+.landing-how-lead {
+  max-width: 32rem;
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
 .landing-card-grid-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -686,8 +693,16 @@ a {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.steps-row-enhanced {
+  position: relative;
+}
+
 .step-card {
   position: relative;
+  display: grid;
+  gap: 10px;
+  min-height: 100%;
+  padding-bottom: 22px;
 }
 
 .step-badge {
@@ -699,6 +714,87 @@ a {
   display: grid;
   place-items: center;
   font-weight: 800;
+}
+
+.step-hint {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #dbeafe;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.step-card-diagnose .step-badge {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.step-card-analyze .step-badge {
+  background: rgba(139, 92, 246, 0.18);
+  color: #ddd6fe;
+}
+
+.step-card-fix .step-badge {
+  background: rgba(255, 107, 0, 0.18);
+  color: #ffd0ae;
+}
+
+.step-card-improve .step-badge {
+  background: rgba(74, 225, 118, 0.18);
+  color: #bbf7d0;
+}
+
+.how-summary-card {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 16px;
+  border: 1px solid var(--line);
+  background: rgba(17, 24, 39, 0.78);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.how-summary-copy {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.how-summary-copy h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.how-summary-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.how-summary-metrics {
+  display: grid;
+  gap: 12px;
+}
+
+.how-summary-metric {
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  display: grid;
+  gap: 8px;
+}
+
+.how-summary-metric strong {
+  color: var(--ink);
+  font-size: 1.05rem;
 }
 
 .landing-tool-card.is-featured {
@@ -2783,6 +2879,7 @@ a {
   .progress-preview-rich,
   .landing-photo-split,
   .landing-parent-panel,
+  .how-summary-card,
   .before-after-card {
     grid-template-columns: 1fr;
   }
