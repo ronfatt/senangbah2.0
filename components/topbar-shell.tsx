@@ -74,7 +74,7 @@ export function TopbarShell() {
           <>
             <span className="topbar-mode">Dashboard</span>
             <NavLink href="/dashboard" label="Dashboard" pathname={pathname} />
-            <NavLink href="/subjects" label="Subjects" pathname={pathname} />
+            <NavLink href="/my-subjects" label="My Subjects" pathname={pathname} />
             <NavLink href="/progress" label="Progress Report" pathname={pathname} />
             <NavLink href="/avatar" label="Avatar" pathname={pathname} />
             <button className="topnav-ghost" onClick={handleSignOut} type="button">
@@ -84,7 +84,7 @@ export function TopbarShell() {
         ) : (
           <>
             <NavLink href="/how-it-works" label="How It Works" pathname={pathname} />
-            <NavLink href="/#subjects" label="Subjects" pathname={pathname} />
+            <NavLink href="/subjects" label="Subjects" pathname={pathname} />
             <NavLink href="/pricing" label="Pricing" pathname={pathname} />
             <NavLink href="/login" label="Login" pathname={pathname} />
             <a className="topnav-cta" href="/register">

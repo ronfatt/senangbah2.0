@@ -21,8 +21,8 @@ export default async function DashboardPage({
           <a className="btn btn-primary" href="/progress">
             Open Progress Report
           </a>
-          <a className="btn btn-secondary" href="/subjects">
-            Browse Subjects
+          <a className="btn btn-secondary" href="/my-subjects">
+            Open My Subjects
           </a>
         </div>
       </section>

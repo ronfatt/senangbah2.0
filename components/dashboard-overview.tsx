@@ -586,7 +586,7 @@ export function DashboardOverview({
             </div>
             <div className="hero-actions">
               <a className="btn btn-primary" href={postPaymentHref}>
-                Open Your Unlocked Subjects
+                Open My Subjects
               </a>
               <a className="btn btn-secondary" href="/pricing">
                 View Memberships
@@ -635,8 +635,8 @@ export function DashboardOverview({
                   Start this mission
                 </a>
               ) : null}
-              <a className="btn btn-secondary" href="/subjects">
-                Browse Subjects
+              <a className="btn btn-secondary" href="/my-subjects">
+                Open My Subjects
               </a>
             </div>
           </article>

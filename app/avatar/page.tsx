@@ -33,7 +33,7 @@ export default function AvatarPage() {
             <a className="btn btn-primary" href="/dashboard">
               Back to dashboard
             </a>
-            <a className="btn btn-secondary" href="/subjects">
+            <a className="btn btn-secondary" href="/my-subjects">
               Earn more Star Points
             </a>
           </div>
@@ -127,8 +127,8 @@ export default function AvatarPage() {
                   <a className="btn btn-primary" href={weeklyDrop.mission.href}>
                     {weeklyDrop.mission.subject}: {weeklyDrop.mission.title}
                   </a>
-                  <a className="btn btn-secondary" href="/subjects">
-                    Browse all subjects
+                  <a className="btn btn-secondary" href="/my-subjects">
+                    Open My Subjects
                   </a>
                 </div>
               ) : null}
