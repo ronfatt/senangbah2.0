@@ -21,45 +21,69 @@ const aiLogicCards = [
 const subjectShowcase = [
   {
     slug: "english",
+    icon: "EN",
     struggle: "Weak grammar, unclear ideas, and basic vocabulary.",
     aiHelps: "Upgrades sentence clarity, fixes weak writing, and explains why the better version works.",
     improves: "Essays, grammar confidence, and band progress.",
-    startWith: "Writing Coach"
+    startWith: "Writing Coach",
+    chips: ["Writing", "Grammar", "Vocabulary"],
+    previewLabel: "AI upgrade",
+    previewValue: "Weak sentence → clearer version"
   },
   {
     slug: "bahasa-melayu",
+    icon: "BM",
     struggle: "Karangan structure feels weak and tatabahasa mistakes keep repeating.",
     aiHelps: "Shows clearer structure, explains sentence corrections, and improves comprehension answers.",
     improves: "Karangan flow, tatabahasa, and BM confidence.",
-    startWith: "Tatabahasa"
+    startWith: "Tatabahasa",
+    chips: ["Karangan", "Tatabahasa", "Pemahaman"],
+    previewLabel: "AI coaching",
+    previewValue: "Simple idea → stronger karangan flow"
   },
   {
     slug: "sejarah",
+    icon: "SJ",
     struggle: "Students know the topic, but do not know how to answer clearly.",
     aiHelps: "Breaks down source questions, sharpens fact use, and improves answer logic.",
     improves: "Source-based answers, revision structure, and exam recall.",
-    startWith: "Timeline Recall"
+    startWith: "Timeline Recall",
+    chips: ["Timeline", "Source", "KBAT"],
+    previewLabel: "AI guidance",
+    previewValue: "Loose facts → clearer answer logic"
   },
   {
     slug: "geografi",
+    icon: "GG",
     struggle: "Concepts, maps, and short answers feel scattered and hard to organise.",
     aiHelps: "Clarifies concepts, explains data interpretation, and guides structured short answers.",
     improves: "Concept confidence, map reading, and exam structure.",
-    startWith: "Map and Data Drill"
+    startWith: "Map and Data Drill",
+    chips: ["Maps", "Data", "Short answer"],
+    previewLabel: "AI support",
+    previewValue: "Messy concepts → clearer structure"
   },
   {
     slug: "math",
+    icon: "MT",
     struggle: "Working breaks halfway and the same mistakes keep repeating.",
     aiHelps: "Checks the method, shows where the working goes wrong, and guides cleaner steps.",
     improves: "Step accuracy, topic confidence, and fewer careless errors.",
-    startWith: "Topic Practice"
+    startWith: "Topic Practice",
+    chips: ["Steps", "Methods", "Errors"],
+    previewLabel: "AI step check",
+    previewValue: "Wrong working → cleaner method"
   },
   {
     slug: "add-math",
+    icon: "AM",
     struggle: "Harder questions feel too big, and students lose track of the method.",
     aiHelps: "Breaks down difficult working into smaller checks and clearer step logic.",
     improves: "Step precision, harder question confidence, and advanced topic control.",
-    startWith: "Step Check Drill"
+    startWith: "Step Check Drill",
+    chips: ["Advanced steps", "Functions", "Precision"],
+    previewLabel: "AI breakdown",
+    previewValue: "Big question → smaller clear steps"
   }
 ];
 
@@ -164,7 +188,23 @@ export default function SubjectsPage() {
                     <p className="subject-status">{subject.group}</p>
                     <h3>{subject.name}</h3>
                   </div>
+                  <span className="subject-showcase-icon">{item.icon}</span>
+                </div>
+
+                <div className="subject-showcase-visual">
+                  <div>
+                    <span className="dashboard-label">{item.previewLabel}</span>
+                    <strong>{item.previewValue}</strong>
+                  </div>
                   <span className="status-pill">{readyCount} ready</span>
+                </div>
+
+                <div className="subject-showcase-chips">
+                  {item.chips.map((chip) => (
+                    <span className="subject-showcase-chip" key={chip}>
+                      {chip}
+                    </span>
+                  ))}
                 </div>
 
                 <div className="subject-showcase-block">
