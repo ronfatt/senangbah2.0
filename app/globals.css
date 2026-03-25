@@ -295,6 +295,10 @@ a {
   padding-top: 44px;
 }
 
+.landing-hero-conversion {
+  padding-top: 36px;
+}
+
 .landing-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
@@ -506,7 +510,7 @@ a {
 
 .landing-heading h2 {
   font-size: clamp(2rem, 4vw, 3.4rem);
-  max-width: 12ch;
+  max-width: 14ch;
 }
 
 .landing-card-grid-3 {
@@ -661,6 +665,73 @@ a {
 
 .landing-final-cta {
   padding-bottom: 24px;
+}
+
+.problem-strip,
+.hero-mission-list,
+.hero-dashboard-stats,
+.daily-system-points {
+  display: grid;
+  gap: 16px;
+}
+
+.problem-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.problem-card {
+  min-height: 100%;
+}
+
+.problem-card p {
+  color: var(--ink);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.hero-mission-item {
+  display: grid;
+  gap: 4px;
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hero-mission-item strong {
+  color: var(--ink);
+  font-size: 1.02rem;
+}
+
+.hero-mission-item span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.hero-dashboard-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.daily-system-card {
+  display: grid;
+  gap: 18px;
+}
+
+.daily-system-points {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.daily-pill {
+  min-height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  padding: 0 18px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  color: #dbeafe;
+  font-weight: 700;
+  text-align: center;
 }
 
 .landing-cta-card {
@@ -2343,6 +2414,9 @@ a {
   .progress-metric-grid,
   .subject-inline-list,
   .steps-row,
+  .problem-strip,
+  .hero-dashboard-stats,
+  .daily-system-points,
   .before-after-card {
     grid-template-columns: 1fr;
   }

@@ -1,192 +1,199 @@
-const whyCards = [
+const problemPoints = [
+  "Don't know what you're doing wrong",
+  "Keep repeating the same mistakes",
+  "Spend hours studying, but results don't change"
+];
+
+const solutionCards = [
   {
-    title: "Short daily missions",
-    body: "Clear missions across English, BM, Sejarah, Geografi, Math, and Add Math.",
-    icon: "01"
+    title: "Find your weak points",
+    body: "AI detects what you don't see, so you stop guessing and start fixing."
   },
   {
-    title: "AI that explains",
-    body: "See your weak point, the fix, and the better version right away.",
-    icon: "02"
+    title: "Fix your mistakes",
+    body: "See what is weak, why it is weak, and how to make it better."
   },
   {
-    title: "Progress you can see",
-    body: "Track missions, streaks, accuracy, and subject-by-subject improvement.",
-    icon: "03"
+    title: "Improve every day",
+    body: "One short mission at a time. Small progress that adds up."
   }
 ];
 
 const subjectCards = [
   {
     title: "English",
-    body: "Writing, grammar, reading, and vocabulary missions with AI upgrades."
+    body: "Better writing, clearer sentences, and stronger grammar."
   },
   {
     title: "Bahasa Melayu",
-    body: "Tatabahasa, pemahaman, and karangan practice with clearer next steps."
+    body: "Stronger karangan, better structure, and clearer answers."
   },
   {
     title: "Sejarah",
-    body: "Timeline recall, source drills, and revision sets for stronger exam recall."
+    body: "Understand faster and answer source questions with more confidence."
   },
   {
     title: "Geografi",
-    body: "Map reading, concept review, and short-answer practice with AI support."
+    body: "Learn the key concepts clearly and answer with more precision."
   },
   {
     title: "Math",
-    body: "Topic drills, worked solutions, and error tracking for cleaner method work."
+    body: "Step-by-step solutions that help you avoid common errors."
   },
   {
     title: "Add Math",
-    body: "Step-check practice for harder questions and more precise working."
+    body: "Break down difficult questions into clearer working steps."
   }
 ];
 
 const aiCards = [
   {
-    title: "AI diagnosis",
-    body: "Find the subject, topic, or skill that needs work first."
+    icon: "AI",
+    title: "AI explains your mistakes",
+    body: "Not just right or wrong. You see what happened and how to fix it."
   },
   {
-    title: "AI feedback",
-    body: "Get clear fixes, stronger answers, and cleaner explanations."
+    icon: "UP",
+    title: "Shows your progress",
+    body: "Track subject progress, weak areas, and improvement over time."
   },
   {
-    title: "AI next step",
-    body: "Know what to do after every mission instead of guessing."
+    icon: "GO",
+    title: "Tells you what to do next",
+    body: "Every mission ends with a clear next step instead of more confusion."
   }
 ];
 
-const progressStats = [
+const beforeAfterRows = [
   {
-    label: "Subjects",
-    value: "6 lanes"
+    subject: "English",
+    before: "I study with my friends because fun.",
+    after: "Studying with my friends keeps me motivated and improves my discipline."
   },
   {
-    label: "Mission Progress",
-    value: "3 / 14"
+    subject: "Math",
+    before: "I just try the formula and hope the answer is correct.",
+    after: "I check each step carefully, so I can see where the method starts going wrong."
   },
   {
-    label: "Grammar Accuracy",
-    value: "62% → 78%"
-  },
-  {
-    label: "Estimated Band",
-    value: "3.8 → 4.6"
+    subject: "Sejarah",
+    before: "I know the topic, but I don't know how to answer properly.",
+    after: "I understand the point, choose the right evidence, and answer more clearly."
   }
 ];
 
 const testimonials = [
-  "I can see which subject to do next instead of wasting time deciding.",
-  "The AI actually explains what is weak and how to fix it.",
-  "The missions are short enough that I really do them every day."
+  "Now I understand my mistakes.",
+  "Short enough that I actually do it.",
+  "Feels like I'm improving."
+];
+
+const parentTrustPoints = [
+  "Aligned with SPM exam format",
+  "Focus on writing, answering, and understanding",
+  "Helps students improve consistently, not just practise"
 ];
 
 export default function HomePage() {
   return (
     <main className="page-shell landing-shell">
-      <section className="landing-hero">
+      <section className="landing-hero landing-hero-conversion">
         <div className="landing-hero-copy">
-          <p className="eyebrow">AI Learning Platform</p>
-          <h1>Upgrade Across English, BM, Sejarah, Geografi, Math, and Add Math.</h1>
+          <p className="eyebrow">AI study system for SPM students</p>
+          <h1>Improve Your SPM Subjects in Just 15 Minutes a Day.</h1>
           <p className="landing-lead">
-            SenangBah is an AI-powered study platform built for students who want short daily missions, clearer feedback, and progress they can actually track.
+            Fix mistakes. Understand better. See real progress with AI guidance across English, BM, Sejarah, Geografi, Math, and Add Math.
           </p>
-          <p className="landing-proof">Start your account, unlock your trial, and begin improving subject by subject.</p>
+          <p className="landing-proof">Used by 100+ SPM students</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="/register">
-              Register as Member
+              Start My AI Learning
             </a>
-            <a className="btn btn-secondary" href="/pricing">
-              See Memberships
+            <a className="btn btn-secondary" href="/#how-it-works">
+              See How It Works
             </a>
           </div>
         </div>
 
         <div className="landing-hero-visual">
-          <article className="mission-mockup">
+          <article className="mission-mockup mission-mockup-conversion">
             <div className="mission-mockup-head">
-              <p className="dashboard-label">AI Mission Control</p>
-              <span className="mission-day-badge">Trial active</span>
+              <p className="dashboard-label">Today's mission</p>
+              <span className="mission-day-badge">Day 3 of 14</span>
             </div>
 
-            <div className="mission-checklist">
-              <div className="mission-check-item">
-                <span className="mission-check-bullet" />
-                <strong>English: fix 1 weak sentence</strong>
+            <div className="hero-mission-list">
+              <div className="hero-mission-item">
+                <strong>Fix 1 weak sentence</strong>
+                <span>English writing</span>
               </div>
-              <div className="mission-check-item">
-                <span className="mission-check-bullet" />
-                <strong>Sejarah: answer 1 source question</strong>
+              <div className="hero-mission-item">
+                <strong>Learn 1 better word</strong>
+                <span>Vocabulary upgrade</span>
               </div>
-              <div className="mission-check-item">
-                <span className="mission-check-bullet" />
-                <strong>Math: check 1 worked solution</strong>
+              <div className="hero-mission-item">
+                <strong>Improve 1 idea</strong>
+                <span>Clearer exam answer</span>
               </div>
             </div>
 
             <div className="mission-upgrade-panel">
-              <p className="dashboard-label">AI Feedback</p>
-              <strong>Weakness: grammar accuracy and sentence clarity</strong>
-              <p className="dashboard-helper">Upgrade: use a clearer connector, stronger verb, and one more precise detail.</p>
+              <p className="dashboard-label">AI feedback</p>
+              <strong>Weakness: grammar accuracy</strong>
+              <p className="dashboard-helper">Upgrade: use a clearer connector and one stronger verb.</p>
             </div>
 
-            <div className="sentence-upgrade-preview">
-              <div>
-                <p className="dashboard-label">Weak answer</p>
-                <p className="sentence-preview-copy sentence-preview-copy-before">
-                  The project result was very good for the team.
-                </p>
-              </div>
-              <div className="sentence-preview-arrow">→</div>
-              <div>
-                <p className="dashboard-label">AI upgrade</p>
-                <p className="sentence-preview-copy">
-                  The project result helped the team work faster and communicate more clearly.
-                </p>
-              </div>
-            </div>
-
-            <div className="mission-stats-grid">
+            <div className="hero-dashboard-stats">
               <div className="mission-stat">
-                <span className="dashboard-label">Current focus</span>
-                <strong>English + Math</strong>
+                <span className="dashboard-label">Subjects live</span>
+                <strong>6 subjects</strong>
               </div>
               <div className="mission-stat">
-                <span className="dashboard-label">AI mode</span>
-                <strong>Daily guidance</strong>
+                <span className="dashboard-label">Daily time</span>
+                <strong>5-15 min</strong>
               </div>
               <div className="mission-stat mission-stat-wide">
-                <span className="dashboard-label">Progress</span>
-                <strong>Short missions. Clear fixes. Better results.</strong>
+                <span className="dashboard-label">Focus now</span>
+                <strong>One short mission. One clear improvement.</strong>
               </div>
             </div>
 
             <div className="mission-progress-rail">
               <div className="mission-progress-head">
-                <span className="dashboard-label">Membership path</span>
-                <strong>Register → Trial → Keep Improving</strong>
+                <span className="dashboard-label">Progress</span>
+                <strong>Small daily wins add up</strong>
               </div>
               <div className="target-progress">
-                <div className="target-progress-bar" style={{ width: "42%" }} />
+                <div className="target-progress-bar" style={{ width: "46%" }} />
               </div>
             </div>
-
-            <p className="mission-signoff">Learn smarter. Improve faster.</p>
           </article>
+        </div>
+      </section>
+
+      <section className="section" id="problem">
+        <div className="section-heading landing-heading">
+          <p className="eyebrow">The problem</p>
+          <h2>Studying hard, but still not improving?</h2>
+        </div>
+        <div className="problem-strip">
+          {problemPoints.map((point) => (
+            <article className="landing-glass-card problem-card" key={point}>
+              <p>{point}</p>
+            </article>
+          ))}
         </div>
       </section>
 
       <section className="section" id="features">
         <div className="section-heading landing-heading">
-          <p className="eyebrow">Why students use it</p>
-          <h2>Built for students who want AI help without boring study flow.</h2>
+          <p className="eyebrow">The solution</p>
+          <h2>SenangBah is your AI learning system.</h2>
         </div>
         <div className="landing-card-grid landing-card-grid-3">
-          {whyCards.map((card) => (
+          {solutionCards.map((card, index) => (
             <article className="landing-glass-card" key={card.title}>
-              <span className="landing-icon-chip">{card.icon}</span>
+              <span className="landing-icon-chip">{`0${index + 1}`}</span>
               <h3>{card.title}</h3>
               <p>{card.body}</p>
             </article>
@@ -194,10 +201,39 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="section" id="how-it-works">
+        <div className="section-heading landing-heading">
+          <p className="eyebrow">How it works</p>
+          <h2>Simple enough to start today.</h2>
+        </div>
+        <div className="steps-row">
+          <article className="step-card">
+            <div className="step-badge">1</div>
+            <h3>Do 1 short task</h3>
+            <p>Start one mission instead of feeling buried by too much work.</p>
+          </article>
+          <article className="step-card">
+            <div className="step-badge">2</div>
+            <h3>AI shows what's wrong</h3>
+            <p>See the exact weak point instead of guessing what happened.</p>
+          </article>
+          <article className="step-card">
+            <div className="step-badge">3</div>
+            <h3>You fix it</h3>
+            <p>Get a clearer answer, stronger wording, or cleaner method.</p>
+          </article>
+          <article className="step-card">
+            <div className="step-badge">4</div>
+            <h3>You improve</h3>
+            <p>Come back tomorrow and keep building one daily win at a time.</p>
+          </article>
+        </div>
+      </section>
+
       <section className="section" id="subjects">
         <div className="section-heading landing-heading">
-          <p className="eyebrow">Subjects</p>
-          <h2>One account opens a full AI study system across six subjects.</h2>
+          <p className="eyebrow">Subject power</p>
+          <h2>One system. All your SPM subjects.</h2>
         </div>
         <div className="landing-card-grid landing-card-grid-3">
           {subjectCards.map((subject) => (
@@ -210,60 +246,87 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section" id="how-it-works">
+      <section className="section">
         <div className="section-heading landing-heading">
-          <p className="eyebrow">How it works</p>
-          <h2>Register once, get AI guidance, and keep improving every day.</h2>
+          <p className="eyebrow">Daily system</p>
+          <h2>You don't need hours. Just consistency.</h2>
         </div>
-        <div className="steps-row">
-          <article className="step-card">
-            <div className="step-badge">1</div>
-            <h3>Register</h3>
-            <p>Start your account and unlock your 7-day full access trial.</p>
-          </article>
-          <article className="step-card">
-            <div className="step-badge">2</div>
-            <h3>Get missions</h3>
-            <p>See the next task for English, BM, Sejarah, Geografi, Math, or Add Math.</p>
-          </article>
-          <article className="step-card">
-            <div className="step-badge">3</div>
-            <h3>Use AI feedback</h3>
-            <p>Fix what is weak, see the upgrade, and know the next step.</p>
-          </article>
-          <article className="step-card">
-            <div className="step-badge">4</div>
-            <h3>Track progress</h3>
-            <p>Watch your missions, streak, points, and subject improvement grow.</p>
-          </article>
-        </div>
+        <article className="landing-glass-card daily-system-card">
+          <div className="daily-system-points">
+            <div className="daily-pill">1 mission per day</div>
+            <div className="daily-pill">5-15 minutes</div>
+            <div className="daily-pill">Focus on 1 improvement</div>
+          </div>
+          <p>
+            SenangBah works best when studying feels light enough to start and clear enough to repeat tomorrow.
+          </p>
+        </article>
       </section>
 
-      <section className="section" id="progress">
+      <section className="section" id="ai-difference">
         <div className="section-heading landing-heading">
-          <p className="eyebrow">AI + progress</p>
-          <h2>Not just practice. Real measurable progress with AI guidance.</h2>
+          <p className="eyebrow">AI difference</p>
+          <h2>This is not just practice.</h2>
         </div>
         <div className="landing-card-grid landing-card-grid-3">
           {aiCards.map((card) => (
             <article className="landing-glass-card" key={card.title}>
-              <p className="dashboard-label">AI layer</p>
+              <span className="landing-icon-chip">{card.icon}</span>
               <h3>{card.title}</h3>
               <p>{card.body}</p>
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="section">
+        <div className="section-heading landing-heading">
+          <p className="eyebrow">Before / after</p>
+          <h2>See the difference.</h2>
+        </div>
+        <div className="before-after-list">
+          {beforeAfterRows.map((row) => (
+            <article className="before-after-card" key={row.subject}>
+              <div>
+                <p className="dashboard-label">{row.subject} before</p>
+                <p className="before-copy">{row.before}</p>
+              </div>
+              <div className="before-after-arrow">→</div>
+              <div>
+                <p className="dashboard-label">{row.subject} after</p>
+                <p className="after-copy">{row.after}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="progress">
+        <div className="section-heading landing-heading">
+          <p className="eyebrow">Progress</p>
+          <h2>Real improvement you can see.</h2>
+        </div>
         <div className="progress-preview">
           <article className="landing-glass-card progress-card-large">
             <div className="progress-metric-grid">
-              {progressStats.map((item) => (
-                <div className="progress-metric" key={item.label}>
-                  <span className="dashboard-label">{item.label}</span>
-                  <strong>{item.value}</strong>
-                </div>
-              ))}
+              <div className="progress-metric">
+                <span className="dashboard-label">Grammar accuracy</span>
+                <strong>58% → 74%</strong>
+              </div>
+              <div className="progress-metric">
+                <span className="dashboard-label">Vocabulary</span>
+                <strong>+21%</strong>
+              </div>
+              <div className="progress-metric">
+                <span className="dashboard-label">Band estimate</span>
+                <strong>3.8 → 4.6</strong>
+              </div>
+              <div className="progress-metric">
+                <span className="dashboard-label">Mistakes</span>
+                <strong>Going down</strong>
+              </div>
             </div>
-            <p className="landing-footnote">Your dashboard keeps every subject, mission, and AI next step in one place.</p>
+            <p className="landing-footnote">Not just practice. Real measurable progress that students and parents can both understand.</p>
           </article>
         </div>
       </section>
@@ -282,22 +345,34 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="section">
+        <div className="section-heading landing-heading">
+          <p className="eyebrow">Parent trust</p>
+          <h2>Built to support real exam improvement.</h2>
+        </div>
+        <div className="landing-card-grid landing-card-grid-3">
+          {parentTrustPoints.map((point) => (
+            <article className="landing-glass-card" key={point}>
+              <h3>{point}</h3>
+              <p>Clear daily structure with AI guidance that supports steady exam progress.</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="section landing-final-cta">
         <article className="landing-cta-card">
-          <p className="eyebrow">Ready to start?</p>
-          <h2>Register now and start your AI learning trial.</h2>
-          <p className="landing-lead">
-            Join SenangBah to access short daily missions, AI feedback, and multi-subject progress tracking in one place.
-          </p>
+          <p className="eyebrow">Start today</p>
+          <h2>Start improving today.</h2>
+          <p className="landing-lead">No stress. Just small daily progress with AI helping you know what to do next.</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="/register">
-              Register as Member
+              Start My AI Learning
             </a>
             <a className="btn btn-secondary" href="/login">
               Login to Continue Learning
             </a>
           </div>
-          <p className="landing-proof">Start with trial access, then continue with the subject bundle that fits you best.</p>
         </article>
       </section>
     </main>
