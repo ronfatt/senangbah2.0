@@ -129,7 +129,7 @@ export default function HomePage() {
             <a className="btn btn-primary" href="/register">
               Start My AI Learning
             </a>
-            <a className="btn btn-secondary" href="/#how-it-works">
+            <a className="btn btn-secondary" href="/how-it-works">
               See How It Works
             </a>
           </div>

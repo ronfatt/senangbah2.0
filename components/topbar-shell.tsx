@@ -83,7 +83,7 @@ export function TopbarShell() {
           </>
         ) : (
           <>
-            <NavLink href="/#how-it-works" label="How It Works" pathname={pathname} />
+            <NavLink href="/how-it-works" label="How It Works" pathname={pathname} />
             <NavLink href="/#subjects" label="Subjects" pathname={pathname} />
             <NavLink href="/pricing" label="Pricing" pathname={pathname} />
             <NavLink href="/login" label="Login" pathname={pathname} />
