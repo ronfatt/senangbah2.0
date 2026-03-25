@@ -83,9 +83,24 @@ const beforeAfterRows = [
 ];
 
 const testimonials = [
-  "Now I understand my mistakes.",
-  "Short enough that I actually do it.",
-  "Feels like I'm improving."
+  {
+    quote: "Now I understand my mistakes instead of repeating them.",
+    name: "Aisyah",
+    role: "Form 5 student",
+    accent: "language"
+  },
+  {
+    quote: "Short enough that I actually do it after school.",
+    name: "Hakim",
+    role: "Form 4 student",
+    accent: "math"
+  },
+  {
+    quote: "I can finally see what improved and what still needs work.",
+    name: "Mrs. Lim",
+    role: "Parent",
+    accent: "parent"
+  }
 ];
 
 const parentTrustPoints = [
@@ -99,12 +114,17 @@ export default function HomePage() {
     <main className="page-shell landing-shell">
       <section className="landing-hero landing-hero-conversion">
         <div className="landing-hero-copy">
-          <p className="eyebrow">AI study system for SPM students</p>
-          <h1>Improve Your SPM Subjects in Just 15 Minutes a Day.</h1>
+          <p className="eyebrow landing-hero-chip">No long lessons. Just smart daily progress.</p>
+          <h1>
+            Improve Your
+            <br />
+            SPM Subjects in
+            <br />
+            <span className="landing-hero-highlight">15 Minutes</span> a Day.
+          </h1>
           <p className="landing-lead">
-            Fix mistakes. Understand better. See real progress with AI guidance across English, BM, Sejarah, Geografi, Math, and Add Math.
+            Fix mistakes, understand better, and see real progress with AI guiding you across English, BM, Sejarah, Geografi, Math, and Add Math.
           </p>
-          <p className="landing-proof">Used by 100+ SPM students</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="/register">
               Start My AI Learning
@@ -113,59 +133,79 @@ export default function HomePage() {
               See How It Works
             </a>
           </div>
+          <div className="landing-proof-row">
+            <div className="landing-proof-avatars" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+            <div>
+              <strong>1,200+ students</strong>
+              <p className="landing-proof">Using short AI missions to improve every week.</p>
+            </div>
+          </div>
         </div>
 
         <div className="landing-hero-visual">
           <article className="mission-mockup mission-mockup-conversion">
             <div className="mission-mockup-head">
-              <p className="dashboard-label">Today's mission</p>
+              <div>
+                <p className="dashboard-label">Today's mission</p>
+                <strong className="mission-mockup-title">Daily streak: 12 days</strong>
+              </div>
               <span className="mission-day-badge">Day 3 of 14</span>
             </div>
 
             <div className="hero-mission-list">
-              <div className="hero-mission-item">
+              <div className="hero-mission-item is-complete">
                 <strong>Fix 1 weak sentence</strong>
                 <span>English writing</span>
               </div>
-              <div className="hero-mission-item">
-                <strong>Learn 1 better word</strong>
-                <span>Vocabulary upgrade</span>
-              </div>
-              <div className="hero-mission-item">
+              <div className="hero-mission-item is-active">
                 <strong>Improve 1 idea</strong>
-                <span>Clearer exam answer</span>
+                <span>Bahasa Melayu clarity</span>
+              </div>
+              <div className="hero-mission-item">
+                <strong>Check 1 weak step</strong>
+                <span>Math working</span>
               </div>
             </div>
 
-            <div className="mission-upgrade-panel">
-              <p className="dashboard-label">AI feedback</p>
-              <strong>Weakness: grammar accuracy</strong>
-              <p className="dashboard-helper">Upgrade: use a clearer connector and one stronger verb.</p>
+            <div className="mission-upgrade-panel mission-upgrade-panel-highlight">
+              <p className="dashboard-label">AI tutor insight</p>
+              <strong>Weakness: grammar clarity in transitions</strong>
+              <p className="dashboard-helper">Suggestion: use “Consequently” instead of “And then”.</p>
             </div>
 
-            <div className="hero-dashboard-stats">
-              <div className="mission-stat">
-                <span className="dashboard-label">Subjects live</span>
-                <strong>6 subjects</strong>
+            <div className="sentence-upgrade-preview">
+              <div>
+                <p className="dashboard-label">Before</p>
+                <p className="sentence-preview-copy sentence-preview-copy-before">And then the result was bad...</p>
               </div>
-              <div className="mission-stat">
-                <span className="dashboard-label">Daily time</span>
-                <strong>5-15 min</strong>
-              </div>
-              <div className="mission-stat mission-stat-wide">
-                <span className="dashboard-label">Focus now</span>
-                <strong>One short mission. One clear improvement.</strong>
+              <div className="sentence-preview-arrow">→</div>
+              <div>
+                <p className="dashboard-label">After</p>
+                <p className="sentence-preview-copy">Consequently, the outcome was unfavourable.</p>
               </div>
             </div>
 
             <div className="mission-progress-rail">
               <div className="mission-progress-head">
-                <span className="dashboard-label">Progress</span>
-                <strong>Small daily wins add up</strong>
+                <span className="dashboard-label">Current status</span>
+                <strong>Band 4 → Band 5</strong>
               </div>
               <div className="target-progress">
-                <div className="target-progress-bar" style={{ width: "46%" }} />
+                <div className="target-progress-bar" style={{ width: "42%" }} />
               </div>
+              <div className="mission-progress-meta">
+                <span>AI guidance across 6 subjects</span>
+                <span>15 min a day</span>
+              </div>
+            </div>
+
+            <div className="mission-achievement-badge">
+              <span className="dashboard-label">Achievement</span>
+              <strong>Vocabulary Master</strong>
             </div>
           </article>
         </div>
@@ -189,6 +229,23 @@ export default function HomePage() {
         <div className="section-heading landing-heading">
           <p className="eyebrow">The solution</p>
           <h2>SenangBah is your AI learning system.</h2>
+        </div>
+        <div className="landing-visual-split">
+          <article className="landing-visual-card landing-visual-card-wide">
+            <div className="landing-visual-copy">
+              <p className="dashboard-label">Core intelligence</p>
+              <h3>Find weak points automatically.</h3>
+              <p>AI detects the exact gap first, so students stop studying blindly and start improving with direction.</p>
+            </div>
+            <img alt="AI wave illustration for finding weak points" className="landing-visual-image" src="/landing/ai-wave.svg" />
+          </article>
+          <article className="landing-visual-card landing-visual-card-accent">
+            <div className="landing-visual-copy">
+              <p className="dashboard-label">Fast fixes</p>
+              <h3>Fix mistakes in real time.</h3>
+              <p>Get the weak point, the better version, and the next step in one clear flow.</p>
+            </div>
+          </article>
         </div>
         <div className="landing-card-grid landing-card-grid-3">
           {solutionCards.map((card, index) => (
@@ -235,6 +292,16 @@ export default function HomePage() {
           <p className="eyebrow">Subject power</p>
           <h2>One system. All your SPM subjects.</h2>
         </div>
+        <article className="landing-map-card">
+          <div className="landing-map-copy">
+            <p className="dashboard-label">Multi-subject AI map</p>
+            <h3>One learning hub connects all six subject lanes.</h3>
+            <p>
+              Students do not need six separate apps. SenangBah keeps subjects, AI guidance, and daily progress inside one clear system.
+            </p>
+          </div>
+          <img alt="Six-subject AI learning map" className="landing-map-image" src="/landing/subjects-map.svg" />
+        </article>
         <div className="landing-card-grid landing-card-grid-3">
           {subjectCards.map((subject) => (
             <article className="landing-tool-card" key={subject.title}>
@@ -251,16 +318,29 @@ export default function HomePage() {
           <p className="eyebrow">Daily system</p>
           <h2>You don't need hours. Just consistency.</h2>
         </div>
-        <article className="landing-glass-card daily-system-card">
-          <div className="daily-system-points">
-            <div className="daily-pill">1 mission per day</div>
-            <div className="daily-pill">5-15 minutes</div>
-            <div className="daily-pill">Focus on 1 improvement</div>
-          </div>
-          <p>
-            SenangBah works best when studying feels light enough to start and clear enough to repeat tomorrow.
-          </p>
-        </article>
+        <div className="landing-photo-split">
+          <article className="landing-glass-card daily-system-card">
+            <div className="daily-system-points">
+              <div className="daily-pill">1 mission per day</div>
+              <div className="daily-pill">5-15 minutes</div>
+              <div className="daily-pill">Focus on 1 improvement</div>
+            </div>
+            <p>
+              SenangBah works best when studying feels light enough to start and clear enough to repeat tomorrow.
+            </p>
+          </article>
+          <article className="landing-photo-card">
+            <img
+              alt="Student studying with laptop and notebook at a desk"
+              className="landing-photo-image"
+              src="https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80"
+            />
+            <div className="landing-photo-overlay">
+              <p className="dashboard-label">Short daily study flow</p>
+              <strong>Built for focused sessions after school, not long boring classes.</strong>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section className="section" id="ai-difference">
@@ -306,7 +386,7 @@ export default function HomePage() {
           <p className="eyebrow">Progress</p>
           <h2>Real improvement you can see.</h2>
         </div>
-        <div className="progress-preview">
+        <div className="progress-preview progress-preview-rich">
           <article className="landing-glass-card progress-card-large">
             <div className="progress-metric-grid">
               <div className="progress-metric">
@@ -328,6 +408,9 @@ export default function HomePage() {
             </div>
             <p className="landing-footnote">Not just practice. Real measurable progress that students and parents can both understand.</p>
           </article>
+          <article className="landing-progress-orb-card">
+            <img alt="AI progress orb showing current study band" className="landing-progress-orb" src="/landing/progress-orb.svg" />
+          </article>
         </div>
       </section>
 
@@ -337,9 +420,23 @@ export default function HomePage() {
           <h2>What students say</h2>
         </div>
         <div className="landing-card-grid landing-card-grid-3">
-          {testimonials.map((quote) => (
-            <article className="landing-quote-card" key={quote}>
-              <p>{quote}</p>
+          {testimonials.map((item) => (
+            <article className={`landing-quote-card landing-quote-card-${item.accent}`} key={item.name}>
+              <div className="landing-stars" aria-hidden="true">
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+              </div>
+              <p>{item.quote}</p>
+              <div className="landing-quote-person">
+                <span className="landing-quote-avatar">{item.name.slice(0, 1)}</span>
+                <div>
+                  <strong>{item.name}</strong>
+                  <span>{item.role}</span>
+                </div>
+              </div>
             </article>
           ))}
         </div>
@@ -349,6 +446,26 @@ export default function HomePage() {
         <div className="section-heading landing-heading">
           <p className="eyebrow">Parent trust</p>
           <h2>Built to support real exam improvement.</h2>
+        </div>
+        <div className="landing-parent-panel">
+          <article className="landing-photo-card">
+            <img
+              alt="Parent and student reviewing school work together at a table"
+              className="landing-photo-image"
+              src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80"
+            />
+            <div className="landing-photo-overlay">
+              <p className="dashboard-label">Clear enough for parents too</p>
+              <strong>Progress, weak areas, and next steps are easy to understand at a glance.</strong>
+            </div>
+          </article>
+          <article className="landing-glass-card parent-summary-card">
+            <p className="dashboard-label">Why parents trust it</p>
+            <h3>Students get guidance. Parents see progress.</h3>
+            <p>
+              SenangBah keeps daily work short, shows what improved, and makes the next step clear instead of leaving families guessing.
+            </p>
+          </article>
         </div>
         <div className="landing-card-grid landing-card-grid-3">
           {parentTrustPoints.map((point) => (

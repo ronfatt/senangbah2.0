@@ -1,0 +1,45 @@
+<svg width="1200" height="680" viewBox="0 0 1200 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="680" rx="36" fill="#0D1728"/>
+  <g opacity="0.12">
+    <path d="M0 120H1200" stroke="white"/>
+    <path d="M0 240H1200" stroke="white"/>
+    <path d="M0 360H1200" stroke="white"/>
+    <path d="M0 480H1200" stroke="white"/>
+    <path d="M0 600H1200" stroke="white"/>
+    <path d="M170 0V680" stroke="white"/>
+    <path d="M340 0V680" stroke="white"/>
+    <path d="M510 0V680" stroke="white"/>
+    <path d="M680 0V680" stroke="white"/>
+    <path d="M850 0V680" stroke="white"/>
+    <path d="M1020 0V680" stroke="white"/>
+  </g>
+  <circle cx="600" cy="340" r="110" fill="#FF6B00" fill-opacity="0.22"/>
+  <circle cx="600" cy="340" r="72" fill="#3B82F6" fill-opacity="0.25"/>
+  <circle cx="600" cy="340" r="24" fill="#F8FAFC"/>
+  <path d="M600 250V126" stroke="#F8FAFC" stroke-opacity="0.28" stroke-width="6" stroke-linecap="round"/>
+  <path d="M690 294L854 228" stroke="#F8FAFC" stroke-opacity="0.28" stroke-width="6" stroke-linecap="round"/>
+  <path d="M702 390L868 454" stroke="#F8FAFC" stroke-opacity="0.28" stroke-width="6" stroke-linecap="round"/>
+  <path d="M600 430V566" stroke="#F8FAFC" stroke-opacity="0.28" stroke-width="6" stroke-linecap="round"/>
+  <path d="M506 394L330 462" stroke="#F8FAFC" stroke-opacity="0.28" stroke-width="6" stroke-linecap="round"/>
+  <path d="M500 292L322 224" stroke="#F8FAFC" stroke-opacity="0.28" stroke-width="6" stroke-linecap="round"/>
+  <rect x="486" y="298" width="228" height="84" rx="20" fill="#101B2E"/>
+  <text x="532" y="350" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800">AI mission hub</text>
+  <rect x="244" y="156" width="168" height="88" rx="22" fill="#101B2E"/>
+  <text x="272" y="194" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">LANGUAGE</text>
+  <text x="272" y="226" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">English</text>
+  <rect x="244" y="438" width="206" height="88" rx="22" fill="#101B2E"/>
+  <text x="272" y="476" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">LANGUAGE</text>
+  <text x="272" y="508" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">Bahasa Melayu</text>
+  <rect x="790" y="160" width="178" height="88" rx="22" fill="#101B2E"/>
+  <text x="818" y="198" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">HUMANITIES</text>
+  <text x="818" y="230" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">Sejarah</text>
+  <rect x="792" y="440" width="184" height="88" rx="22" fill="#101B2E"/>
+  <text x="820" y="478" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">HUMANITIES</text>
+  <text x="820" y="510" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">Geografi</text>
+  <rect x="516" y="48" width="160" height="88" rx="22" fill="#101B2E"/>
+  <text x="544" y="86" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">MATH</text>
+  <text x="544" y="118" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">Math</text>
+  <rect x="502" y="544" width="188" height="88" rx="22" fill="#101B2E"/>
+  <text x="530" y="582" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">MATH</text>
+  <text x="530" y="614" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">Add Math</text>
+</svg>

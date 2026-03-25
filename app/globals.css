@@ -92,6 +92,23 @@ a {
   background: linear-gradient(180deg, rgba(20, 19, 25, 0.9), rgba(20, 19, 25, 0.54));
 }
 
+.topbar.is-public {
+  margin-top: 12px;
+  padding: 18px 24px;
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(9, 18, 32, 0.92), rgba(9, 18, 32, 0.78)),
+    rgba(9, 18, 32, 0.82);
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.topbar.is-app {
+  padding-top: 18px;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -133,9 +150,14 @@ a {
 
 .topnav-link {
   color: inherit;
+  transition: color 160ms ease;
 }
 
 .topnav-link.is-active {
+  color: var(--text-primary);
+}
+
+.topnav-link:hover {
   color: var(--text-primary);
 }
 
@@ -155,12 +177,18 @@ a {
 }
 
 .topnav-cta {
-  padding: 10px 16px;
+  padding: 12px 20px;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-hover));
   color: #fff;
   font-weight: 700;
   box-shadow: var(--shadow-glow-orange);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.topnav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(255, 107, 0, 0.34);
 }
 
 .topnav-ghost {
@@ -315,6 +343,22 @@ a {
   letter-spacing: -0.05em;
 }
 
+.landing-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.16);
+  color: #c7d2fe;
+}
+
+.landing-hero-highlight {
+  color: var(--accent-orange);
+  text-shadow: 0 12px 32px rgba(255, 107, 0, 0.28);
+}
+
 .landing-lead {
   max-width: 34rem;
   margin-top: 18px;
@@ -328,6 +372,52 @@ a {
   margin-top: 16px;
   color: #cbd5e1;
   font-size: 0.96rem;
+}
+
+.landing-proof-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.landing-proof-row strong {
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
+.landing-proof-row .landing-proof {
+  margin-top: 4px;
+}
+
+.landing-proof-avatars {
+  display: flex;
+  align-items: center;
+  min-width: 86px;
+}
+
+.landing-proof-avatars span {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 2px solid rgba(8, 17, 31, 0.9);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+.landing-proof-avatars span + span {
+  margin-left: -12px;
+}
+
+.landing-proof-avatars span:nth-child(1) {
+  background: linear-gradient(135deg, #f59e0b, #fb923c);
+}
+
+.landing-proof-avatars span:nth-child(2) {
+  background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+}
+
+.landing-proof-avatars span:nth-child(3) {
+  background: linear-gradient(135deg, #34d399, #22c55e);
 }
 
 .landing-hero-visual,
@@ -364,6 +454,14 @@ a {
     rgba(17, 24, 39, 0.82);
 }
 
+.mission-mockup-conversion {
+  position: relative;
+  padding: 28px;
+  background:
+    linear-gradient(180deg, rgba(31, 41, 55, 0.94), rgba(17, 24, 39, 0.92)),
+    rgba(17, 24, 39, 0.92);
+}
+
 .mission-mockup-head,
 .mission-check-item,
 .progress-metric,
@@ -389,6 +487,14 @@ a {
   color: #ffd0ae;
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.mission-mockup-title {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink);
+  font-size: 1.5rem;
+  line-height: 1.2;
 }
 
 .mission-checklist,
@@ -468,6 +574,17 @@ a {
 .landing-card-grid {
   display: grid;
   gap: 16px;
+}
+
+.landing-visual-split,
+.progress-preview-rich {
+  display: grid;
+  gap: 16px;
+}
+
+.landing-visual-split {
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
+  margin-bottom: 18px;
 }
 
 .mission-stats-grid {
@@ -591,6 +708,90 @@ a {
   transform: scale(1.02);
 }
 
+.landing-visual-card,
+.landing-map-card,
+.landing-progress-orb-card {
+  border: 1px solid var(--line);
+  background: rgba(17, 24, 39, 0.78);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.landing-visual-card {
+  min-height: 320px;
+  display: grid;
+}
+
+.landing-visual-card-wide {
+  grid-template-columns: minmax(0, 0.8fr) minmax(280px, 1.2fr);
+}
+
+.landing-visual-card-accent {
+  background:
+    radial-gradient(circle at top, rgba(255, 107, 0, 0.3), transparent 42%),
+    linear-gradient(180deg, rgba(255, 107, 0, 0.96), rgba(255, 127, 31, 0.92));
+}
+
+.landing-visual-copy,
+.landing-map-copy {
+  padding: 28px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.landing-visual-copy h3,
+.landing-map-copy h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+}
+
+.landing-visual-copy p,
+.landing-map-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.landing-visual-card-accent .landing-visual-copy p,
+.landing-visual-card-accent .landing-visual-copy h3,
+.landing-visual-card-accent .dashboard-label {
+  color: #201206;
+}
+
+.landing-visual-image,
+.landing-map-image,
+.landing-progress-orb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.landing-map-card {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.7fr) minmax(0, 1.3fr);
+  margin-bottom: 18px;
+}
+
+.progress-preview-rich {
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+  align-items: stretch;
+}
+
+.landing-progress-orb-card {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.18), transparent 30%),
+    rgba(17, 24, 39, 0.82);
+}
+
 .before-after-list {
   grid-template-columns: 1fr;
 }
@@ -650,6 +851,57 @@ a {
   font-size: 1.05rem;
 }
 
+.landing-stars {
+  display: flex;
+  gap: 4px;
+  color: #ffb067;
+  font-size: 1rem;
+  margin-bottom: 14px;
+}
+
+.landing-quote-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.landing-quote-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+}
+
+.landing-quote-person strong {
+  display: block;
+  color: var(--ink);
+  font-size: 0.96rem;
+}
+
+.landing-quote-person span:last-child {
+  display: block;
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin-top: 2px;
+}
+
+.landing-quote-card-language .landing-quote-avatar {
+  background: linear-gradient(135deg, #8b5cf6, #22d3ee);
+}
+
+.landing-quote-card-math .landing-quote-avatar {
+  background: linear-gradient(135deg, #f59e0b, #ff6b00);
+}
+
+.landing-quote-card-parent .landing-quote-avatar {
+  background: linear-gradient(135deg, #22c55e, #3b82f6);
+}
+
 .audience-card {
   justify-content: flex-start;
 }
@@ -670,13 +922,21 @@ a {
 .problem-strip,
 .hero-mission-list,
 .hero-dashboard-stats,
-.daily-system-points {
+.daily-system-points,
+.landing-photo-split,
+.landing-parent-panel {
   display: grid;
   gap: 16px;
 }
 
 .problem-strip {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing-photo-split,
+.landing-parent-panel {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 18px;
 }
 
 .problem-card {
@@ -690,12 +950,71 @@ a {
   line-height: 1.55;
 }
 
+.landing-photo-card,
+.parent-summary-card {
+  border: 1px solid var(--line);
+  background: rgba(17, 24, 39, 0.78);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.landing-photo-card {
+  position: relative;
+  min-height: 320px;
+}
+
+.landing-photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.landing-photo-overlay {
+  position: absolute;
+  inset: auto 18px 18px 18px;
+  border-radius: 18px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(8, 17, 31, 0.36), rgba(8, 17, 31, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.landing-photo-overlay strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.parent-summary-card {
+  padding: 28px;
+  display: grid;
+  align-content: center;
+  gap: 12px;
+}
+
+.parent-summary-card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.parent-summary-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
 .hero-mission-item {
   display: grid;
   gap: 4px;
   border-radius: 18px;
   padding: 16px;
   background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .hero-mission-item strong {
@@ -706,6 +1025,16 @@ a {
 .hero-mission-item span {
   color: var(--muted);
   font-size: 0.92rem;
+}
+
+.hero-mission-item.is-complete {
+  border-color: rgba(34, 197, 94, 0.3);
+  box-shadow: inset 3px 0 0 rgba(34, 197, 94, 0.9);
+}
+
+.hero-mission-item.is-active {
+  border-color: rgba(255, 107, 0, 0.34);
+  box-shadow: inset 3px 0 0 rgba(255, 107, 0, 0.9);
 }
 
 .hero-dashboard-stats {
@@ -732,6 +1061,37 @@ a {
   color: #dbeafe;
   font-weight: 700;
   text-align: center;
+}
+
+.mission-upgrade-panel-highlight {
+  border: 1px solid rgba(255, 107, 0, 0.28);
+  box-shadow: inset 3px 0 0 rgba(255, 107, 0, 0.92);
+}
+
+.mission-progress-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.mission-achievement-badge {
+  justify-self: end;
+  min-width: 214px;
+  border-radius: 20px;
+  padding: 14px 18px;
+  background: rgba(28, 35, 51, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+
+.mission-achievement-badge strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink);
+  font-size: 1rem;
 }
 
 .landing-cta-card {
@@ -2417,6 +2777,12 @@ a {
   .problem-strip,
   .hero-dashboard-stats,
   .daily-system-points,
+  .landing-visual-split,
+  .landing-visual-card-wide,
+  .landing-map-card,
+  .progress-preview-rich,
+  .landing-photo-split,
+  .landing-parent-panel,
   .before-after-card {
     grid-template-columns: 1fr;
   }
@@ -2433,6 +2799,17 @@ a {
   .landing-hero-copy h1 {
     max-width: 9ch;
     font-size: clamp(2.5rem, 11vw, 4rem);
+  }
+
+  .landing-proof-row,
+  .mission-progress-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mission-achievement-badge {
+    justify-self: stretch;
+    min-width: 0;
   }
 
   .topnav {
@@ -2478,6 +2855,11 @@ a {
 
   .topbar {
     position: static;
+  }
+
+  .topbar.is-public {
+    padding: 14px 16px;
+    border-radius: 24px;
   }
 
   .billing-success-banner {

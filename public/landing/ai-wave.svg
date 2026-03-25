@@ -1,0 +1,32 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="36" fill="#0D1728"/>
+  <g opacity="0.35">
+    <circle cx="914" cy="118" r="184" fill="#3B82F6"/>
+    <circle cx="236" cy="586" r="210" fill="#FF6B00"/>
+  </g>
+  <g opacity="0.12">
+    <path d="M0 118H1200" stroke="white"/>
+    <path d="M0 238H1200" stroke="white"/>
+    <path d="M0 358H1200" stroke="white"/>
+    <path d="M0 478H1200" stroke="white"/>
+    <path d="M0 598H1200" stroke="white"/>
+    <path d="M140 0V720" stroke="white"/>
+    <path d="M300 0V720" stroke="white"/>
+    <path d="M460 0V720" stroke="white"/>
+    <path d="M620 0V720" stroke="white"/>
+    <path d="M780 0V720" stroke="white"/>
+    <path d="M940 0V720" stroke="white"/>
+    <path d="M1100 0V720" stroke="white"/>
+  </g>
+  <path d="M98 486C196 420 290 406 382 444C466 478 522 482 614 434C708 386 776 380 860 414C948 450 1020 450 1102 404" stroke="#3B82F6" stroke-width="14" stroke-linecap="round"/>
+  <path d="M92 546C180 508 276 500 378 528C476 554 562 550 650 504C736 462 820 454 904 488C988 520 1062 520 1110 502" stroke="#4AE176" stroke-width="14" stroke-linecap="round"/>
+  <path d="M90 402C162 350 246 324 352 336C454 346 532 338 624 280C714 222 800 208 890 244C990 286 1060 290 1104 270" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+  <rect x="118" y="104" width="276" height="176" rx="24" fill="#101B2E" fill-opacity="0.92"/>
+  <text x="148" y="150" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">AI detects the weak point</text>
+  <text x="148" y="196" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="800">Grammar clarity</text>
+  <text x="148" y="236" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="22">Transition words need work.</text>
+  <rect x="800" y="420" width="246" height="152" rx="24" fill="#101B2E" fill-opacity="0.92"/>
+  <text x="832" y="466" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">AI upgrade</text>
+  <text x="832" y="512" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">Clearer answer</text>
+  <text x="832" y="548" fill="#4AE176" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">+ more precise wording</text>
+</svg>

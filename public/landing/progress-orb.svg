@@ -1,0 +1,18 @@
+<svg width="960" height="960" viewBox="0 0 960 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="960" rx="80" fill="#0D1728"/>
+  <circle cx="480" cy="480" r="252" fill="#13213A"/>
+  <circle cx="480" cy="480" r="198" stroke="#3B82F6" stroke-opacity="0.22" stroke-width="2"/>
+  <circle cx="480" cy="480" r="244" stroke="white" stroke-opacity="0.08" stroke-width="2"/>
+  <circle cx="480" cy="480" r="154" stroke="#4AE176" stroke-opacity="0.2" stroke-width="2"/>
+  <path d="M480 244C610.339 244 716 349.661 716 480" stroke="#FF6B00" stroke-width="24" stroke-linecap="round"/>
+  <path d="M716 480C716 610.339 610.339 716 480 716" stroke="#3B82F6" stroke-width="24" stroke-linecap="round"/>
+  <path d="M480 716C349.661 716 244 610.339 244 480" stroke="#4AE176" stroke-width="24" stroke-linecap="round"/>
+  <path d="M244 480C244 349.661 349.661 244 480 244" stroke="white" stroke-opacity="0.12" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="480" cy="480" r="112" fill="#101B2E"/>
+  <text x="480" y="458" fill="#A8B3C7" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle">Current AI band</text>
+  <text x="480" y="522" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="800" text-anchor="middle">4.6</text>
+  <text x="480" y="566" fill="#4AE176" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle">+0.8 this cycle</text>
+  <circle cx="710" cy="282" r="18" fill="#4AE176"/>
+  <circle cx="744" cy="220" r="12" fill="#3B82F6"/>
+  <circle cx="256" cy="690" r="14" fill="#FF6B00"/>
+</svg>

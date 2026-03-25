@@ -60,7 +60,7 @@ export function TopbarShell() {
   const signedIn = sessionState === "signed_in";
 
   return (
-    <header className="topbar">
+    <header className={`topbar${signedIn ? " is-app" : " is-public"}`}>
       <a className="brand" href={signedIn ? "/dashboard" : "/"}>
         <span className="brand-mark">S</span>
         <span className="brand-copy">
@@ -84,10 +84,11 @@ export function TopbarShell() {
         ) : (
           <>
             <NavLink href="/#how-it-works" label="How It Works" pathname={pathname} />
-            <NavLink href="/#features" label="Features" pathname={pathname} />
+            <NavLink href="/#subjects" label="Subjects" pathname={pathname} />
+            <NavLink href="/pricing" label="Pricing" pathname={pathname} />
             <NavLink href="/login" label="Login" pathname={pathname} />
             <a className="topnav-cta" href="/register">
-              Register
+              Start My AI Learning
             </a>
           </>
         )}
