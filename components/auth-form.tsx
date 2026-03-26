@@ -33,7 +33,11 @@ export function AuthForm({ mode, locale }: { mode: AuthMode; locale: AppLocale }
       success:
         locale === "ms"
           ? "Akaun berjaya dicipta dan percubaan penuh 7 hari anda sudah disediakan."
-          : "Account created and your 7-day full trial has been prepared."
+          : "Account created and your 7-day full trial has been prepared.",
+      confirmationRequired:
+        locale === "ms"
+          ? "Supabase masih meminta pengesahan e-mel. Jika anda mahu pelajar terus boleh log masuk selepas daftar, tutup Confirm email dalam tetapan Auth > Email."
+          : "Supabase still requires email confirmation. If you want students to log in immediately after registering, turn off Confirm email in Auth > Email settings."
     }
   };
   const [email, setEmail] = useState("");
@@ -88,7 +92,21 @@ export function AuthForm({ mode, locale }: { mode: AuthMode; locale: AppLocale }
         if (error) throw error;
 
         const user = data.user;
-        if (user) {
+        const session = data.session;
+
+        if (!session && user) {
+          const signInResult = await supabase.auth.signInWithPassword({ email, password });
+          if (!signInResult.error && signInResult.data.user) {
+            bootstrapPayload = {
+              authUserId: signInResult.data.user.id,
+              email: signInResult.data.user.email,
+              fullName
+            };
+          } else {
+            setStatus(formCopy.register.confirmationRequired);
+            return;
+          }
+        } else if (user) {
           bootstrapPayload = {
             authUserId: user.id,
             email: user.email,
