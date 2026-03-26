@@ -2,30 +2,40 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getLocaleCopy, type AppLocale } from "../lib/locale";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 import { hasPublicSupabaseEnv } from "../lib/env";
 
 type AuthMode = "login" | "register";
 
-const formCopy = {
-  login: {
-    eyebrow: "Welcome back",
-    title: "Continue your AI learning journey.",
-    helper: "Jump back into English, Bahasa Melayu, Sejarah, Geografi, Math, and Add Math with your saved progress waiting.",
-    button: "Login to Continue Learning",
-    success: "Signed in. Your learning dashboard is ready."
-  },
-  register: {
-    eyebrow: "Start your account",
-    title: "Start your 7-day full access trial.",
-    helper: "Get instant access to the SenangBah AI learning platform and try missions across all six subjects.",
-    button: "Register and Start Trial",
-    success: "Account created and your 7-day full trial has been prepared."
-  }
-};
-
-export function AuthForm({ mode }: { mode: AuthMode }) {
+export function AuthForm({ mode, locale }: { mode: AuthMode; locale: AppLocale }) {
   const router = useRouter();
+  const copy = getLocaleCopy(locale);
+  const formCopy = {
+    login: {
+      eyebrow: locale === "ms" ? "Selamat kembali" : "Welcome back",
+      title: locale === "ms" ? "Sambung semula perjalanan pembelajaran AI anda." : "Continue your AI learning journey.",
+      helper:
+        locale === "ms"
+          ? "Masuk semula ke Bahasa Inggeris, Bahasa Melayu, Sejarah, Geografi, Matematik, dan Matematik Tambahan dengan semua kemajuan anda menunggu."
+          : "Jump back into English, Bahasa Melayu, Sejarah, Geografi, Math, and Add Math with your saved progress waiting.",
+      button: locale === "ms" ? "Log Masuk untuk Terus Belajar" : "Login to Continue Learning",
+      success: locale === "ms" ? "Berjaya log masuk. Dashboard pembelajaran anda sudah sedia." : "Signed in. Your learning dashboard is ready."
+    },
+    register: {
+      eyebrow: locale === "ms" ? "Mulakan akaun anda" : "Start your account",
+      title: locale === "ms" ? "Mulakan percubaan akses penuh 7 hari anda." : "Start your 7-day full access trial.",
+      helper:
+        locale === "ms"
+          ? "Dapatkan akses segera ke platform pembelajaran AI SenangBah dan cuba misi untuk keenam-enam subjek."
+          : "Get instant access to the SenangBah AI learning platform and try missions across all six subjects.",
+      button: locale === "ms" ? "Daftar dan Mulakan Percubaan" : "Register and Start Trial",
+      success:
+        locale === "ms"
+          ? "Akaun berjaya dicipta dan percubaan penuh 7 hari anda sudah disediakan."
+          : "Account created and your 7-day full trial has been prepared."
+    }
+  };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -36,7 +46,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     event.preventDefault();
 
     if (!hasPublicSupabaseEnv()) {
-      setStatus("Missing Supabase public env. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+      setStatus(copy.auth.missingEnv);
       return;
     }
 
@@ -106,7 +116,12 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       router.push(mode === "register" ? "/welcome" : "/dashboard");
       router.refresh();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Something went wrong.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : locale === "ms"
+            ? "Sesuatu telah berlaku."
+            : "Something went wrong.";
       setStatus(message);
     } finally {
       setIsLoading(false);
@@ -124,7 +139,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       <form className="auth-form" onSubmit={handleSubmit}>
         {mode === "register" ? (
           <label className="field">
-            <span>Full name</span>
+            <span>{copy.auth.fullName}</span>
             <input
               value={fullName}
               onChange={(event) => setFullName(event.target.value)}
@@ -136,7 +151,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         ) : null}
 
         <label className="field">
-          <span>Email</span>
+          <span>{copy.auth.email}</span>
           <input
             value={email}
             onChange={(event) => setEmail(event.target.value)}
@@ -147,7 +162,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         </label>
 
         <label className="field">
-          <span>Password</span>
+          <span>{copy.auth.password}</span>
           <input
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -159,15 +174,19 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         </label>
 
         <button className="btn btn-primary auth-submit" disabled={isLoading} type="submit">
-          {isLoading ? "Working..." : formCopy[mode].button}
+          {isLoading ? copy.auth.working : formCopy[mode].button}
         </button>
       </form>
 
       <p className="auth-status">
         {status ||
           (mode === "register"
-            ? "Create your account to unlock your 7-day full trial."
-            : "Login to continue your missions, points, and progress.")}
+            ? locale === "ms"
+              ? "Cipta akaun anda untuk membuka percubaan penuh 7 hari."
+              : "Create your account to unlock your 7-day full trial."
+            : locale === "ms"
+              ? "Log masuk untuk teruskan misi, mata, dan kemajuan anda."
+              : "Login to continue your missions, points, and progress.")}
       </p>
     </section>
   );

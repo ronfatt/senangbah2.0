@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { SubjectHubClient } from "../../../components/subject-hub-client";
+import { getServerLocale } from "../../../lib/server-locale";
 import { getSubjectBySlug, subjectDefinitions } from "../../../lib/subjects";
 
 export function generateStaticParams() {
@@ -12,6 +13,7 @@ export default async function SubjectHubPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const locale = await getServerLocale();
   const subject = getSubjectBySlug(slug);
 
   if (!subject) {
@@ -27,22 +29,22 @@ export default async function SubjectHubPage({
           <p className="hero-text">{subject.summary}</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="#subject-guide">
-              See best path
+              {locale === "ms" ? "Lihat laluan terbaik" : "See best path"}
             </a>
             <a className="btn btn-secondary" href="/progress">
-              Open Progress Report
+              {locale === "ms" ? "Buka Laporan Kemajuan" : "Open Progress Report"}
             </a>
           </div>
         </div>
 
         <div className="hero-panel">
-          <p className="panel-label">Best for</p>
+          <p className="panel-label">{locale === "ms" ? "Paling sesuai untuk" : "Best for"}</p>
           <h2>{subject.bundle}</h2>
           <p className="hero-text">{subject.access}</p>
         </div>
       </section>
 
-      <SubjectHubClient subject={subject} />
+      <SubjectHubClient locale={locale} subject={subject} />
     </main>
   );
 }

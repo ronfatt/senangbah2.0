@@ -148,6 +148,42 @@ a {
   font-weight: 500;
 }
 
+.topbar-locale-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.topbar-locale-button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.topbar-locale-button:hover {
+  color: var(--text-primary);
+}
+
+.topbar-locale-button.is-active {
+  background: rgba(139, 92, 246, 0.18);
+  color: #f8fafc;
+  transform: translateY(-1px);
+}
+
 .topnav-link {
   color: inherit;
   transition: color 160ms ease;

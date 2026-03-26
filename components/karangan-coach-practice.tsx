@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import { getRotatingWritingPrompt, karanganCoachPrompt } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 
@@ -46,7 +47,7 @@ function scoreKarangan(draft: string) {
   };
 }
 
-export function KaranganCoachPractice() {
+export function KaranganCoachPractice({ locale }: { locale: AppLocale }) {
   const promptSet = getRotatingWritingPrompt("bahasa_melayu", "karangan-coach") || karanganCoachPrompt;
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState("Tulis satu perenggan ringkas, kemudian hantar untuk semakan pantas.");
@@ -211,6 +212,7 @@ export function KaranganCoachPractice() {
           weeklyDropHeadline={reward.weeklyDropHeadline}
           totalPoints={reward.totalPoints}
           unlockedAvatarItems={reward.unlockedAvatarItems}
+          locale={locale}
         />
       ) : null}
     </section>

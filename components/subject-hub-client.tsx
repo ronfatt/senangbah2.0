@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 import type { SubjectDefinition } from "../lib/subjects";
 
@@ -24,27 +25,35 @@ type DashboardSnapshot = {
   addMathModules: ModulePerformance[];
 };
 
-function useSubjectAccess(subject: SubjectDefinition) {
+function useSubjectAccess(subject: SubjectDefinition, locale: AppLocale) {
   const [state, setState] = useState({
     loading: true,
     isUnlocked: subject.isCore,
-    label: subject.isCore ? "Core subject" : "Locked",
+    label: subject.isCore ? (locale === "ms" ? "Subjek teras" : "Core subject") : locale === "ms" ? "Terkunci" : "Locked",
     detail: subject.isCore
-      ? "Core subject remains visible in the starter experience."
-      : `Unlock with ${subject.bundle}.`
+      ? locale === "ms"
+        ? "Subjek teras kekal kelihatan dalam pengalaman permulaan."
+        : "Core subject remains visible in the starter experience."
+      : locale === "ms"
+        ? `Buka kunci dengan ${subject.bundle}.`
+        : `Unlock with ${subject.bundle}.`
   });
 
   useEffect(() => {
     if (!hasPublicSupabaseEnv()) {
       setState({
-        loading: false,
-        isUnlocked: subject.isCore,
-        label: subject.isCore ? "Starter access" : "Locked",
-        detail: subject.isCore
-          ? "Core subject remains visible in the starter experience."
-          : `Unlock with ${subject.bundle}.`
-      });
-      return;
+          loading: false,
+          isUnlocked: subject.isCore,
+          label: subject.isCore ? (locale === "ms" ? "Akses permulaan" : "Starter access") : locale === "ms" ? "Terkunci" : "Locked",
+          detail: subject.isCore
+            ? locale === "ms"
+              ? "Subjek teras kekal kelihatan dalam pengalaman permulaan."
+              : "Core subject remains visible in the starter experience."
+            : locale === "ms"
+              ? `Buka kunci dengan ${subject.bundle}.`
+              : `Unlock with ${subject.bundle}.`
+        });
+        return;
     }
 
     const supabase = getSupabaseBrowserClient();
@@ -56,10 +65,14 @@ function useSubjectAccess(subject: SubjectDefinition) {
         setState({
           loading: false,
           isUnlocked: subject.isCore,
-          label: subject.isCore ? "Starter access" : "Signed out",
+          label: subject.isCore ? (locale === "ms" ? "Akses permulaan" : "Starter access") : locale === "ms" ? "Belum log masuk" : "Signed out",
           detail: subject.isCore
-            ? "English and BM can stay visible in the starter experience."
-            : `Sign in or start a trial to unlock via ${subject.bundle}.`
+            ? locale === "ms"
+              ? "Bahasa Inggeris dan Bahasa Melayu kekal kelihatan dalam pengalaman permulaan."
+              : "English and BM can stay visible in the starter experience."
+            : locale === "ms"
+              ? `Log masuk atau mulakan percubaan untuk buka melalui ${subject.bundle}.`
+              : `Sign in or start a trial to unlock via ${subject.bundle}.`
         });
         return;
       }
@@ -81,31 +94,51 @@ function useSubjectAccess(subject: SubjectDefinition) {
         setState({
           loading: false,
           isUnlocked,
-          label: isUnlocked ? (trialActive ? "Trial unlocked" : "Bundle active") : "Locked",
+          label: isUnlocked
+            ? trialActive
+              ? locale === "ms"
+                ? "Dibuka oleh percubaan"
+                : "Trial unlocked"
+              : locale === "ms"
+                ? "Pakej aktif"
+                : "Bundle active"
+            : locale === "ms"
+              ? "Terkunci"
+              : "Locked",
           detail: isUnlocked
             ? trialActive
-              ? "This subject is open during your active trial."
-              : "Your active plan currently unlocks this subject."
-            : `This subject unlocks through ${subject.bundle}.`
+              ? locale === "ms"
+                ? "Subjek ini terbuka semasa percubaan anda masih aktif."
+                : "This subject is open during your active trial."
+              : locale === "ms"
+                ? "Pelan aktif anda kini membuka subjek ini."
+                : "Your active plan currently unlocks this subject."
+            : locale === "ms"
+              ? `Subjek ini dibuka melalui ${subject.bundle}.`
+              : `This subject unlocks through ${subject.bundle}.`
         });
       } catch {
         setState({
           loading: false,
           isUnlocked: subject.isCore,
-          label: subject.isCore ? "Starter access" : "Locked",
+          label: subject.isCore ? (locale === "ms" ? "Akses permulaan" : "Starter access") : locale === "ms" ? "Terkunci" : "Locked",
           detail: subject.isCore
-            ? "Core subject remains visible in the starter experience."
-            : `Unlock with ${subject.bundle}.`
+            ? locale === "ms"
+              ? "Subjek teras kekal kelihatan dalam pengalaman permulaan."
+              : "Core subject remains visible in the starter experience."
+            : locale === "ms"
+              ? `Buka kunci dengan ${subject.bundle}.`
+              : `Unlock with ${subject.bundle}.`
         });
       }
     });
-  }, [subject]);
+  }, [locale, subject]);
 
   return state;
 }
 
-export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
-  const access = useSubjectAccess(subject);
+export function SubjectHubClient({ subject, locale }: { subject: SubjectDefinition; locale: AppLocale }) {
+  const access = useSubjectAccess(subject, locale);
   const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(null);
 
   useEffect(() => {
@@ -209,34 +242,40 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
   return (
     <>
       <section className="session-banner subject-access-banner">
-        <p className="eyebrow">Subject access</p>
-        <h2>{access.loading ? "Checking access..." : access.label}</h2>
+        <p className="eyebrow">{locale === "ms" ? "Akses subjek" : "Subject access"}</p>
+        <h2>{access.loading ? (locale === "ms" ? "Sedang menyemak akses..." : "Checking access...") : access.label}</h2>
         <p className="dashboard-helper">{access.detail}</p>
       </section>
 
       <section className="section" id="subject-guide">
         <div className="table-head">
           <div>
-            <p className="eyebrow">Best path in this subject</p>
-            <h2>Start with one clear module, then open the rest only when you need them.</h2>
+            <p className="eyebrow">{locale === "ms" ? "Laluan terbaik dalam subjek ini" : "Best path in this subject"}</p>
+            <h2>{locale === "ms" ? "Mulakan dengan satu modul yang jelas, kemudian buka yang lain hanya apabila perlu." : "Start with one clear module, then open the rest only when you need them."}</h2>
           </div>
         </div>
 
         <div className="subject-lane-grid">
           <article className={`subject-lane-card ${toneClass}`}>
-            <p className="dashboard-label">Start here</p>
-            <h3>{startHereModule?.name || "Open your first module"}</h3>
+            <p className="dashboard-label">{locale === "ms" ? "Mula di sini" : "Start here"}</p>
+            <h3>{startHereModule?.name || (locale === "ms" ? "Buka modul pertama anda" : "Open your first module")}</h3>
             <p className="dashboard-helper">
               {startHereModule
                 ? startHereModule.attemptsCount
-                  ? "This is the easiest place to keep your momentum moving."
-                  : "Start with this first so the subject begins tracking real progress."
-                : "Open one ready module first so the dashboard can start guiding you."}
+                  ? locale === "ms"
+                    ? "Inilah tempat paling mudah untuk mengekalkan momentum anda."
+                    : "This is the easiest place to keep your momentum moving."
+                  : locale === "ms"
+                    ? "Mulakan dengan ini dahulu supaya subjek ini mula menjejak kemajuan sebenar."
+                    : "Start with this first so the subject begins tracking real progress."
+                : locale === "ms"
+                  ? "Buka satu modul sedia dahulu supaya dashboard boleh mula membimbing anda."
+                  : "Open one ready module first so the dashboard can start guiding you."}
             </p>
             <div className="momentum-stack">
               <div className="momentum-item">
-                <span className="dashboard-label">Mission</span>
-                <strong>{startHereModule?.mission || "Choose one short task"}</strong>
+                <span className="dashboard-label">{locale === "ms" ? "Misi" : "Mission"}</span>
+                <strong>{startHereModule?.mission || (locale === "ms" ? "Pilih satu tugasan ringkas" : "Choose one short task")}</strong>
               </div>
             </div>
             <div className="hero-actions">
@@ -251,41 +290,53 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
                 }
               >
                 {startHereModule?.visualState === "ready" && (access.isUnlocked || subject.isCore)
-                  ? `Start ${startHereModule.name}`
-                  : "View Memberships"}
+                  ? locale === "ms"
+                    ? `Mula ${startHereModule.name}`
+                    : `Start ${startHereModule.name}`
+                  : locale === "ms"
+                    ? "Lihat Keahlian"
+                    : "View Memberships"}
               </a>
             </div>
           </article>
 
           <article className={`subject-lane-card ${toneClass}`}>
-            <p className="dashboard-label">Needs work</p>
-            <h3>{needsWorkModule?.name || "This will appear after your first few results"}</h3>
+            <p className="dashboard-label">{locale === "ms" ? "Perlu dibaiki" : "Needs work"}</p>
+            <h3>{needsWorkModule?.name || (locale === "ms" ? "Ini akan muncul selepas beberapa keputusan pertama anda" : "This will appear after your first few results")}</h3>
             <p className="dashboard-helper">
               {needsWorkModule
-                ? `${needsWorkModule.averageAccuracy}% average accuracy so far. This is the smartest place to tighten next.`
-                : "Finish one or two short missions first. Then we can show your weakest spot clearly."}
+                ? locale === "ms"
+                  ? `${needsWorkModule.averageAccuracy}% purata ketepatan setakat ini. Inilah tempat paling bijak untuk dikemaskan seterusnya.`
+                  : `${needsWorkModule.averageAccuracy}% average accuracy so far. This is the smartest place to tighten next.`
+                : locale === "ms"
+                  ? "Selesaikan satu atau dua misi ringkas dahulu. Selepas itu kami boleh tunjuk bahagian paling lemah dengan jelas."
+                  : "Finish one or two short missions first. Then we can show your weakest spot clearly."}
             </p>
             {needsWorkModule ? (
               <div className="hero-actions">
                 <a className="btn btn-primary" href={needsWorkModule.href}>
-                  Fix {needsWorkModule.name}
+                  {locale === "ms" ? `Baiki ${needsWorkModule.name}` : `Fix ${needsWorkModule.name}`}
                 </a>
               </div>
             ) : null}
           </article>
 
           <article className={`subject-lane-card ${toneClass}`}>
-            <p className="dashboard-label">Improving now</p>
-            <h3>{improvingNowModule?.name || "Your best module will show here"}</h3>
+            <p className="dashboard-label">{locale === "ms" ? "Sedang bertambah baik" : "Improving now"}</p>
+            <h3>{improvingNowModule?.name || (locale === "ms" ? "Modul terbaik anda akan muncul di sini" : "Your best module will show here")}</h3>
             <p className="dashboard-helper">
               {improvingNowModule
-                ? `${improvingNowModule.totalStars} star(s) and ${improvingNowModule.masteryPercent}% mastery. This is your strongest lane in ${subject.name} right now.`
-                : "Once you complete a few missions, this card will show what is getting stronger."}
+                ? locale === "ms"
+                  ? `${improvingNowModule.totalStars} bintang dan ${improvingNowModule.masteryPercent}% penguasaan. Inilah laluan terkuat anda dalam ${subject.name} sekarang.`
+                  : `${improvingNowModule.totalStars} star(s) and ${improvingNowModule.masteryPercent}% mastery. This is your strongest lane in ${subject.name} right now.`
+                : locale === "ms"
+                  ? "Selepas anda menyiapkan beberapa misi, kad ini akan menunjukkan apa yang sedang menjadi lebih kuat."
+                  : "Once you complete a few missions, this card will show what is getting stronger."}
             </p>
             {improvingNowModule ? (
               <div className="hero-actions">
                 <a className="btn btn-secondary" href={improvingNowModule.href}>
-                  Revisit {improvingNowModule.name}
+                  {locale === "ms" ? `Ulang semula ${improvingNowModule.name}` : `Revisit ${improvingNowModule.name}`}
                 </a>
               </div>
             ) : null}
@@ -295,8 +346,8 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
 
       <section className="section section-split">
         <article className="feature-panel alt">
-          <p className="eyebrow">Why this subject matters</p>
-          <h2>What students should improve in this lane</h2>
+          <p className="eyebrow">{locale === "ms" ? "Kenapa subjek ini penting" : "Why this subject matters"}</p>
+          <h2>{locale === "ms" ? "Apa yang pelajar patut perbaiki dalam laluan ini" : "What students should improve in this lane"}</h2>
           <ul className="feature-list">
             {subject.focusAreas.map((focus) => (
               <li key={focus}>{focus}</li>
@@ -304,13 +355,15 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
           </ul>
           {!subject.isCore ? (
             <div className="upgrade-callout">
-              <p className="eyebrow">Bundle Path</p>
+              <p className="eyebrow">{locale === "ms" ? "Laluan pakej" : "Bundle Path"}</p>
               <h3>{subject.bundle}</h3>
               <p className="subject-summary">
-                This subject stays visible in trial, then unlocks through its bundle after trial expiry.
+                {locale === "ms"
+                  ? "Subjek ini kekal kelihatan semasa percubaan, kemudian dibuka melalui pakejnya selepas percubaan tamat."
+                  : "This subject stays visible in trial, then unlocks through its bundle after trial expiry."}
               </p>
               <a className="btn btn-secondary" href="/pricing">
-                Compare plans
+                {locale === "ms" ? "Bandingkan pelan" : "Compare plans"}
               </a>
             </div>
           ) : null}
@@ -320,8 +373,8 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
           <details className="dashboard-foldout" open>
             <summary className="dashboard-foldout-summary">
               <div>
-                <p className="eyebrow">All modules</p>
-                <h2>Open every module in this subject only when you need it.</h2>
+                <p className="eyebrow">{locale === "ms" ? "Semua modul" : "All modules"}</p>
+                <h2>{locale === "ms" ? "Buka setiap modul dalam subjek ini hanya apabila anda memerlukannya." : "Open every module in this subject only when you need it."}</h2>
               </div>
             </summary>
 
@@ -331,32 +384,50 @@ export function SubjectHubClient({ subject }: { subject: SubjectDefinition }) {
                   <div className="module-card-head">
                     <h3>{module.name}</h3>
                     <span className={`module-state state-${module.visualState}`}>
-                      {module.visualState === "ready" ? "Open" : module.visualState === "coming_soon" ? "Soon" : "Locked"}
+                      {module.visualState === "ready"
+                        ? locale === "ms"
+                          ? "Terbuka"
+                          : "Open"
+                        : module.visualState === "coming_soon"
+                          ? locale === "ms"
+                            ? "Akan datang"
+                            : "Soon"
+                          : locale === "ms"
+                            ? "Terkunci"
+                            : "Locked"}
                     </span>
                   </div>
                   <p>{module.summary}</p>
                   <div className="momentum-stack">
                     <div className="momentum-item">
-                      <span className="dashboard-label">Status</span>
+                      <span className="dashboard-label">{locale === "ms" ? "Status" : "Status"}</span>
                       <strong>
                         {module.attemptsCount
-                          ? `${module.attemptsCount} result(s) saved`
+                          ? locale === "ms"
+                            ? `${module.attemptsCount} keputusan disimpan`
+                            : `${module.attemptsCount} result(s) saved`
                           : module.visualState === "ready"
-                            ? "Ready to start"
+                            ? locale === "ms"
+                              ? "Sedia untuk mula"
+                              : "Ready to start"
                             : module.visualState === "coming_soon"
-                              ? "Build next"
-                              : "Membership needed"}
+                              ? locale === "ms"
+                                ? "Akan dibina seterusnya"
+                                : "Build next"
+                              : locale === "ms"
+                                ? "Keahlian diperlukan"
+                                : "Membership needed"}
                       </strong>
                     </div>
                   </div>
                   {module.visualState === "ready" ? (
                     <a className="mini-link" href={module.href}>
-                      Open module
+                      {locale === "ms" ? "Buka modul" : "Open module"}
                     </a>
                   ) : null}
                   {(module.visualState === "locked" || (module.status === "ready" && !access.isUnlocked && !subject.isCore)) ? (
                     <a className="mini-link" href="/pricing">
-                      Unlock with {subject.bundle}
+                      {locale === "ms" ? `Buka kunci dengan ${subject.bundle}` : `Unlock with ${subject.bundle}`}
                     </a>
                   ) : null}
                   {module.status === "locked" && access.isUnlocked ? (

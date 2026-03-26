@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import { geografiShortAnswerPrompt, getRotatingWritingPrompt } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 
@@ -48,7 +49,7 @@ function scoreResponse(draft: string) {
   };
 }
 
-export function GeografiShortAnswerPractice() {
+export function GeografiShortAnswerPractice({ locale }: { locale: AppLocale }) {
   const promptSet = getRotatingWritingPrompt("geografi", "short-answer-practice") || geografiShortAnswerPrompt;
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState("Tulis satu jawapan ringkas, kemudian hantar untuk semakan pantas.");
@@ -214,6 +215,7 @@ export function GeografiShortAnswerPractice() {
           weeklyDropHeadline={reward.weeklyDropHeadline}
           totalPoints={reward.totalPoints}
           unlockedAvatarItems={reward.unlockedAvatarItems}
+          locale={locale}
         />
       ) : null}
     </section>

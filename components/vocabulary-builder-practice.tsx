@@ -3,12 +3,18 @@
 import { useState } from "react";
 import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import { vocabularyBuilderSet } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 
-export function VocabularyBuilderPractice() {
+export function VocabularyBuilderPractice({ locale }: { locale: AppLocale }) {
+  const isMalay = locale === "ms";
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [status, setStatus] = useState("Learn the words, choose the best usage, and submit one scored set.");
+  const [status, setStatus] = useState(
+    isMalay
+      ? "Pelajari perkataan, pilih penggunaan terbaik, dan hantar satu set ber markah."
+      : "Learn the words, choose the best usage, and submit one scored set."
+  );
   const [result, setResult] = useState<{
     accuracyPercent: number;
     stars: number;
@@ -23,7 +29,7 @@ export function VocabularyBuilderPractice() {
 
   async function handleSubmit() {
     if (Object.keys(answers).length !== vocabularyBuilderSet.questions.length) {
-      setStatus("Answer all vocabulary questions before submitting.");
+      setStatus(isMalay ? "Jawab semua soalan kosa kata sebelum menghantar." : "Answer all vocabulary questions before submitting.");
       return;
     }
 
@@ -40,7 +46,11 @@ export function VocabularyBuilderPractice() {
     });
 
     if (!hasPublicSupabaseEnv()) {
-      setStatus(`Set scored at ${accuracyPercent}%. Add Supabase env to save this vocabulary result.`);
+      setStatus(
+        isMalay
+          ? `Set dinilai pada ${accuracyPercent}%. Tambah env Supabase untuk menyimpan keputusan kosa kata ini.`
+          : `Set scored at ${accuracyPercent}%. Add Supabase env to save this vocabulary result.`
+      );
       return;
     }
 
@@ -54,7 +64,11 @@ export function VocabularyBuilderPractice() {
       } = await supabase.auth.getSession();
 
       if (!session?.user?.id || !session.user.email) {
-        setStatus(`Set scored at ${accuracyPercent}%. Sign in to save this vocabulary result.`);
+        setStatus(
+          isMalay
+            ? `Set dinilai pada ${accuracyPercent}%. Log masuk untuk menyimpan keputusan kosa kata ini.`
+            : `Set scored at ${accuracyPercent}%. Sign in to save this vocabulary result.`
+        );
         return;
       }
 
@@ -94,10 +108,12 @@ export function VocabularyBuilderPractice() {
       });
 
       setStatus(
-        `Saved ${correctCount}/${vocabularyBuilderSet.questions.length} correct. Vocabulary Builder added ${stars} star(s) and ${Number(payload?.starPoints || 0)} pts.`
+        isMalay
+          ? `Disimpan ${correctCount}/${vocabularyBuilderSet.questions.length} betul. Vocabulary Builder menambah ${stars} bintang dan ${Number(payload?.starPoints || 0)} mata.`
+          : `Saved ${correctCount}/${vocabularyBuilderSet.questions.length} correct. Vocabulary Builder added ${stars} star(s) and ${Number(payload?.starPoints || 0)} pts.`
       );
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to save this vocabulary result.");
+      setStatus(error instanceof Error ? error.message : isMalay ? "Tidak dapat menyimpan keputusan kosa kata ini." : "Unable to save this vocabulary result.");
     } finally {
       setIsSubmitting(false);
     }
@@ -107,7 +123,7 @@ export function VocabularyBuilderPractice() {
     <section className="writing-shell">
       <div className="practice-header">
         <div>
-          <p className="eyebrow">Live vocabulary set</p>
+          <p className="eyebrow">{isMalay ? "Set kosa kata langsung" : "Live vocabulary set"}</p>
           <h2>{vocabularyBuilderSet.title}</h2>
         </div>
         <p className="dashboard-helper">{vocabularyBuilderSet.helper}</p>
@@ -115,8 +131,8 @@ export function VocabularyBuilderPractice() {
 
       <div className="writing-layout">
         <article className="feature-panel">
-          <p className="eyebrow">Word bank</p>
-          <h2>Use these words in context.</h2>
+          <p className="eyebrow">{isMalay ? "Bank perkataan" : "Word bank"}</p>
+          <h2>{isMalay ? "Gunakan perkataan ini dalam konteks." : "Use these words in context."}</h2>
           <div className="word-bank">
             {vocabularyBuilderSet.words.map((word) => (
               <div className="word-card" key={word.term}>
@@ -129,12 +145,12 @@ export function VocabularyBuilderPractice() {
         </article>
 
         <article className="feature-panel alt">
-          <p className="eyebrow">Quick practice</p>
-          <h2>Pick the strongest word choice.</h2>
+          <p className="eyebrow">{isMalay ? "Latihan pantas" : "Quick practice"}</p>
+          <h2>{isMalay ? "Pilih perkataan yang paling kuat." : "Pick the strongest word choice."}</h2>
           <div className="practice-question-list">
             {vocabularyBuilderSet.questions.map((question, index) => (
               <article className="practice-card" key={question.id}>
-                <p className="dashboard-label">Question {index + 1}</p>
+                <p className="dashboard-label">{isMalay ? `Soalan ${index + 1}` : `Question ${index + 1}`}</p>
                 <h3>{question.prompt}</h3>
                 <p className="dashboard-helper">{question.sentence}</p>
                 <div className="practice-option-list">
@@ -164,13 +180,13 @@ export function VocabularyBuilderPractice() {
 
       <div className="practice-footer">
         <button className="btn btn-primary" disabled={isSubmitting} onClick={handleSubmit} type="button">
-          {isSubmitting ? "Saving result..." : "Submit Vocabulary Set"}
+          {isSubmitting ? (isMalay ? "Menyimpan keputusan..." : "Saving result...") : isMalay ? "Hantar Set Kosa Kata" : "Submit Vocabulary Set"}
         </button>
         {result ? (
           <div className="practice-score">
-            <span className="dashboard-label">Result</span>
+            <span className="dashboard-label">{isMalay ? "Keputusan" : "Result"}</span>
             <strong>
-              {result.correctCount}/{vocabularyBuilderSet.questions.length} correct · {result.accuracyPercent}% · {result.stars} star(s)
+              {result.correctCount}/{vocabularyBuilderSet.questions.length} {isMalay ? "betul" : "correct"} · {result.accuracyPercent}% · {result.stars} {isMalay ? "bintang" : "star(s)"}
             </strong>
           </div>
         ) : null}
@@ -189,6 +205,7 @@ export function VocabularyBuilderPractice() {
           weeklyDropHeadline={result.weeklyDropHeadline}
           totalPoints={result.totalPoints}
           unlockedAvatarItems={result.unlockedAvatarItems}
+          locale={locale}
         />
       ) : null}
     </section>

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AvatarPreviewFigure } from "./avatar-preview-figure";
 import { getCollectionMission } from "../lib/avatar-catalog";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import { getRankFromPoints } from "../lib/rewards";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 
@@ -46,7 +47,8 @@ type ClosetCelebration = {
   pricePoints?: number;
 };
 
-export function AvatarClosetClient() {
+export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
+  const isMalay = locale === "ms";
   const [closet, setCloset] = useState<ClosetSnapshot | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "signed_out" | "env_missing" | "schema_missing" | "error">(
     hasPublicSupabaseEnv() ? "loading" : "env_missing"
@@ -174,27 +176,29 @@ export function AvatarClosetClient() {
   }, [closet?.availablePoints, closet?.items]);
 
   if (status === "env_missing") {
-    return <p className="dashboard-helper">Supabase env is still missing, so the closet can only stay in preview mode.</p>;
+    return <p className="dashboard-helper">{isMalay ? "Env Supabase masih tiada, jadi almari hanya boleh kekal dalam mod pratonton." : "Supabase env is still missing, so the closet can only stay in preview mode."}</p>;
   }
 
   if (status === "signed_out") {
-    return <p className="dashboard-helper">Sign in first to start collecting items and equipping your avatar.</p>;
+    return <p className="dashboard-helper">{isMalay ? "Log masuk dahulu untuk mula mengumpul item dan memakaikan avatar anda." : "Sign in first to start collecting items and equipping your avatar."}</p>;
   }
 
   if (status === "schema_missing") {
     return (
       <p className="dashboard-helper">
-        The avatar schema is not live in Supabase yet. Once you rerun the updated schema, purchases and equip state will start working.
+        {isMalay
+          ? "Skema avatar masih belum aktif di Supabase. Selepas anda jalankan semula schema yang dikemas kini, pembelian dan status pakai akan mula berfungsi."
+          : "The avatar schema is not live in Supabase yet. Once you rerun the updated schema, purchases and equip state will start working."}
       </p>
     );
   }
 
   if (status === "loading") {
-    return <p className="dashboard-helper">Loading your closet snapshot...</p>;
+    return <p className="dashboard-helper">{isMalay ? "Sedang memuat snapshot almari anda..." : "Loading your closet snapshot..."}</p>;
   }
 
   if (status === "error") {
-    return <p className="dashboard-helper">The closet hit a temporary loading problem. The API skeleton is in place, but the current data load failed.</p>;
+    return <p className="dashboard-helper">{isMalay ? "Almari mengalami masalah pemuatan sementara. Rangka API sudah tersedia, tetapi pemuatan data semasa gagal." : "The closet hit a temporary loading problem. The API skeleton is in place, but the current data load failed."}</p>;
   }
 
   return (
@@ -203,61 +207,77 @@ export function AvatarClosetClient() {
         <article className={`closet-celebration closet-celebration-${celebration.type}`}>
           <div className="closet-celebration-copy">
             <p className="dashboard-label">
-              {celebration.type === "purchase" ? "Purchase success" : "Style updated"}
+              {celebration.type === "purchase"
+                ? isMalay
+                  ? "Pembelian berjaya"
+                  : "Purchase success"
+                : isMalay
+                  ? "Gaya dikemas kini"
+                  : "Style updated"}
             </p>
             <h3>
               {celebration.type === "purchase"
-                ? `${celebration.itemName} is now yours.`
-                : `${celebration.itemName} is now equipped.`}
+                ? isMalay
+                  ? `${celebration.itemName} kini milik anda.`
+                  : `${celebration.itemName} is now yours.`
+                : isMalay
+                  ? `${celebration.itemName} kini sedang dipakai.`
+                  : `${celebration.itemName} is now equipped.`}
             </h3>
             <p className="dashboard-helper">
               {celebration.type === "purchase"
-                ? `${celebration.collectionName || "Closet"} just got stronger${typeof celebration.pricePoints === "number" ? ` for ${celebration.pricePoints} pts` : ""}.`
-                : "Your avatar preview has already updated, so the reward feels immediate."}
+                ? isMalay
+                  ? `${celebration.collectionName || "Almari"} baru sahaja menjadi lebih kuat${typeof celebration.pricePoints === "number" ? ` dengan ${celebration.pricePoints} mata` : ""}.`
+                  : `${celebration.collectionName || "Closet"} just got stronger${typeof celebration.pricePoints === "number" ? ` for ${celebration.pricePoints} pts` : ""}.`
+                : isMalay
+                  ? "Pratonton avatar anda sudah dikemas kini, jadi ganjaran terasa serta-merta."
+                  : "Your avatar preview has already updated, so the reward feels immediate."}
             </p>
           </div>
           <div className="hero-actions">
             <button className="btn btn-primary closet-action" onClick={() => setCelebration(null)} type="button">
-              Nice
+              {isMalay ? "Baik" : "Nice"}
             </button>
             <a className="btn btn-secondary" href="/dashboard">
-              See dashboard
+              {isMalay ? "Lihat dashboard" : "See dashboard"}
             </a>
           </div>
         </article>
       ) : null}
 
       <article className="feature-panel avatar-live-preview">
-        <p className="eyebrow">Live preview</p>
-        <h2>Your avatar updates from equipped items.</h2>
+        <p className="eyebrow">{isMalay ? "Pratonton langsung" : "Live preview"}</p>
+        <h2>{isMalay ? "Avatar anda berubah mengikut item yang dipakai." : "Your avatar updates from equipped items."}</h2>
         <AvatarPreviewFigure equippedBySlot={equippedBySlot} />
         <p className="dashboard-helper">
-          Buy and equip an item below, then this preview changes immediately. That makes the reward loop feel much more real.
+          {isMalay
+            ? "Beli dan pakai item di bawah, kemudian pratonton ini berubah serta-merta. Itu menjadikan gelung ganjaran terasa lebih nyata."
+            : "Buy and equip an item below, then this preview changes immediately. That makes the reward loop feel much more real."}
         </p>
       </article>
 
       <article className="feature-panel">
-        <p className="eyebrow">Live balance</p>
-        <h2>{closet?.availablePoints || 0} pts ready to spend</h2>
+        <p className="eyebrow">{isMalay ? "Baki semasa" : "Live balance"}</p>
+        <h2>{closet?.availablePoints || 0} {isMalay ? "mata sedia dibelanja" : "pts ready to spend"}</h2>
         <div className="momentum-stack">
           <div className="momentum-item">
-            <span className="dashboard-label">Earned</span>
-            <strong>{closet?.totalPoints || 0} pts</strong>
+            <span className="dashboard-label">{isMalay ? "Diperoleh" : "Earned"}</span>
+            <strong>{closet?.totalPoints || 0} {isMalay ? "mata" : "pts"}</strong>
           </div>
           <div className="momentum-item">
-            <span className="dashboard-label">Spent</span>
-            <strong>{closet?.spentPoints || 0} pts</strong>
+            <span className="dashboard-label">{isMalay ? "Dibelanja" : "Spent"}</span>
+            <strong>{closet?.spentPoints || 0} {isMalay ? "mata" : "pts"}</strong>
           </div>
           <div className="momentum-item">
-            <span className="dashboard-label">Rank</span>
+            <span className="dashboard-label">{isMalay ? "Peringkat" : "Rank"}</span>
             <strong>{getRankFromPoints(closet?.totalPoints || 0)}</strong>
           </div>
         </div>
       </article>
 
       <article className="feature-panel alt">
-        <p className="eyebrow">Collection progress</p>
-        <h2>See which style set is closest to completion.</h2>
+        <p className="eyebrow">{isMalay ? "Kemajuan koleksi" : "Collection progress"}</p>
+        <h2>{isMalay ? "Lihat set gaya mana yang paling hampir siap." : "See which style set is closest to completion."}</h2>
         <div className="momentum-stack">
           {(closet?.collectionProgress || []).map((collection) => (
             <div className="momentum-item" key={collection.collectionName}>
@@ -270,7 +290,7 @@ export function AvatarClosetClient() {
               <div className="mastery-bar">
                 <div className="mastery-bar-fill" style={{ width: `${collection.progressPercent}%` }} />
               </div>
-              <p className="dashboard-helper">{collection.progressPercent}% complete</p>
+              <p className="dashboard-helper">{collection.progressPercent}% {isMalay ? "siap" : "complete"}</p>
               {getCollectionMission(collection.collectionName) ? (
                 <a className="mini-link" href={getCollectionMission(collection.collectionName)?.href}>
                   {getCollectionMission(collection.collectionName)?.subject}: {getCollectionMission(collection.collectionName)?.title}
@@ -282,13 +302,13 @@ export function AvatarClosetClient() {
       </article>
 
       <article className="feature-panel alt">
-        <p className="eyebrow">Equipped now</p>
-        <h2>Your current style setup</h2>
+        <p className="eyebrow">{isMalay ? "Sedang dipakai" : "Equipped now"}</p>
+        <h2>{isMalay ? "Gaya semasa anda" : "Your current style setup"}</h2>
         <div className="momentum-stack">
           {["hair", "top", "bottom", "shoes", "accessory"].map((slot) => (
             <div className="momentum-item" key={slot}>
               <span className="dashboard-label">{slot}</span>
-              <strong>{equippedBySlot.get(slot)?.itemName || "Nothing equipped yet"}</strong>
+              <strong>{equippedBySlot.get(slot)?.itemName || (isMalay ? "Belum pakai apa-apa" : "Nothing equipped yet")}</strong>
             </div>
           ))}
         </div>
@@ -296,8 +316,8 @@ export function AvatarClosetClient() {
 
       <div className="achievement-grid closet-item-grid">
         <div className="closet-sort-note">
-          <p className="dashboard-label">Shop order</p>
-          <p className="dashboard-helper">Owned looks come first, then items you can afford right now, then the longer-term targets.</p>
+          <p className="dashboard-label">{isMalay ? "Susunan kedai" : "Shop order"}</p>
+          <p className="dashboard-helper">{isMalay ? "Gaya yang dimiliki muncul dahulu, kemudian item yang anda mampu beli sekarang, kemudian sasaran jangka panjang." : "Owned looks come first, then items you can afford right now, then the longer-term targets."}</p>
         </div>
         {sortedItems.map((item) => (
           <article

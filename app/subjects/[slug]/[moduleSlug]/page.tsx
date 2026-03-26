@@ -22,6 +22,7 @@ import {
   tatabahasaQuestions,
   workedSolutionReviewQuestions
 } from "../../../../lib/practice-content";
+import { getServerLocale } from "../../../../lib/server-locale";
 import { getModuleBySlugs, subjectDefinitions } from "../../../../lib/subjects";
 
 export function generateStaticParams() {
@@ -41,6 +42,7 @@ export default async function SubjectModulePage({
   params: Promise<{ slug: string; moduleSlug: string }>;
 }) {
   const { slug, moduleSlug } = await params;
+  const locale = await getServerLocale();
   const result = getModuleBySlugs(slug, moduleSlug);
 
   if (!result) {
@@ -63,16 +65,16 @@ export default async function SubjectModulePage({
           <p className="hero-text">{module.summary}</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="#practice-task">
-              Start mission
+              {locale === "ms" ? "Mulakan misi" : "Start mission"}
             </a>
             <a className="btn btn-secondary" href={`/subjects/${subject.slug}`}>
-              Back to {subject.name}
+              {locale === "ms" ? `Kembali ke ${subject.name}` : `Back to ${subject.name}`}
             </a>
           </div>
         </div>
 
         <div className="hero-panel">
-          <p className="panel-label">Today&apos;s task</p>
+          <p className="panel-label">{locale === "ms" ? "Tugasan hari ini" : "Today&apos;s task"}</p>
           <h2>{module.lessonFormat}</h2>
           <p className="hero-text">{module.mission}</p>
         </div>
@@ -80,22 +82,22 @@ export default async function SubjectModulePage({
 
       <section className="section section-split practice-intro-grid">
         <article className="feature-panel">
-          <p className="eyebrow">What to do</p>
-          <h2>Finish one short mission and get instant feedback.</h2>
+          <p className="eyebrow">{locale === "ms" ? "Apa yang perlu dibuat" : "What to do"}</p>
+          <h2>{locale === "ms" ? "Selesaikan satu misi ringkas dan dapatkan maklum balas segera." : "Finish one short mission and get instant feedback."}</h2>
           <ul className="feature-list">
-            <li>Read the task first</li>
-            <li>Answer or write clearly</li>
-            <li>Check the result and follow the next step</li>
+            <li>{locale === "ms" ? "Baca tugasan dahulu" : "Read the task first"}</li>
+            <li>{locale === "ms" ? "Jawab atau tulis dengan jelas" : "Answer or write clearly"}</li>
+            <li>{locale === "ms" ? "Semak keputusan dan ikut langkah seterusnya" : "Check the result and follow the next step"}</li>
           </ul>
         </article>
 
         <article className="feature-panel alt">
-          <p className="eyebrow">What you get</p>
-          <h2>One mission updates your stars, points, and progress.</h2>
+          <p className="eyebrow">{locale === "ms" ? "Apa yang anda dapat" : "What you get"}</p>
+          <h2>{locale === "ms" ? "Satu misi akan mengemas kini bintang, mata, dan kemajuan anda." : "One mission updates your stars, points, and progress."}</h2>
           <ul className="feature-list">
-            <li>AI-style feedback</li>
-            <li>Progress back to dashboard</li>
-            <li>Clear next move after you finish</li>
+            <li>{locale === "ms" ? "Maklum balas gaya AI" : "AI-style feedback"}</li>
+            <li>{locale === "ms" ? "Kemajuan kembali ke dashboard" : "Progress back to dashboard"}</li>
+            <li>{locale === "ms" ? "Langkah seterusnya yang jelas selepas anda selesai" : "Clear next move after you finish"}</li>
           </ul>
         </article>
       </section>
@@ -103,13 +105,14 @@ export default async function SubjectModulePage({
       <SubjectModuleAccessGate
         bundle={subject.bundle}
         isCore={subject.isCore}
+        locale={locale}
         subjectCode={subject.code}
         subjectName={subject.name}
       >
       <div id="practice-task">
       {subject.slug === "english" && module.slug === "writing-coach" ? (
         <section className="section">
-          <WritingCoachPractice />
+          <WritingCoachPractice locale={locale} />
         </section>
       ) : subject.slug === "english" && module.slug === "grammar-lab" ? (
         <section className="section">
@@ -122,6 +125,7 @@ export default async function SubjectModulePage({
             subjectSlug="english"
             submitLabel="Submit Grammar Set"
             title="Grammar Lab Quick Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "bahasa-melayu" && module.slug === "tatabahasa" ? (
@@ -135,6 +139,7 @@ export default async function SubjectModulePage({
             subjectSlug="bahasa-melayu"
             submitLabel="Hantar Set Tatabahasa"
             title="Tatabahasa Quick Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "bahasa-melayu" && module.slug === "pemahaman-drill" ? (
@@ -148,11 +153,12 @@ export default async function SubjectModulePage({
             subjectSlug="bahasa-melayu"
             submitLabel="Hantar Set Pemahaman"
             title="Pemahaman Mini Passage"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "bahasa-melayu" && module.slug === "karangan-coach" ? (
         <section className="section">
-          <KaranganCoachPractice />
+          <KaranganCoachPractice locale={locale} />
         </section>
       ) : subject.slug === "sejarah" && module.slug === "timeline-recall" ? (
         <section className="section">
@@ -164,6 +170,7 @@ export default async function SubjectModulePage({
             subjectSlug="sejarah"
             submitLabel="Hantar Set Timeline"
             title="Timeline Recall Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "sejarah" && module.slug === "source-question-drill" ? (
@@ -176,6 +183,7 @@ export default async function SubjectModulePage({
             subjectSlug="sejarah"
             submitLabel="Hantar Set Sumber"
             title="Source Question Drill Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "sejarah" && module.slug === "topic-revision-set" ? (
@@ -188,6 +196,7 @@ export default async function SubjectModulePage({
             subjectSlug="sejarah"
             submitLabel="Hantar Set Ulang Kaji"
             title="Topic Revision Set Mini Drill"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "geografi" && module.slug === "map-and-data-drill" ? (
@@ -200,6 +209,7 @@ export default async function SubjectModulePage({
             subjectSlug="geografi"
             submitLabel="Hantar Set Data"
             title="Map and Data Drill Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "geografi" && module.slug === "concept-review" ? (
@@ -212,11 +222,12 @@ export default async function SubjectModulePage({
             subjectSlug="geografi"
             submitLabel="Hantar Set Konsep"
             title="Concept Review Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "geografi" && module.slug === "short-answer-practice" ? (
         <section className="section">
-          <GeografiShortAnswerPractice />
+          <GeografiShortAnswerPractice locale={locale} />
         </section>
       ) : subject.slug === "math" && module.slug === "topic-practice" ? (
         <section className="section">
@@ -228,6 +239,7 @@ export default async function SubjectModulePage({
             subjectSlug="math"
             submitLabel="Submit Math Set"
             title="Topic Practice Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "math" && module.slug === "worked-solution-review" ? (
@@ -240,6 +252,7 @@ export default async function SubjectModulePage({
             subjectSlug="math"
             submitLabel="Submit Worked Solution Set"
             title="Worked Solution Review Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "math" && module.slug === "error-pattern-tracker" ? (
@@ -252,6 +265,7 @@ export default async function SubjectModulePage({
             subjectSlug="math"
             submitLabel="Submit Error Pattern Set"
             title="Error Pattern Tracker Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "add-math" && module.slug === "step-check-drill" ? (
@@ -264,6 +278,7 @@ export default async function SubjectModulePage({
             subjectSlug="add-math"
             submitLabel="Submit Add Math Set"
             title="Step Check Drill Mini Set"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "english" && module.slug === "reading-decoder" ? (
@@ -277,15 +292,16 @@ export default async function SubjectModulePage({
             subjectSlug="english"
             submitLabel="Submit Reading Set"
             title="Reading Decoder Mini Passage"
+            locale={locale}
           />
         </section>
       ) : subject.slug === "english" && module.slug === "vocabulary-builder" ? (
         <section className="section">
-          <VocabularyBuilderPractice />
+          <VocabularyBuilderPractice locale={locale} />
         </section>
       ) : (
         <section className="section">
-          <ModuleActionPanel moduleSlug={module.slug} subjectSlug={subject.slug} />
+          <ModuleActionPanel locale={locale} moduleSlug={module.slug} subjectSlug={subject.slug} />
         </section>
       )}
       </div>

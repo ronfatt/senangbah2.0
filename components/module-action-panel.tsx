@@ -3,16 +3,22 @@
 import { useState } from "react";
 import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 
 export function ModuleActionPanel({
   subjectSlug,
-  moduleSlug
+  moduleSlug,
+  locale
 }: {
   subjectSlug: string;
   moduleSlug: string;
+  locale: AppLocale;
 }) {
-  const [status, setStatus] = useState("Mark a quick start or completion to feed the dashboard.");
+  const isMalay = locale === "ms";
+  const [status, setStatus] = useState(
+    isMalay ? "Tandakan mula atau siap untuk mengemas kini dashboard." : "Mark a quick start or completion to feed the dashboard."
+  );
   const [isWorking, setIsWorking] = useState(false);
   const [accuracyPercent, setAccuracyPercent] = useState("80");
   const [stars, setStars] = useState("2");
@@ -29,7 +35,7 @@ export function ModuleActionPanel({
 
   async function logProgress(eventType: "started" | "completed") {
     if (!hasPublicSupabaseEnv()) {
-      setStatus("Missing Supabase env. Add the public keys before testing progress logging.");
+      setStatus(isMalay ? "Env Supabase tiada. Tambah kunci awam sebelum menguji log kemajuan." : "Missing Supabase env. Add the public keys before testing progress logging.");
       return;
     }
 
@@ -43,7 +49,7 @@ export function ModuleActionPanel({
       } = await supabase.auth.getSession();
 
       if (!session?.user?.id || !session.user.email) {
-        setStatus("Sign in first so this module can write to your learning history.");
+        setStatus(isMalay ? "Log masuk dahulu supaya modul ini boleh menulis ke sejarah pembelajaran anda." : "Sign in first so this module can write to your learning history.");
         return;
       }
 
@@ -84,11 +90,15 @@ export function ModuleActionPanel({
 
       setStatus(
         eventType === "completed"
-          ? `${result.moduleName} marked complete with ${result.stars} star(s), ${result.accuracyPercent}% accuracy, and ${Number(result.starPoints || 0)} pts.`
-          : `${result.moduleName} added to your active learning queue.`
+          ? isMalay
+            ? `${result.moduleName} ditandakan siap dengan ${result.stars} bintang, ketepatan ${result.accuracyPercent}%, dan ${Number(result.starPoints || 0)} mata.`
+            : `${result.moduleName} marked complete with ${result.stars} star(s), ${result.accuracyPercent}% accuracy, and ${Number(result.starPoints || 0)} pts.`
+          : isMalay
+            ? `${result.moduleName} ditambah ke barisan pembelajaran aktif anda.`
+            : `${result.moduleName} added to your active learning queue.`
       );
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Something went wrong.");
+      setStatus(error instanceof Error ? error.message : isMalay ? "Sesuatu tidak berjalan dengan baik." : "Something went wrong.");
     } finally {
       setIsWorking(false);
     }
@@ -96,14 +106,16 @@ export function ModuleActionPanel({
 
   return (
     <div className="module-action-panel">
-      <p className="eyebrow">Learning signal</p>
-      <h2>Write one real dashboard event.</h2>
+      <p className="eyebrow">{isMalay ? "Isyarat pembelajaran" : "Learning signal"}</p>
+      <h2>{isMalay ? "Tulis satu peristiwa dashboard yang sebenar." : "Write one real dashboard event."}</h2>
       <p className="dashboard-helper">
-        This is the first 2.0 bridge from a module page into reusable attempt and progress snapshot data.
+        {isMalay
+          ? "Ini ialah jambatan 2.0 pertama daripada halaman modul kepada data percubaan dan snapshot kemajuan yang boleh diguna semula."
+          : "This is the first 2.0 bridge from a module page into reusable attempt and progress snapshot data."}
       </p>
       <div className="module-signal-form">
         <label className="field">
-          <span>Completion accuracy (%)</span>
+          <span>{isMalay ? "Ketepatan siap (%)" : "Completion accuracy (%)"}</span>
           <input
             max={100}
             min={0}
@@ -113,20 +125,20 @@ export function ModuleActionPanel({
           />
         </label>
         <label className="field">
-          <span>Stars earned</span>
+          <span>{isMalay ? "Bintang diperoleh" : "Stars earned"}</span>
           <select onChange={(event) => setStars(event.target.value)} value={stars}>
-            <option value="1">1 star</option>
-            <option value="2">2 stars</option>
-            <option value="3">3 stars</option>
+            <option value="1">{isMalay ? "1 bintang" : "1 star"}</option>
+            <option value="2">{isMalay ? "2 bintang" : "2 stars"}</option>
+            <option value="3">{isMalay ? "3 bintang" : "3 stars"}</option>
           </select>
         </label>
       </div>
       <div className="hero-actions">
         <button className="btn btn-secondary" disabled={isWorking} onClick={() => logProgress("started")} type="button">
-          {isWorking ? "Saving..." : "Mark started"}
+          {isWorking ? (isMalay ? "Menyimpan..." : "Saving...") : isMalay ? "Tanda mula" : "Mark started"}
         </button>
         <button className="btn btn-primary" disabled={isWorking} onClick={() => logProgress("completed")} type="button">
-          {isWorking ? "Saving..." : "Mark completed"}
+          {isWorking ? (isMalay ? "Menyimpan..." : "Saving...") : isMalay ? "Tanda siap" : "Mark completed"}
         </button>
       </div>
       <p className="auth-status">{status}</p>
@@ -142,6 +154,7 @@ export function ModuleActionPanel({
           weeklyDropHeadline={reward.weeklyDropHeadline}
           totalPoints={reward.totalPoints}
           unlockedAvatarItems={reward.unlockedAvatarItems}
+          locale={locale}
         />
       ) : null}
     </div>

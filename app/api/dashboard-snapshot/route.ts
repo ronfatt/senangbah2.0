@@ -6,6 +6,7 @@ import {
   getMonday
 } from "../../../lib/achievements";
 import { hasPublicSupabaseEnv } from "../../../lib/env";
+import { normalizeLocale, type AppLocale } from "../../../lib/locale";
 import { resolveAccessSnapshot } from "../../../lib/access";
 import { subjectDefinitions } from "../../../lib/subjects";
 import { getSupabaseServerClient } from "../../../lib/supabase/server";
@@ -19,7 +20,31 @@ const SUBJECT_NAME_MAP: Record<string, string> = {
   add_math: "Add Math"
 };
 
+const SUBJECT_NAME_MAP_MS: Record<string, string> = {
+  english: "Bahasa Inggeris",
+  bahasa_melayu: "Bahasa Melayu",
+  sejarah: "Sejarah",
+  geografi: "Geografi",
+  math: "Matematik",
+  add_math: "Matematik Tambahan"
+};
+
+function getSubjectLabel(name: string) {
+  return (
+    {
+      English: "Bahasa Inggeris",
+      "Bahasa Melayu": "Bahasa Melayu",
+      Sejarah: "Sejarah",
+      Geografi: "Geografi",
+      Math: "Matematik",
+      "Add Math": "Matematik Tambahan",
+      Humanities: "Kemanusiaan"
+    }[name] || name
+  );
+}
+
 function buildReportSummary({
+  locale,
   strongestSubject,
   weakestTarget,
   recommendedMissions,
@@ -27,6 +52,7 @@ function buildReportSummary({
   weeklyCompletedCount,
   streakDays
 }: {
+  locale: AppLocale;
   strongestSubject: { code: string; label: string; score: number } | null;
   weakestTarget: {
     name: string;
@@ -43,29 +69,42 @@ function buildReportSummary({
   weeklyCompletedCount: number;
   streakDays: number;
 }) {
+  const isMalay = locale === "ms";
   const headline = strongestSubject && weakestTarget
-    ? `${strongestSubject.label} is moving well. ${weakestTarget.name} needs the next push.`
+    ? isMalay
+      ? `${strongestSubject.label} sedang bergerak dengan baik. ${weakestTarget.name} perlukan tolakan seterusnya.`
+      : `${strongestSubject.label} is moving well. ${weakestTarget.name} needs the next push.`
     : strongestSubject
-      ? `${strongestSubject.label} is currently your strongest lane. Keep the next mission focused.`
+      ? isMalay
+        ? `${strongestSubject.label} kini ialah laluan terkuat anda. Kekalkan fokus pada misi seterusnya.`
+        : `${strongestSubject.label} is currently your strongest lane. Keep the next mission focused.`
       : recommendedMissions[0]
-        ? `Your first wins will show up fast once you finish ${recommendedMissions[0].title}.`
-        : "Your study report will sharpen as soon as a few short missions are saved.";
+        ? isMalay
+          ? `Kemenangan pertama anda akan muncul cepat sebaik sahaja anda menyiapkan ${recommendedMissions[0].title}.`
+          : `Your first wins will show up fast once you finish ${recommendedMissions[0].title}.`
+        : isMalay
+          ? "Laporan belajar anda akan menjadi lebih jelas sebaik sahaja beberapa misi ringkas disimpan."
+          : "Your study report will sharpen as soon as a few short missions are saved.";
 
   const strongestNow = [
-    strongestSubject ? `${strongestSubject.label} is leading your current progress.` : null,
-    weeklyCompletedCount > 0 ? `You already finished ${weeklyCompletedCount} mission(s) this week.` : null,
-    averageAccuracy >= 70 ? `Your average accuracy is ${averageAccuracy}%, which shows cleaner checking before submit.` : null,
-    streakDays >= 2 ? `Your ${streakDays}-day streak is helping you build consistency.` : null
+    strongestSubject ? (isMalay ? `${strongestSubject.label} sedang mendahului kemajuan semasa anda.` : `${strongestSubject.label} is leading your current progress.`) : null,
+    weeklyCompletedCount > 0 ? (isMalay ? `Anda sudah menyiapkan ${weeklyCompletedCount} misi minggu ini.` : `You already finished ${weeklyCompletedCount} mission(s) this week.`) : null,
+    averageAccuracy >= 70 ? (isMalay ? `Purata ketepatan anda ialah ${averageAccuracy}%, ini menunjukkan semakan yang lebih kemas sebelum hantar.` : `Your average accuracy is ${averageAccuracy}%, which shows cleaner checking before submit.`) : null,
+    streakDays >= 2 ? (isMalay ? `Streak ${streakDays} hari anda sedang membantu membina konsistensi.` : `Your ${streakDays}-day streak is helping you build consistency.`) : null
   ].filter(Boolean) as string[];
 
   const needsWorkNow = [
-    weakestTarget ? `${weakestTarget.name} is the clearest place to improve next.` : null,
+    weakestTarget ? (isMalay ? `${weakestTarget.name} ialah tempat paling jelas untuk diperbaiki seterusnya.` : `${weakestTarget.name} is the clearest place to improve next.`) : null,
     weakestTarget?.insight || null,
     averageAccuracy > 0 && averageAccuracy < 70
-      ? `Slow down for one extra check. Your average accuracy is ${averageAccuracy}%, so small corrections will lift results fast.`
+      ? isMalay
+        ? `Perlahankan untuk satu semakan tambahan. Purata ketepatan anda ialah ${averageAccuracy}%, jadi pembetulan kecil akan menaikkan keputusan dengan cepat.`
+        : `Slow down for one extra check. Your average accuracy is ${averageAccuracy}%, so small corrections will lift results fast.`
       : null,
     recommendedMissions[0]
-      ? `Open ${recommendedMissions[0].title} next if you want the fastest improvement signal today.`
+      ? isMalay
+        ? `Buka ${recommendedMissions[0].title} seterusnya jika anda mahu isyarat peningkatan paling cepat hari ini.`
+        : `Open ${recommendedMissions[0].title} next if you want the fastest improvement signal today.`
       : null
   ].filter(Boolean) as string[];
 
@@ -75,21 +114,37 @@ function buildReportSummary({
     needsWorkNow,
     aiAdvice: [
       weakestTarget
-        ? `Open ${weakestTarget.name} first. That is your clearest improvement lane right now.`
+        ? isMalay
+          ? `Buka ${weakestTarget.name} dahulu. Itulah laluan peningkatan paling jelas anda sekarang.`
+          : `Open ${weakestTarget.name} first. That is your clearest improvement lane right now.`
         : recommendedMissions[0]
-          ? `Start with ${recommendedMissions[0].title}. The fastest progress comes from taking the next ready mission, not waiting for a perfect plan.`
-          : "Start one short mission first so the report can begin giving sharper advice.",
+          ? isMalay
+            ? `Mulakan dengan ${recommendedMissions[0].title}. Kemajuan paling cepat datang apabila anda mengambil misi sedia seterusnya, bukan menunggu pelan yang sempurna.`
+            : `Start with ${recommendedMissions[0].title}. The fastest progress comes from taking the next ready mission, not waiting for a perfect plan.`
+          : isMalay
+            ? "Mulakan satu misi ringkas dahulu supaya laporan boleh mula memberi nasihat yang lebih tajam."
+            : "Start one short mission first so the report can begin giving sharper advice.",
       strongestSubject
-        ? `Keep one mission a day in ${strongestSubject.label}. It is your strongest subject now, so small wins there will keep confidence high.`
-        : "Once one subject starts moving, keep returning to it for a few days so your progress feels real.",
+        ? isMalay
+          ? `Kekalkan satu misi sehari dalam ${strongestSubject.label}. Itulah subjek terkuat anda sekarang, jadi kemenangan kecil di situ akan mengekalkan keyakinan.`
+          : `Keep one mission a day in ${strongestSubject.label}. It is your strongest subject now, so small wins there will keep confidence high.`
+        : isMalay
+          ? "Sebaik sahaja satu subjek mula bergerak, terus kembali kepadanya beberapa hari supaya kemajuan anda terasa nyata."
+          : "Once one subject starts moving, keep returning to it for a few days so your progress feels real.",
       averageAccuracy >= 80
-        ? "Your checking habit is working. Push one slightly harder mission next."
+        ? isMalay
+          ? "Tabiat semakan anda sedang berfungsi. Cuba satu misi yang sedikit lebih sukar selepas ini."
+          : "Your checking habit is working. Push one slightly harder mission next."
         : averageAccuracy >= 60
-          ? "Before you submit, slow down for one extra check. That is the easiest way to turn 2-star work into 3-star work."
-          : "Do not rush the next mission. Focus on one weak detail, fix it, then move on."
+          ? isMalay
+            ? "Sebelum anda hantar, perlahankan untuk satu semakan tambahan. Itulah cara paling mudah untuk menukar kerja 2 bintang menjadi 3 bintang."
+            : "Before you submit, slow down for one extra check. That is the easiest way to turn 2-star work into 3-star work."
+          : isMalay
+            ? "Jangan tergesa-gesa misi seterusnya. Fokus pada satu butiran lemah, baiki, kemudian teruskan."
+            : "Do not rush the next mission. Focus on one weak detail, fix it, then move on."
     ],
     nextActions: recommendedMissions.map((mission) => ({
-      label: `Start ${mission.subject}: ${mission.title}`,
+      label: isMalay ? `Mula ${mission.subject}: ${mission.title}` : `Start ${mission.subject}: ${mission.title}`,
       helper: mission.helper,
       href: mission.href
     }))
@@ -97,9 +152,11 @@ function buildReportSummary({
 }
 
 function buildSubjectPerformance({
+  locale,
   subjectCode,
   completedAttempts
 }: {
+  locale: AppLocale;
   subjectCode: string;
   completedAttempts: {
     status: string;
@@ -142,7 +199,13 @@ function buildSubjectPerformance({
             100,
             Math.round(moduleAttempts.length * 18 + averageModuleAccuracy * 0.55 + totalModuleStars * 4)
           ),
-          statusLabel: moduleAttempts.length ? "Active" : "Not started"
+          statusLabel: moduleAttempts.length
+            ? locale === "ms"
+              ? "Aktif"
+              : "Active"
+            : locale === "ms"
+              ? "Belum bermula"
+              : "Not started"
         };
       }) || [];
 
@@ -171,7 +234,10 @@ function buildSubjectPerformance({
               ? {
                   name: strongest.name,
                   href: strongest.href,
-                  insight: `${strongest.averageAccuracy}% average accuracy with ${strongest.totalStars} star(s).`
+                  insight:
+                    locale === "ms"
+                      ? `${strongest.averageAccuracy}% purata ketepatan dengan ${strongest.totalStars} bintang.`
+                      : `${strongest.averageAccuracy}% average accuracy with ${strongest.totalStars} star(s).`
                 }
               : null,
             weakest: weakest
@@ -179,8 +245,12 @@ function buildSubjectPerformance({
                   name: weakest.name,
                   href: weakest.href,
                   insight: weakest.attemptsCount
-                    ? `${weakest.averageAccuracy}% average accuracy so far. This is the best place to reinforce next.`
-                    : `Not started yet. Opening ${weakest.name} is the fastest way to expand your ${subjectDefinition?.name || "subject"} coverage.`
+                    ? locale === "ms"
+                      ? `${weakest.averageAccuracy}% purata ketepatan setakat ini. Inilah tempat terbaik untuk diperkukuh selepas ini.`
+                      : `${weakest.averageAccuracy}% average accuracy so far. This is the best place to reinforce next.`
+                    : locale === "ms"
+                      ? `Belum bermula lagi. Membuka ${weakest.name} ialah cara terpantas untuk meluaskan liputan ${subjectDefinition?.name || "subjek"} anda.`
+                      : `Not started yet. Opening ${weakest.name} is the fastest way to expand your ${subjectDefinition?.name || "subject"} coverage.`
                 }
               : null
           }
@@ -189,6 +259,7 @@ function buildSubjectPerformance({
 }
 
 function getBestUpgradePlan({
+  locale,
   englishPerformance,
   bahasaMelayuPerformance,
   sejarahPerformance,
@@ -196,6 +267,7 @@ function getBestUpgradePlan({
   mathPerformance,
   addMathPerformance
 }: {
+  locale: AppLocale;
   englishPerformance: ReturnType<typeof buildSubjectPerformance>;
   bahasaMelayuPerformance: ReturnType<typeof buildSubjectPerformance>;
   sejarahPerformance: ReturnType<typeof buildSubjectPerformance>;
@@ -216,20 +288,20 @@ function getBestUpgradePlan({
   const ranking = [
     {
       planCode: "language_pack",
-      label: "Language Pack",
-      helper: "You are already building momentum in English and Bahasa Melayu.",
+      label: locale === "ms" ? "Pakej Bahasa" : "Language Pack",
+      helper: locale === "ms" ? "Anda sudah membina momentum dalam Bahasa Inggeris dan Bahasa Melayu." : "You are already building momentum in English and Bahasa Melayu.",
       score: languageScore
     },
     {
       planCode: "humanities_pack",
-      label: "Humanities Pack",
-      helper: "Your Sejarah and Geografi usage suggests the Humanities bundle is a strong fit.",
+      label: locale === "ms" ? "Pakej Kemanusiaan" : "Humanities Pack",
+      helper: locale === "ms" ? "Penggunaan Sejarah dan Geografi anda menunjukkan pakej Kemanusiaan ialah pilihan yang kuat." : "Your Sejarah and Geografi usage suggests the Humanities bundle is a strong fit.",
       score: humanitiesScore
     },
     {
       planCode: "math_pack",
-      label: "Math Pack",
-      helper: "Your Math and Add Math progress points toward step-based premium support next.",
+      label: locale === "ms" ? "Pakej Matematik" : "Math Pack",
+      helper: locale === "ms" ? "Kemajuan Matematik dan Matematik Tambahan anda menunjukkan sokongan premium berasaskan langkah patut datang seterusnya." : "Your Math and Add Math progress points toward step-based premium support next.",
       score: mathScore
     }
   ].sort((a, b) => b.score - a.score);
@@ -243,6 +315,14 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
+  const locale = normalizeLocale(
+    request.headers
+      .get("cookie")
+      ?.split(";")
+      .map((part) => part.trim())
+      .find((part) => part.startsWith("sb-locale="))
+      ?.split("=")[1]
+  );
   const authUserId = String(body?.authUserId || "").trim();
   const email = String(body?.email || "").trim().toLowerCase();
 
@@ -276,7 +356,9 @@ export async function POST(request: Request) {
     const unlockedCodes = access.unlockedSubjectCodes.length
       ? access.unlockedSubjectCodes
       : ["english", "bahasa_melayu"];
-    const unlockedNames = unlockedCodes.map((code) => SUBJECT_NAME_MAP[code] || code);
+    const unlockedNames = unlockedCodes.map((code) =>
+      locale === "ms" ? SUBJECT_NAME_MAP_MS[code] || code : SUBJECT_NAME_MAP[code] || code
+    );
     const { data: trials } = await supabase
       .from("trial_windows")
       .select("ends_at")
@@ -325,9 +407,19 @@ export async function POST(request: Request) {
           accuracyPercent: Number(attempt.accuracy_percent || 0),
           createdAt: attempt.created_at,
           subjectName:
-            typeof summary.subject_name === "string" ? summary.subject_name : "Learning mission",
+            typeof summary.subject_name === "string"
+              ? locale === "ms"
+                ? getSubjectLabel(summary.subject_name)
+                : summary.subject_name
+              : locale === "ms"
+                ? "Misi pembelajaran"
+                : "Learning mission",
           moduleName:
-            typeof summary.module_name === "string" ? summary.module_name : "Module progress"
+            typeof summary.module_name === "string"
+              ? summary.module_name
+              : locale === "ms"
+                ? "Kemajuan modul"
+                : "Module progress"
         };
       }) || [];
     const todayKey = formatDateOnly(new Date());
@@ -384,26 +476,32 @@ export async function POST(request: Request) {
         { completed: 0, started: 0, stars: 0 }
       );
     const englishPerformance = buildSubjectPerformance({
+      locale,
       subjectCode: "english",
       completedAttempts
     });
     const bahasaMelayuPerformance = buildSubjectPerformance({
+      locale,
       subjectCode: "bahasa_melayu",
       completedAttempts
     });
     const sejarahPerformance = buildSubjectPerformance({
+      locale,
       subjectCode: "sejarah",
       completedAttempts
     });
     const geografiPerformance = buildSubjectPerformance({
+      locale,
       subjectCode: "geografi",
       completedAttempts
     });
     const mathPerformance = buildSubjectPerformance({
+      locale,
       subjectCode: "math",
       completedAttempts
     });
     const addMathPerformance = buildSubjectPerformance({
+      locale,
       subjectCode: "add_math",
       completedAttempts
     });
@@ -421,7 +519,7 @@ export async function POST(request: Request) {
         subject.modules
           .filter((module) => module.status === "ready")
           .map((module) => ({
-            subject: subject.name,
+            subject: locale === "ms" ? getSubjectLabel(subject.name) : subject.name,
             title: module.name,
             helper: module.mission,
             href: `/subjects/${subject.slug}/${module.slug}`
@@ -440,12 +538,12 @@ export async function POST(request: Request) {
     }[];
     const strongestSubject =
       [
-        { code: "english", label: "English", score: englishPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) },
+        { code: "english", label: locale === "ms" ? "Bahasa Inggeris" : "English", score: englishPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) },
         { code: "bahasa_melayu", label: "Bahasa Melayu", score: bahasaMelayuPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) },
         { code: "sejarah", label: "Sejarah", score: sejarahPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) },
         { code: "geografi", label: "Geografi", score: geografiPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) },
-        { code: "math", label: "Math", score: mathPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) },
-        { code: "add_math", label: "Add Math", score: addMathPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) }
+        { code: "math", label: locale === "ms" ? "Matematik" : "Math", score: mathPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) },
+        { code: "add_math", label: locale === "ms" ? "Matematik Tambahan" : "Add Math", score: addMathPerformance.modules.reduce((sum, item) => sum + item.totalStars, 0) }
       ]
         .sort((a, b) => b.score - a.score)
         .find((item) => item.score > 0) || null;
@@ -458,6 +556,7 @@ export async function POST(request: Request) {
       addMathPerformance.coachSignal?.weakest ||
       null;
     const recommendedUpgrade = getBestUpgradePlan({
+      locale,
       englishPerformance,
       bahasaMelayuPerformance,
       sejarahPerformance,
@@ -493,6 +592,7 @@ export async function POST(request: Request) {
           ? "Star Starter"
               : "Launch Pad";
     const reportSummary = buildReportSummary({
+      locale,
       strongestSubject,
       weakestTarget,
       recommendedMissions,
@@ -501,10 +601,14 @@ export async function POST(request: Request) {
       streakDays
     });
     const nextFocus = weakestTarget?.name
-      ? `${weakestTarget.name} is your clearest next fix.`
+      ? locale === "ms"
+        ? `${weakestTarget.name} ialah pembaikan seterusnya yang paling jelas untuk anda.`
+        : `${weakestTarget.name} is your clearest next fix.`
       : recommendedMissions[0]
         ? `${recommendedMissions[0].subject}: ${recommendedMissions[0].title}`
-        : "English and Bahasa Melayu starter missions";
+        : locale === "ms"
+          ? "Misi permulaan Bahasa Inggeris dan Bahasa Melayu"
+          : "English and Bahasa Melayu starter missions";
 
     return NextResponse.json({
       ok: true,
@@ -519,10 +623,14 @@ export async function POST(request: Request) {
         unlockedCount: unlockedCodes.length,
         nextFocus,
         membershipLabel: access.trialActive
-          ? "7-day full access trial"
+          ? locale === "ms"
+            ? "Percubaan akses penuh 7 hari"
+            : "7-day full access trial"
           : access.activePlanCodes.length
             ? access.activePlanCodes.join(", ")
-            : "Free starter access",
+            : locale === "ms"
+              ? "Akses permulaan percuma"
+              : "Free starter access",
         streakDays,
         weeklyTarget,
         weeklyCompletedCount,

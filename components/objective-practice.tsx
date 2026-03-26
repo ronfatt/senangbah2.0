@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { RewardBurst } from "./reward-burst";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import type { ObjectiveQuestion } from "../lib/practice-content";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 
@@ -14,7 +15,8 @@ export function ObjectivePractice({
   subjectSlug,
   moduleSlug,
   submitLabel,
-  questions
+  questions,
+  locale
 }: {
   eyebrow: string;
   title: string;
@@ -24,7 +26,9 @@ export function ObjectivePractice({
   moduleSlug: string;
   submitLabel: string;
   questions: ObjectiveQuestion[];
+  locale: AppLocale;
 }) {
+  const isMalay = locale === "ms";
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [result, setResult] = useState<{
     accuracyPercent: number;
@@ -36,7 +40,11 @@ export function ObjectivePractice({
     totalPoints?: number | null;
     unlockedAvatarItems?: { code: string; name: string; badgeCode: string | null }[];
   } | null>(null);
-  const [status, setStatus] = useState("Complete the set, then submit once for a scored result.");
+  const [status, setStatus] = useState(
+    isMalay
+      ? "Lengkapkan set ini, kemudian hantar sekali untuk keputusan ber markah."
+      : "Complete the set, then submit once for a scored result."
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function setAnswer(questionId: string, optionIndex: number) {
@@ -48,7 +56,7 @@ export function ObjectivePractice({
 
   async function handleSubmit() {
     if (Object.keys(answers).length !== questions.length) {
-      setStatus("Answer all questions before submitting this set.");
+      setStatus(isMalay ? "Jawab semua soalan sebelum menghantar set ini." : "Answer all questions before submitting this set.");
       return;
     }
 
@@ -66,7 +74,11 @@ export function ObjectivePractice({
     });
 
     if (!hasPublicSupabaseEnv()) {
-      setStatus(`Set scored at ${accuracyPercent}%. Add Supabase env to save it to the dashboard.`);
+      setStatus(
+        isMalay
+          ? `Set dinilai pada ${accuracyPercent}%. Tambah env Supabase untuk menyimpannya ke dashboard.`
+          : `Set scored at ${accuracyPercent}%. Add Supabase env to save it to the dashboard.`
+      );
       return;
     }
 
@@ -80,7 +92,11 @@ export function ObjectivePractice({
       } = await supabase.auth.getSession();
 
       if (!session?.user?.id || !session.user.email) {
-        setStatus(`Set scored at ${accuracyPercent}%. Sign in to save this result.`);
+        setStatus(
+          isMalay
+            ? `Set dinilai pada ${accuracyPercent}%. Log masuk untuk menyimpan keputusan ini.`
+            : `Set scored at ${accuracyPercent}%. Sign in to save this result.`
+        );
         return;
       }
 
@@ -116,10 +132,12 @@ export function ObjectivePractice({
       });
 
       setStatus(
-        `Saved ${correctCount}/${questions.length} correct. Dashboard updated with ${stars} star(s) and ${Number(payload?.starPoints || 0)} pts.`
+        isMalay
+          ? `Disimpan ${correctCount}/${questions.length} betul. Dashboard dikemas kini dengan ${stars} bintang dan ${Number(payload?.starPoints || 0)} mata.`
+          : `Saved ${correctCount}/${questions.length} correct. Dashboard updated with ${stars} star(s) and ${Number(payload?.starPoints || 0)} pts.`
       );
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to save this practice result.");
+      setStatus(error instanceof Error ? error.message : isMalay ? "Tidak dapat menyimpan keputusan latihan ini." : "Unable to save this practice result.");
     } finally {
       setIsSubmitting(false);
     }
@@ -134,14 +152,14 @@ export function ObjectivePractice({
         </div>
         <p className="dashboard-helper">
           {helper}
-          {setLabel ? ` Current rotation: ${setLabel}.` : ""}
+          {setLabel ? isMalay ? ` Set semasa: ${setLabel}.` : ` Current rotation: ${setLabel}.` : ""}
         </p>
       </div>
 
       <div className="practice-question-list">
         {questions.map((question, questionIndex) => (
           <article className="practice-card" key={question.id}>
-            <p className="dashboard-label">Question {questionIndex + 1}</p>
+            <p className="dashboard-label">{isMalay ? `Soalan ${questionIndex + 1}` : `Question ${questionIndex + 1}`}</p>
             <h3>{question.prompt}</h3>
             <p className="dashboard-helper">{question.sentence}</p>
             {question.passage ? <div className="practice-passage">{question.passage}</div> : null}
@@ -170,13 +188,13 @@ export function ObjectivePractice({
 
       <div className="practice-footer">
         <button className="btn btn-primary" disabled={isSubmitting} onClick={handleSubmit} type="button">
-          {isSubmitting ? "Saving result..." : submitLabel}
+          {isSubmitting ? (isMalay ? "Menyimpan keputusan..." : "Saving result...") : submitLabel}
         </button>
         {result ? (
           <div className="practice-score">
-            <span className="dashboard-label">Result</span>
+            <span className="dashboard-label">{isMalay ? "Keputusan" : "Result"}</span>
             <strong>
-              {result.correctCount}/{questions.length} correct · {result.accuracyPercent}% · {result.stars} star(s)
+              {result.correctCount}/{questions.length} {isMalay ? "betul" : "correct"} · {result.accuracyPercent}% · {result.stars} {isMalay ? "bintang" : "star(s)"}
             </strong>
           </div>
         ) : null}
@@ -195,6 +213,7 @@ export function ObjectivePractice({
           weeklyDropHeadline={result.weeklyDropHeadline}
           totalPoints={result.totalPoints}
           unlockedAvatarItems={result.unlockedAvatarItems}
+          locale={locale}
         />
       ) : null}
     </section>

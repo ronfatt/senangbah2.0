@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { hasPublicSupabaseEnv } from "../lib/env";
+import { type AppLocale } from "../lib/locale";
 import { subjectDefinitions } from "../lib/subjects";
 import { getSupabaseBrowserClient } from "../lib/supabase/client";
 
@@ -13,16 +14,24 @@ const missionOptions = [
   { code: "revision", label: "Revision missions", helper: "I want short daily practice that tells me what to do next." }
 ];
 
-export function OnboardingWelcomeClient() {
+export function OnboardingWelcomeClient({ locale }: { locale: AppLocale }) {
   const router = useRouter();
   const [focusSubjectCode, setFocusSubjectCode] = useState("english");
   const [missionPreference, setMissionPreference] = useState("writing");
-  const [status, setStatus] = useState("Pick one subject and one mission style so we can shape your first dashboard.");
+  const [status, setStatus] = useState(
+    locale === "ms"
+      ? "Pilih satu subjek dan satu gaya misi supaya kami boleh membentuk dashboard pertama anda."
+      : "Pick one subject and one mission style so we can shape your first dashboard."
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   async function handleContinue() {
     if (!hasPublicSupabaseEnv()) {
-      setStatus("Missing Supabase public env. Add the public keys before onboarding can save.");
+      setStatus(
+        locale === "ms"
+          ? "Env awam Supabase tiada. Tambah kunci awam dahulu sebelum onboarding boleh disimpan."
+          : "Missing Supabase public env. Add the public keys before onboarding can save."
+      );
       return;
     }
 
@@ -36,7 +45,7 @@ export function OnboardingWelcomeClient() {
       } = await supabase.auth.getSession();
 
       if (!session?.user?.id || !session.user.email) {
-        setStatus("Sign in first so we can save your study focus.");
+        setStatus(locale === "ms" ? "Log masuk dahulu supaya kami boleh simpan fokus belajar anda." : "Sign in first so we can save your study focus.");
         return;
       }
 
@@ -61,7 +70,13 @@ export function OnboardingWelcomeClient() {
       router.push(`/dashboard?welcome=done&focus=${focusSubjectCode}`);
       router.refresh();
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to save your study focus.");
+      setStatus(
+        error instanceof Error
+          ? error.message
+          : locale === "ms"
+            ? "Tidak dapat menyimpan fokus belajar anda."
+            : "Unable to save your study focus."
+      );
     } finally {
       setIsSaving(false);
     }
@@ -69,9 +84,9 @@ export function OnboardingWelcomeClient() {
 
   return (
     <section className="section section-split">
-      <article className="feature-panel">
-        <p className="eyebrow">Pick your first subject</p>
-        <h2>Start with the subject you want to improve first.</h2>
+        <article className="feature-panel">
+        <p className="eyebrow">{locale === "ms" ? "Pilih subjek pertama anda" : "Pick your first subject"}</p>
+        <h2>{locale === "ms" ? "Mulakan dengan subjek yang anda mahu perbaiki dahulu." : "Start with the subject you want to improve first."}</h2>
         <div className="onboarding-option-grid">
           {subjectDefinitions.map((subject) => (
             <button
@@ -88,9 +103,9 @@ export function OnboardingWelcomeClient() {
         </div>
       </article>
 
-      <article className="feature-panel alt">
-        <p className="eyebrow">Pick your mission style</p>
-        <h2>Choose the kind of help you want first.</h2>
+        <article className="feature-panel alt">
+        <p className="eyebrow">{locale === "ms" ? "Pilih gaya misi anda" : "Pick your mission style"}</p>
+        <h2>{locale === "ms" ? "Pilih jenis bantuan yang anda mahu dahulu." : "Choose the kind of help you want first."}</h2>
         <div className="onboarding-option-grid">
           {missionOptions.map((option) => (
             <button
@@ -99,15 +114,41 @@ export function OnboardingWelcomeClient() {
               onClick={() => setMissionPreference(option.code)}
               type="button"
             >
-              <span className="dashboard-label">Starter focus</span>
-              <strong>{option.label}</strong>
-              <p className="dashboard-helper">{option.helper}</p>
+              <span className="dashboard-label">{locale === "ms" ? "Fokus permulaan" : "Starter focus"}</span>
+              <strong>
+                {locale === "ms"
+                  ? option.code === "writing"
+                    ? "Bantuan penulisan"
+                    : option.code === "grammar"
+                      ? "Baiki tatabahasa"
+                      : option.code === "reading"
+                        ? "Pembacaan dan bukti"
+                        : "Misi ulang kaji"
+                  : option.label}
+              </strong>
+              <p className="dashboard-helper">
+                {locale === "ms"
+                  ? option.code === "writing"
+                    ? "Saya mahu ayat yang lebih jelas dan idea yang lebih baik."
+                    : option.code === "grammar"
+                      ? "Saya mahu berhenti mengulang kesilapan mudah."
+                      : option.code === "reading"
+                        ? "Saya mahu menjawab petikan dengan lebih yakin."
+                        : "Saya mahu latihan harian yang ringkas dan jelas apa langkah seterusnya."
+                  : option.helper}
+              </p>
             </button>
           ))}
         </div>
         <div className="hero-actions">
           <button className="btn btn-primary" disabled={isSaving} onClick={handleContinue} type="button">
-            {isSaving ? "Saving your focus..." : "Continue to My Dashboard"}
+            {isSaving
+              ? locale === "ms"
+                ? "Sedang simpan fokus anda..."
+                : "Saving your focus..."
+              : locale === "ms"
+                ? "Terus ke Dashboard Saya"
+                : "Continue to My Dashboard"}
           </button>
         </div>
         <p className="auth-status">{status}</p>
