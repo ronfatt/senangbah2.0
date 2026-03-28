@@ -99,7 +99,7 @@ export function TopbarShell({ locale }: { locale: AppLocale }) {
       className={`topbar${signedIn ? " is-app" : " is-public"}${publicHome ? " is-home" : ""}`}
     >
       <a className="brand" href={signedIn ? "/dashboard" : "/"}>
-        <span className="brand-mark">S</span>
+        <span className="brand-mark">{publicHome ? "✦" : "S"}</span>
         <span className="brand-copy">
           <strong>SenangBah</strong>
           <span>{signedIn ? copy.nav.appTagline : copy.nav.publicTagline}</span>
