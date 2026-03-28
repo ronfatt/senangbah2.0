@@ -196,6 +196,20 @@ export function AuthForm({ mode, locale }: { mode: AuthMode; locale: AppLocale }
         </button>
       </form>
 
+      <div className="auth-switch-row">
+        {mode === "login" ? (
+          <>
+            <span>{locale === "ms" ? "Belum ada akaun?" : "New here?"}</span>
+            <a href="/register">{locale === "ms" ? "Mula percubaan percuma" : "Start free trial"}</a>
+          </>
+        ) : (
+          <>
+            <span>{locale === "ms" ? "Sudah ada akaun?" : "Already have an account?"}</span>
+            <a href="/login">{locale === "ms" ? "Log masuk" : "Log in"}</a>
+          </>
+        )}
+      </div>
+
       <p className="auth-status">
         {status ||
           (mode === "register"

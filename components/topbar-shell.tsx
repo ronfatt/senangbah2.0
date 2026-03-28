@@ -64,6 +64,8 @@ function LanguageToggle({
 export function TopbarShell({ locale }: { locale: AppLocale }) {
   const pathname = usePathname();
   const [sessionState, setSessionState] = useState<SessionState>("signed_out");
+  const [profileName, setProfileName] = useState("Aisyah Rahman");
+  const [profileSubtitle, setProfileSubtitle] = useState("");
   const copy = getLocaleCopy(locale);
 
   useEffect(() => {
@@ -72,12 +74,29 @@ export function TopbarShell({ locale }: { locale: AppLocale }) {
     const supabase = getSupabaseBrowserClient();
 
     supabase.auth.getSession().then(({ data }) => {
+      const user = data.session?.user || null;
+      const derivedName =
+        user?.user_metadata?.full_name ||
+        user?.user_metadata?.name ||
+        user?.email?.split("@")[0] ||
+        "Student";
+
+      setProfileName(derivedName);
+      setProfileSubtitle(user?.email || "");
       setSessionState(data.session ? "signed_in" : "signed_out");
     });
 
     const {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      const derivedName =
+        session?.user?.user_metadata?.full_name ||
+        session?.user?.user_metadata?.name ||
+        session?.user?.email?.split("@")[0] ||
+        "Student";
+
+      setProfileName(derivedName);
+      setProfileSubtitle(session?.user?.email || "");
       setSessionState(session ? "signed_in" : "signed_out");
     });
 
@@ -93,6 +112,12 @@ export function TopbarShell({ locale }: { locale: AppLocale }) {
 
   const signedIn = sessionState === "signed_in";
   const publicHome = !signedIn && pathname === "/";
+  const initials = profileName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("");
 
   return (
     <header
@@ -109,20 +134,18 @@ export function TopbarShell({ locale }: { locale: AppLocale }) {
       <nav className="topnav">
         {signedIn ? (
           <>
-            <span className="topbar-mode">{copy.nav.mode}</span>
             <NavLink href="/dashboard" label={copy.nav.dashboard} pathname={pathname} />
             <NavLink href="/my-subjects" label={copy.nav.mySubjects} pathname={pathname} />
             <NavLink href="/progress" label={copy.nav.progress} pathname={pathname} />
             <NavLink href="/avatar" label={copy.nav.avatar} pathname={pathname} />
-            <LanguageToggle labels={copy.nav} locale={locale} />
-            <button className="topnav-ghost" onClick={handleSignOut} type="button">
-              {copy.nav.logout}
-            </button>
           </>
         ) : (
           <>
             {publicHome ? (
               <>
+                <NavLink href="/how-it-works" label={copy.nav.howItWorks} pathname={pathname} />
+                <NavLink href="/subjects" label={copy.nav.subjects} pathname={pathname} />
+                <NavLink href="/pricing" label={copy.nav.pricing} pathname={pathname} />
                 <NavLink href="/login" label={copy.nav.login} pathname={pathname} />
                 <a className="topnav-cta is-home-cta" href="/register">
                   {copy.nav.startTrial}
@@ -143,6 +166,19 @@ export function TopbarShell({ locale }: { locale: AppLocale }) {
           </>
         )}
       </nav>
+
+      {signedIn ? (
+        <div className="topbar-profile">
+          <div className="topbar-profile-copy">
+            <strong>{profileName}</strong>
+            <span>{profileSubtitle || copy.nav.appTagline}</span>
+          </div>
+          <span className="topbar-profile-badge">{initials || "SB"}</span>
+          <button className="topnav-ghost topbar-signout" onClick={handleSignOut} type="button">
+            {copy.nav.logout}
+          </button>
+        </div>
+      ) : null}
     </header>
   );
 }

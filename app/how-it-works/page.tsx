@@ -61,18 +61,40 @@ export default async function HowItWorksPage() {
             <a className="btn landing-v2-primary-btn" href="/register">
               {isMalay ? "Mula Belajar Dengan AI" : "Start My AI Learning"}
             </a>
+            <a className="btn landing-v2-secondary-btn" href="/pricing">
+              {isMalay ? "Lihat Pilihan Pelan" : "See Pricing"}
+            </a>
+          </div>
+          <div className="public-detail-proof">
+            <span>{isMalay ? "1 misi ringkas" : "1 short mission"}</span>
+            <span>{isMalay ? "1 pembaikan jelas" : "1 clear fix"}</span>
+            <span>{isMalay ? "1 langkah seterusnya" : "1 next step"}</span>
           </div>
         </div>
 
         <article className="public-detail-preview">
-          <div className="public-detail-preview-card">
+          <span className="landing-v2-floating-chip top">{isMalay ? "Aliran 14 hari" : "14-day flow"}</span>
+          <span className="landing-v2-floating-chip bottom">{isMalay ? "Dibimbing AI" : "AI guided"}</span>
+          <div className="public-detail-preview-card public-detail-preview-card-hero">
             <span className="dashboard-label">{isMalay ? "Aliran AI 14 hari" : "Your 14-day AI flow"}</span>
             <h3>{isMalay ? "Apa yang berlaku selepas anda mula" : "What actually happens after you start"}</h3>
             <div className="public-detail-preview-flow">
-              <div><strong>{isMalay ? "Diagnos" : "Diagnose"}</strong><span>{isMalay ? "Cari titik lemah" : "Find the weak point"}</span></div>
-              <div><strong>{isMalay ? "Latih" : "Train"}</strong><span>{isMalay ? "Satu misi ringkas" : "One short mission"}</span></div>
-              <div><strong>{isMalay ? "Naik taraf" : "Upgrade"}</strong><span>{isMalay ? "Lihat versi lebih baik" : "See the better version"}</span></div>
-              <div><strong>{isMalay ? "Maju" : "Improve"}</strong><span>{isMalay ? "Jejak perubahan jelas" : "Track clear improvement"}</span></div>
+              <div>
+                <strong>{isMalay ? "Diagnos" : "Diagnose"}</strong>
+                <span>{isMalay ? "Cari titik lemah" : "Find the weak point"}</span>
+              </div>
+              <div>
+                <strong>{isMalay ? "Latih" : "Train"}</strong>
+                <span>{isMalay ? "Satu misi ringkas" : "One short mission"}</span>
+              </div>
+              <div>
+                <strong>{isMalay ? "Naik taraf" : "Upgrade"}</strong>
+                <span>{isMalay ? "Lihat versi lebih baik" : "See the better version"}</span>
+              </div>
+              <div>
+                <strong>{isMalay ? "Maju" : "Improve"}</strong>
+                <span>{isMalay ? "Jejak perubahan jelas" : "Track clear improvement"}</span>
+              </div>
             </div>
           </div>
         </article>
