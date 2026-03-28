@@ -208,8 +208,12 @@ export default async function HomePage() {
           </h1>
           <p className="landing-v2-lead">
             {isMalay
-              ? "AI pintar membimbing anda merentas Bahasa Inggeris, BM, Sejarah, Geografi, Matematik, dan Matematik Tambahan. Tiada lagi belajar berjam-jam — hanya kemajuan harian yang lebih bijak."
-              : "Smart AI guides you through English, BM, Sejarah, Geografi, Math, and Add Math. No more long hours, just smart daily progress."}
+              ? "AI pintar membimbing anda melalui Bahasa Inggeris, BM, Sejarah, Geografi, Matematik, dan Matematik Tambahan."
+              : "Smart AI guides you through English, BM, Sejarah, Geografi, Math, and Add Math."}
+            <br />
+            {isMalay
+              ? "Tiada lagi belajar berjam-jam — hanya kemajuan harian yang lebih bijak."
+              : "No more long hours, just smart daily progress."}
           </p>
           <div className="hero-actions">
             <a className="btn landing-v2-primary-btn" href="/register">
@@ -242,14 +246,21 @@ export default async function HomePage() {
                 <h3>{isMalay ? "Misi Hari Ini" : "Today's Mission"}</h3>
                 <p>{isMalay ? "Hari 12 🔥" : "Day 12 🔥"}</p>
               </div>
+              <span className="landing-v2-day-pill">{isMalay ? "Hari 12" : "Day 12"}</span>
             </div>
             <div className="landing-v2-mission-list">
               <div className="landing-v2-mission-item">
-                <strong>{isMalay ? "Baiki 1 ayat lemah" : "Fix 1 weak sentence"}</strong>
+                <strong>
+                  <span className="landing-v2-mission-dot green" aria-hidden="true" />
+                  {isMalay ? "Baiki 1 ayat lemah" : "Fix 1 weak sentence"}
+                </strong>
                 <span>{isMalay ? "Penulisan Bahasa Inggeris" : "English writing"}</span>
               </div>
               <div className="landing-v2-mission-item">
-                <strong>{isMalay ? "Perbaiki 1 idea" : "Improve 1 idea"}</strong>
+                <strong>
+                  <span className="landing-v2-mission-dot blue" aria-hidden="true" />
+                  {isMalay ? "Perbaiki 1 idea" : "Improve 1 idea"}
+                </strong>
                 <span>{isMalay ? "Kejelasan Bahasa Melayu" : "Bahasa Melayu clarity"}</span>
               </div>
             </div>

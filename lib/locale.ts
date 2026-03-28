@@ -36,6 +36,7 @@ export const localeCopy = {
       pricing: "Pricing",
       login: "Login",
       start: "Start My AI Learning",
+      startTrial: "Start Free Trial",
       english: "EN",
       malay: "BM"
     },
@@ -74,6 +75,7 @@ export const localeCopy = {
       pricing: "Harga",
       login: "Log Masuk",
       start: "Mula Belajar Dengan AI",
+      startTrial: "Mula Percubaan Percuma",
       english: "EN",
       malay: "BM"
     },

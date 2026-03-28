@@ -92,9 +92,12 @@ export function TopbarShell({ locale }: { locale: AppLocale }) {
   }
 
   const signedIn = sessionState === "signed_in";
+  const publicHome = !signedIn && pathname === "/";
 
   return (
-    <header className={`topbar${signedIn ? " is-app" : " is-public"}`}>
+    <header
+      className={`topbar${signedIn ? " is-app" : " is-public"}${publicHome ? " is-home" : ""}`}
+    >
       <a className="brand" href={signedIn ? "/dashboard" : "/"}>
         <span className="brand-mark">S</span>
         <span className="brand-copy">
@@ -118,14 +121,25 @@ export function TopbarShell({ locale }: { locale: AppLocale }) {
           </>
         ) : (
           <>
-            <NavLink href="/how-it-works" label={copy.nav.howItWorks} pathname={pathname} />
-            <NavLink href="/subjects" label={copy.nav.subjects} pathname={pathname} />
-            <NavLink href="/pricing" label={copy.nav.pricing} pathname={pathname} />
-            <NavLink href="/login" label={copy.nav.login} pathname={pathname} />
-            <LanguageToggle labels={copy.nav} locale={locale} />
-            <a className="topnav-cta" href="/register">
-              {copy.nav.start}
-            </a>
+            {publicHome ? (
+              <>
+                <NavLink href="/login" label={copy.nav.login} pathname={pathname} />
+                <a className="topnav-cta is-home-cta" href="/register">
+                  {copy.nav.startTrial}
+                </a>
+              </>
+            ) : (
+              <>
+                <NavLink href="/how-it-works" label={copy.nav.howItWorks} pathname={pathname} />
+                <NavLink href="/subjects" label={copy.nav.subjects} pathname={pathname} />
+                <NavLink href="/pricing" label={copy.nav.pricing} pathname={pathname} />
+                <NavLink href="/login" label={copy.nav.login} pathname={pathname} />
+                <LanguageToggle labels={copy.nav} locale={locale} />
+                <a className="topnav-cta" href="/register">
+                  {copy.nav.start}
+                </a>
+              </>
+            )}
           </>
         )}
       </nav>
