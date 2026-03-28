@@ -3,170 +3,157 @@ import { getServerLocale } from "../../lib/server-locale";
 
 export default async function PricingPage() {
   const locale = await getServerLocale();
+  const isMalay = locale === "ms";
   const plans = await getPlanCatalog();
 
   const freePlan = plans.find((plan) => plan.code === "free");
-  const languagePack = plans.find((plan) => plan.code === "language_pack");
-  const humanitiesPack = plans.find((plan) => plan.code === "humanities_pack");
-  const mathPack = plans.find((plan) => plan.code === "math_pack");
   const allAccess = plans.find((plan) => plan.code === "all_access");
-
-  const focusPacks = [languagePack, humanitiesPack, mathPack].filter(Boolean);
+  const packs = plans.filter((plan) => ["language_pack", "humanities_pack", "math_pack"].includes(plan.code));
 
   return (
-    <main className="page-shell pricing-shell">
-      <section className="pricing-hero">
-        <div className="pricing-hero-copy">
-          <p className="eyebrow">{locale === "ms" ? "Pilih laluan naik taraf anda" : "Choose your upgrade path"}</p>
-          <h1 className="dashboard-title">
-            {locale === "ms" ? "Pilih laluan naik taraf anda. Mula maju dalam 7 hari." : "Pick your upgrade path. Start improving in 7 days."}
-          </h1>
-          <p className="landing-lead">
-            {locale === "ms" ? "Tiada teka-teki. Hanya kemajuan yang jelas merentas subjek SPM anda." : "No guessing. Just clear progress across your SPM subjects."}
+    <main className="page-shell landing-v2-shell public-detail-shell">
+      <section className="public-detail-hero public-detail-hero-pricing">
+        <div className="public-detail-copy">
+          <span className="landing-v2-badge">{isMalay ? "HARGA & NAIK TARAF" : "PRICING & UPGRADES"} 💸</span>
+          <h1>{isMalay ? "Pilih laluan naik taraf anda. Mula maju dalam 7 hari." : "Pick your upgrade path. Start improving in 7 days."}</h1>
+          <p className="public-detail-lead">
+            {isMalay
+              ? "Tiada teka-teki. Hanya kemajuan yang jelas merentas subjek SPM anda."
+              : "No guessing. Just clear progress across your SPM subjects."}
           </p>
-          <div className="pricing-hero-badges">
-            <span className="pricing-popular-badge">{locale === "ms" ? "Kebanyakan pelajar memilih Akses Penuh" : "Most students choose All Access"}</span>
-            <span className="pricing-trial-pill">{locale === "ms" ? "Percubaan akses penuh 7 hari disertakan" : "7-day full access trial included"}</span>
-          </div>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="/upgrade?plan=all_access">
-              {locale === "ms" ? "Mula akses penuh" : "Start full access"}
+            <a className="btn landing-v2-primary-btn" href="/upgrade?plan=all_access">
+              {isMalay ? "Mula akses penuh" : "Start full access"}
             </a>
-            <a className="btn btn-secondary" href="/register">
-              {locale === "ms" ? "Mula percubaan percuma" : "Start free trial"}
+            <a className="btn landing-v2-secondary-btn" href="/register">
+              {isMalay ? "Mula percubaan percuma" : "Start free trial"}
             </a>
           </div>
         </div>
 
-        <article className="pricing-hero-panel">
-          <p className="dashboard-label">{locale === "ms" ? "Kenapa pelajar memilih ini" : "Why students choose this"}</p>
-          <h2>{locale === "ms" ? "Kebanyakan pelajar bermula dengan Akses Penuh kerana ia menghapuskan teka-teki." : "Most students start with All Access because it removes the guesswork."}</h2>
-          <ul className="pricing-trigger-list">
-            <li>{locale === "ms" ? "Mereka tidak mahu meneka apa yang perlu dipelajari" : "They don&apos;t want to guess what to study"}</li>
-            <li>{locale === "ms" ? "Mereka mahu kemajuan lebih cepat merentas subjek" : "They want faster improvement across subjects"}</li>
-            <li>{locale === "ms" ? "Mereka sedang bersedia secara serius untuk SPM" : "They are preparing seriously for SPM"}</li>
-          </ul>
+        <article className="public-detail-preview">
+          <div className="public-detail-preview-card">
+            <span className="dashboard-label">{isMalay ? "Pilihan paling popular" : "Most popular choice"}</span>
+            <h3>{isMalay ? "Kebanyakan pelajar memilih Akses Penuh" : "Most students choose All Access"}</h3>
+            <div className="public-detail-preview-flow">
+              <div><strong>{isMalay ? "Tiada teka-teki" : "No guessing"}</strong><span>{isMalay ? "Semua subjek dibuka" : "All subjects unlocked"}</span></div>
+              <div><strong>{isMalay ? "Lebih cepat" : "Faster"}</strong><span>{isMalay ? "AI penuh + kemajuan" : "Full AI + progress tracking"}</span></div>
+              <div><strong>{isMalay ? "SPM" : "SPM"}</strong><span>{isMalay ? "Sesuai untuk persediaan serius" : "Built for serious prep"}</span></div>
+            </div>
+          </div>
         </article>
       </section>
 
-      <section className="section">
-        <div className="section-heading">
-          <p className="eyebrow">{locale === "ms" ? "Pilihan pembelajaran anda" : "Your study options"}</p>
-          <h2>{locale === "ms" ? "Pilih tahap yang sepadan dengan fokus persediaan anda." : "Choose the level that matches how focused you want your prep to be."}</h2>
+      <section className="landing-v2-section landing-v2-light">
+        <div className="landing-v2-heading">
+          <span className="landing-v2-pill">{isMalay ? "TINGKAT HARGA" : "PRICING TIERS"} 🔥</span>
+          <h2>{isMalay ? "Tiga tahap yang jelas. Satu jalan untuk bermula." : "Three clear levels. One easy way to start."}</h2>
         </div>
-
-        <div className="pricing-tier-grid">
-          <article className="pricing-tier-card pricing-tier-card-free">
-            <p className="pricing-name">{locale === "ms" ? "Permulaan Percuma" : "Free Starter"}</p>
-            <h2>{freePlan?.priceLabel || "RM0"}</h2>
-            <p className="pricing-detail">{locale === "ms" ? "Misi asas harian, subjek terhad, dan maklum balas asas." : "Daily basic missions, limited subjects, and basic feedback."}</p>
-            <ul className="feature-list">
-              <li>{locale === "ms" ? "Misi asas harian" : "Daily basic missions"}</li>
-              <li>{locale === "ms" ? "Subjek terhad" : "Limited subjects"}</li>
-              <li>{locale === "ms" ? "Maklum balas asas" : "Basic feedback"}</li>
+        <div className="public-pricing-grid">
+          <article className="public-price-card free">
+            <small>{isMalay ? "PERCUMA" : "FREE"}</small>
+            <h3>{isMalay ? "Permulaan Percuma" : "Free Starter"}</h3>
+            <strong>{freePlan?.priceLabel || "RM0"}</strong>
+            <p>{isMalay ? "Misi asas harian, subjek terhad, dan maklum balas asas." : "Daily basic missions, limited subjects, and basic feedback."}</p>
+            <ul>
+              <li>{isMalay ? "Misi asas harian" : "Daily basic missions"}</li>
+              <li>{isMalay ? "Subjek terhad" : "Limited subjects"}</li>
+              <li>{isMalay ? "Maklum balas asas" : "Basic feedback"}</li>
             </ul>
-            <div className="hero-actions">
-              <a className="btn btn-secondary" href="/register">
-                {locale === "ms" ? "Cuba percuma" : "Try free"}
-              </a>
-            </div>
+            <a className="btn btn-secondary" href="/register">{isMalay ? "Cuba percuma" : "Try free"}</a>
           </article>
 
-          <article className="pricing-tier-card pricing-tier-card-pack">
-            <p className="pricing-name">{locale === "ms" ? "Pakej Subjek" : "Subject Pack"}</p>
-            <h2>RM19 / RM29</h2>
-            <p className="pricing-detail">{locale === "ms" ? "Majukan subjek tertentu dengan maklum balas AI penuh dan misi harian." : "Improve specific subjects with full AI feedback and daily missions."}</p>
-            <div className="pricing-pack-options">
-              {focusPacks.map((plan) => (
-                <div className="pricing-pack-option" key={plan!.code}>
-                  <div>
-                    <strong>{plan!.name}</strong>
-                    <span>{plan!.priceLabel}</span>
-                  </div>
-                  <p>{plan!.detail}</p>
+          <article className="public-price-card pack">
+            <small>{isMalay ? "PAKEJ SUBJEK" : "SUBJECT PACK"}</small>
+            <h3>{isMalay ? "Pilih subjek fokus anda" : "Choose your focus subjects"}</h3>
+            <strong>RM19 / RM29</strong>
+            <p>{isMalay ? "Akses penuh untuk subjek pilihan anda dengan maklum balas AI dan misi harian." : "Full access for selected subjects with AI feedback and daily missions."}</p>
+            <div className="public-pack-options">
+              {packs.map((plan) => (
+                <div key={plan.code}>
+                  <b>{plan.name}</b>
+                  <span>{plan.priceLabel}</span>
                 </div>
               ))}
             </div>
-            <div className="hero-actions">
-              <a className="btn btn-primary" href="/upgrade?plan=language_pack">
-                {locale === "ms" ? "Pilih subjek anda" : "Choose your subjects"}
-              </a>
-              <a className="btn btn-secondary" href="/login">
-                {locale === "ms" ? "Log masuk untuk teruskan" : "Login to continue"}
-              </a>
-            </div>
+            <a className="btn landing-v2-secondary-btn" href="/upgrade?plan=language_pack">{isMalay ? "Pilih subjek anda" : "Choose your subjects"}</a>
           </article>
 
-          <article className="pricing-tier-card pricing-tier-card-highlight">
-            <div className="pricing-highlight-top">
-              <span className="pricing-popular-badge">{locale === "ms" ? "Paling Popular" : "Most Popular"}</span>
-            </div>
-            <p className="pricing-name">{locale === "ms" ? "Akses Semua Subjek" : "All Subjects Access"}</p>
-            <h2>{allAccess?.priceLabel || "RM59"}</h2>
-            <p className="pricing-detail">{locale === "ms" ? "Semua yang anda perlukan untuk maju lebih cepat." : "Everything you need to improve faster."}</p>
-            <ul className="feature-list">
-              <li>{locale === "ms" ? "Semua 6 subjek dibuka" : "All 6 subjects unlocked"}</li>
-              <li>{locale === "ms" ? "Sistem maklum balas AI penuh" : "Full AI feedback system"}</li>
-              <li>{locale === "ms" ? "Penjejakan kemajuan yang lebih pantas" : "Faster improvement tracking"}</li>
-              <li>{locale === "ms" ? "Nilai terbaik untuk persediaan peperiksaan" : "Best value for exam prep"}</li>
+          <article className="public-price-card highlight">
+            <span className="public-price-badge">{isMalay ? "Paling Popular" : "Most Popular"}</span>
+            <small>{isMalay ? "AKSES PENUH" : "ALL ACCESS"}</small>
+            <h3>{isMalay ? "Akses Semua Subjek" : "All Subjects Access"}</h3>
+            <strong>{allAccess?.priceLabel || "RM59"}</strong>
+            <p>{isMalay ? "Semua yang anda perlukan untuk maju lebih cepat." : "Everything you need to improve faster."}</p>
+            <ul>
+              <li>{isMalay ? "Semua 6 subjek dibuka" : "All 6 subjects unlocked"}</li>
+              <li>{isMalay ? "Sistem maklum balas AI penuh" : "Full AI feedback system"}</li>
+              <li>{isMalay ? "Penjejakan kemajuan yang lebih pantas" : "Faster improvement tracking"}</li>
+              <li>{isMalay ? "Nilai terbaik untuk persediaan peperiksaan" : "Best value for exam prep"}</li>
             </ul>
-            <div className="hero-actions">
-              <a className="btn btn-primary" href="/upgrade?plan=all_access">
-                {locale === "ms" ? "Mula akses penuh" : "Start full access"}
-              </a>
-              <a className="btn btn-secondary" href="/login">
-                {locale === "ms" ? "Log masuk untuk teruskan" : "Login to continue"}
-              </a>
-            </div>
+            <a className="btn landing-v2-primary-btn" href="/upgrade?plan=all_access">{isMalay ? "Mula akses penuh" : "Start full access"}</a>
           </article>
         </div>
       </section>
 
-      <section className="section">
-        <div className="section-heading">
-          <p className="eyebrow">{locale === "ms" ? "Apa yang pelajar dapat" : "What students get"}</p>
-          <h2>{locale === "ms" ? "Apa yang pelajar dapat selepas naik taraf" : "What students get after upgrading"}</h2>
+      <section className="landing-v2-section landing-v2-white">
+        <div className="landing-v2-heading">
+          <span className="landing-v2-pill">{isMalay ? "APA YANG PELAJAR DAPAT" : "WHAT STUDENTS GET"} 📈</span>
+          <h2>{isMalay ? "Apa yang pelajar nampak selepas naik taraf" : "What students get after upgrading"}</h2>
         </div>
-
-        <div className="pricing-results-grid">
-          <article className="pricing-result-card">
-            <span className="dashboard-label">{locale === "ms" ? "Bahasa Inggeris" : "English"}</span>
-            <strong>{locale === "ms" ? "Ketepatan tatabahasa ↑" : "Grammar accuracy ↑"}</strong>
-          </article>
-          <article className="pricing-result-card">
-            <span className="dashboard-label">{locale === "ms" ? "Pertumbuhan bahasa" : "Language growth"}</span>
-            <strong>{locale === "ms" ? "Julat kosa kata ↑" : "Vocabulary range ↑"}</strong>
-          </article>
-          <article className="pricing-result-card">
-            <span className="dashboard-label">{locale === "ms" ? "Prestasi keseluruhan" : "Overall performance"}</span>
-            <strong>{locale === "ms" ? "Skor band ↑" : "Band score ↑"}</strong>
-          </article>
-        </div>
-      </section>
-
-      <section className="section">
-        <article className="pricing-trigger-panel">
-          <div>
-            <p className="eyebrow">{locale === "ms" ? "Kenapa pelajar pilih Akses Penuh" : "Why students choose All Access"}</p>
-            <h2>{locale === "ms" ? "Kebanyakan pelajar bermula dengan Akses Penuh kerana mereka mahu laluan paling cepat." : "Most students start with All Access because they want the fastest path."}</h2>
+        <article className="landing-v2-stats-banner">
+          <div className="landing-v2-stats-grid">
+            <div><strong>{isMalay ? "Tatabahasa ↑" : "Grammar ↑"}</strong><span>{isMalay ? "Ketepatan jadi lebih kuat" : "Accuracy gets stronger"}</span></div>
+            <div><strong>{isMalay ? "Kosa kata ↑" : "Vocabulary ↑"}</strong><span>{isMalay ? "Range bahasa bertambah" : "Language range grows"}</span></div>
+            <div><strong>{isMalay ? "Band ↑" : "Band ↑"}</strong><span>{isMalay ? "Kemajuan lebih mudah dilihat" : "Progress becomes easier to see"}</span></div>
           </div>
-          <ul className="pricing-trigger-list">
-            <li>{locale === "ms" ? "Mereka tidak mahu meneka apa yang perlu dipelajari" : "They don&apos;t want to guess what to study"}</li>
-            <li>{locale === "ms" ? "Mereka mahu peningkatan yang lebih cepat" : "They want faster improvement"}</li>
-            <li>{locale === "ms" ? "Mereka sedang membuat persediaan SPM secara serius" : "They are preparing for SPM seriously"}</li>
-          </ul>
         </article>
       </section>
 
-      <section className="section landing-final-cta">
-        <article className="landing-cta-card">
-          <p className="eyebrow">{locale === "ms" ? "Mulakan akses penuh 7 hari anda sekarang" : "Start your 7-day full access now"}</p>
-          <h2>{locale === "ms" ? "Mula bertambah baik hari ini." : "Start improving today."}</h2>
-          <p className="landing-lead">{locale === "ms" ? "Tanpa tekanan. Hanya kemajuan kecil harian yang terkumpul." : "No stress. Just small daily progress that adds up."}</p>
+      <section className="landing-v2-section landing-v2-cream">
+        <div className="landing-v2-heading">
+          <span className="landing-v2-pill">{isMalay ? "KENAPA PILIH AKSES PENUH" : "WHY CHOOSE ALL ACCESS"} 🧠</span>
+          <h2>{isMalay ? "Kenapa kebanyakan pelajar bermula dengan Akses Penuh" : "Why most students start with All Access"}</h2>
+        </div>
+        <div className="landing-v2-card-triplet">
+          <article className="public-soft-card">
+            <h3>{isMalay ? "Tidak mahu meneka" : "They don't want to guess"}</h3>
+            <p>{isMalay ? "Pelajar mahu sistem yang jelas tanpa perlu fikir subjek mana patut dimula dahulu." : "Students want one clear system without guessing which subject to start with."}</p>
+          </article>
+          <article className="public-soft-card">
+            <h3>{isMalay ? "Mahu maju lebih cepat" : "They want faster improvement"}</h3>
+            <p>{isMalay ? "Apabila semua subjek dibuka, AI boleh memandu langkah seterusnya dengan lebih tepat." : "When every subject is unlocked, AI can guide the next move more accurately."}</p>
+          </article>
+          <article className="public-soft-card">
+            <h3>{isMalay ? "Sedang bersedia untuk SPM" : "They are preparing for SPM"}</h3>
+            <p>{isMalay ? "Mereka perlukan nilai terbaik dan semua laluan subjek untuk ulang kaji yang serius." : "They need the best value and every subject path for serious exam prep."}</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="landing-v2-section landing-v2-final">
+        <div className="landing-v2-final-copy">
+          <span className="landing-v2-badge">{isMalay ? "AKSES PENUH 7 HARI" : "7-DAY FULL ACCESS"} 🚀</span>
+          <h2>{isMalay ? "Mula akses penuh anda sekarang." : "Start your 7-day full access now"}</h2>
+          <p>{isMalay ? "Tanpa tekanan. Hanya kemajuan kecil yang jelas merentas subjek anda." : "No stress. Just clear progress across your subjects."}</p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="/register">
-              {locale === "ms" ? "Mula Belajar Dengan AI" : "Start My AI Learning"}
+            <a className="btn landing-v2-white-btn" href="/register">
+              {isMalay ? "Mula Belajar Dengan AI" : "Start My AI Learning"}
             </a>
+          </div>
+        </div>
+        <article className="public-detail-side-card">
+          <div className="public-detail-side-stat">
+            <strong>RM0</strong>
+            <span>{isMalay ? "percubaan 7 hari" : "7-day trial"}</span>
+          </div>
+          <div className="public-detail-side-stat">
+            <strong>6</strong>
+            <span>{isMalay ? "subjek dibuka" : "subjects unlocked"}</span>
+          </div>
+          <div className="public-detail-side-stat">
+            <strong>AI</strong>
+            <span>{isMalay ? "bimbingan penuh" : "full guidance"}</span>
           </div>
         </article>
       </section>

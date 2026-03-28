@@ -33,6 +33,8 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "Redesign Student Education Landing Page",
+    "Redesign Student Education Destop Page"
   ]
 }
