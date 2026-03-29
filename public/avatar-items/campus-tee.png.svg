@@ -1,0 +1,28 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="40" y1="30" x2="214" y2="220" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8FF"/>
+      <stop offset="1" stop-color="#F7F2FF"/>
+    </linearGradient>
+    <linearGradient id="tee" x1="76" y1="68" x2="180" y2="184" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7A6CFF"/>
+      <stop offset="1" stop-color="#5A46E8"/>
+    </linearGradient>
+    <filter id="shadow" x="24" y="28" width="208" height="196" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#6A56D7" flood-opacity="0.16"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#FFFFFF" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <ellipse cx="128" cy="210" rx="62" ry="14" fill="#E5DBFF"/>
+  <g filter="url(#shadow)">
+    <rect x="46" y="40" width="164" height="160" rx="34" fill="url(#bg)" stroke="#E4D8FF" stroke-width="2"/>
+    <ellipse cx="110" cy="68" rx="52" ry="18" fill="#FFFFFF" fill-opacity="0.58"/>
+    <path d="M92 74L108 64H148L164 74L182 90L166 116L154 108V176H102V108L90 116L74 90L92 74Z" fill="url(#tee)"/>
+    <path d="M104 78H152L160 86L170 98L160 108L154 104V114C144 118 116 118 102 114V104L96 108L86 98L96 86L104 78Z" fill="#FFFFFF" fill-opacity="0.12"/>
+    <path d="M108 64H148L142 78H114L108 64Z" fill="#EEE8FF"/>
+    <rect x="138" y="94" width="14" height="20" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+    <path d="M141 98L145 103L149 98" stroke="#7A6CFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M102 88C118 98 138 98 154 88" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="5" stroke-linecap="round"/>
+    <path d="M92 74L108 64H148L164 74L182 90L166 116L154 108V176H102V108L90 116L74 90L92 74Z" stroke="#4F39D6" stroke-opacity="0.18" stroke-width="2"/>
+  </g>
+</svg>

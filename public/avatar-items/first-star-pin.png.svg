@@ -1,0 +1,26 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="46" y1="38" x2="210" y2="214" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF8"/>
+      <stop offset="1" stop-color="#FFF3E2"/>
+    </linearGradient>
+    <linearGradient id="star" x1="90" y1="76" x2="166" y2="158" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD84D"/>
+      <stop offset="1" stop-color="#FF9D1F"/>
+    </linearGradient>
+    <filter id="shadow" x="30" y="42" width="196" height="176" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#FFB23E" flood-opacity="0.18"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#FFFFFF" flood-opacity="0.26"/>
+    </filter>
+  </defs>
+  <ellipse cx="128" cy="212" rx="54" ry="14" fill="#F9E8CB"/>
+  <g filter="url(#shadow)">
+    <rect x="52" y="56" width="152" height="136" rx="30" fill="url(#bg)" stroke="#F6DFC2" stroke-width="2"/>
+    <ellipse cx="116" cy="78" rx="46" ry="15" fill="#FFFFFF" fill-opacity="0.5"/>
+    <path d="M128 80L140 108H170L146 126L156 154L128 138L100 154L110 126L86 108H116L128 80Z" fill="url(#star)"/>
+    <path d="M128 88L138 110H160L142 124L150 144L128 132L106 144L114 124L96 110H118L128 88Z" fill="#FFFFFF" fill-opacity="0.12"/>
+    <circle cx="128" cy="114" r="10" fill="#FFF7D2"/>
+    <rect x="122" y="154" width="12" height="20" rx="6" fill="#D88E54"/>
+    <path d="M128 80L140 108H170L146 126L156 154L128 138L100 154L110 126L86 108H116L128 80Z" stroke="#E58A1F" stroke-opacity="0.18" stroke-width="2"/>
+  </g>
+</svg>

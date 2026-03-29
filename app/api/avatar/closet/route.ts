@@ -7,6 +7,7 @@ import {
   getMonday
 } from "../../../../lib/achievements";
 import { resolveAccessSnapshot } from "../../../../lib/access";
+import { avatarCatalog } from "../../../../lib/avatar-catalog";
 import { ensureAvatarBootstrapForUser } from "../../../../lib/avatar";
 import { hasPublicSupabaseEnv } from "../../../../lib/env";
 import { getSupabaseServerClient } from "../../../../lib/supabase/server";
@@ -268,6 +269,7 @@ export async function POST(request: Request) {
       const category = Array.isArray(item.avatar_item_categories)
         ? item.avatar_item_categories[0]
         : item.avatar_item_categories;
+      const catalogItem = avatarCatalog.find((entry) => entry.code === item.code);
 
       return {
         code: item.code,
@@ -281,7 +283,10 @@ export async function POST(request: Request) {
         badgeUnlocked: item.required_badge_code ? unlockedBadgeCodes.has(item.required_badge_code) : true,
         slot: category?.code || "unknown",
         slotName: category?.name || "Unknown",
-        owned: inventoryByItemId.has(item.id)
+        owned: inventoryByItemId.has(item.id),
+        imageSrc: catalogItem?.imageSrc || "",
+        imageReady: Boolean(catalogItem?.imageReady),
+        imagePrompt: catalogItem?.imagePrompt || ""
       };
     });
     const collectionProgress = Object.values(

@@ -4509,6 +4509,55 @@ a {
   min-height: 100%;
 }
 
+.avatar-v4-item-visual {
+  display: grid;
+  place-items: center;
+  min-height: 148px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 242, 255, 0.92));
+  border: 1px solid rgba(229, 218, 244, 0.92);
+  overflow: hidden;
+}
+
+.avatar-v4-item-image {
+  width: 100%;
+  max-width: 132px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 18px rgba(111, 76, 167, 0.18));
+}
+
+.avatar-v4-item-image-placeholder {
+  width: 100%;
+  padding: 16px 14px;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+}
+
+.avatar-v4-item-image-placeholder strong {
+  color: #253043;
+  font-size: 0.98rem;
+}
+
+.avatar-v4-item-image-placeholder .dashboard-helper {
+  margin: 0;
+  color: #66738a;
+}
+
+.avatar-v4-item-image-placeholder code {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(143, 53, 255, 0.08);
+  color: #7a3cff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  word-break: break-all;
+}
+
 .avatar-v4-reward-strip {
   padding: 24px;
   border-radius: 28px;

@@ -10,6 +10,9 @@ export type AvatarCatalogItem = {
   collectionName: string;
   helper: string;
   previewTone: string;
+  imageSrc: string;
+  imageReady: boolean;
+  imagePrompt: string;
 };
 
 export const avatarCatalog: AvatarCatalogItem[] = [
@@ -22,7 +25,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "starter",
     collectionName: "Study Core",
     helper: "A clean default look that every student starts with.",
-    previewTone: "study-bob"
+    previewTone: "study-bob",
+    imageSrc: "/avatar-items/study-bob.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A neat student hairstyle, short bob haircut, simple and clean, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "hair-comet-wave",
@@ -33,7 +40,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "shop",
     collectionName: "Galaxy Explorer",
     helper: "A brighter look for students building star momentum.",
-    previewTone: "comet-wave"
+    previewTone: "comet-wave",
+    imageSrc: "/avatar-items/comet-wave.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A stylish wavy hairstyle with a slightly cosmic playful feel, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "top-campus-tee",
@@ -44,7 +55,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "starter",
     collectionName: "Study Core",
     helper: "Simple and easy to mix with any later item.",
-    previewTone: "campus-tee"
+    previewTone: "campus-tee",
+    imageSrc: "/avatar-items/campus-tee.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A purple student t-shirt with a small school badge on the chest, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "top-neon-hoodie",
@@ -55,7 +70,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "shop",
     collectionName: "Neo Math",
     helper: "Feels like a high-energy reward for Math and Add Math learners.",
-    previewTone: "neon-hoodie"
+    previewTone: "neon-hoodie",
+    imageSrc: "/avatar-items/neon-hoodie.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A bright neon purple hoodie with sporty futuristic details, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "bottom-classic-pants",
@@ -66,7 +85,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "starter",
     collectionName: "Study Core",
     helper: "Starter bottoms that keep the first avatar setup complete.",
-    previewTone: "classic-pants"
+    previewTone: "classic-pants",
+    imageSrc: "/avatar-items/classic-pants.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A pair of simple light beige student pants, clean and classic, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "bottom-explorer-cargo",
@@ -77,7 +100,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "shop",
     collectionName: "Galaxy Explorer",
     helper: "Fits Geografi and Humanities themed drops later.",
-    previewTone: "explorer-cargo"
+    previewTone: "explorer-cargo",
+    imageSrc: "/avatar-items/explorer-cargo.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A pair of explorer-style cargo pants with pocket details, adventurous but clean, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "shoes-daily-runner",
@@ -88,7 +115,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "shop",
     collectionName: "Sporty Pop",
     helper: "A fast first purchase so the economy feels rewarding early.",
-    previewTone: "daily-runner"
+    previewTone: "daily-runner",
+    imageSrc: "/avatar-items/daily-runner.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A pair of sporty everyday sneakers, simple and energetic, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "shoes-cosmic-high",
@@ -99,7 +130,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "shop",
     collectionName: "Galaxy Explorer",
     helper: "A headline item for long-term Star Point saving.",
-    previewTone: "cosmic-high"
+    previewTone: "cosmic-high",
+    imageSrc: "/avatar-items/cosmic-high-tops.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A pair of high-top cosmic sneakers with bright futuristic details, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "accessory-first-star-pin",
@@ -110,7 +145,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "achievement",
     collectionName: "Exam Ace",
     helper: "Unlock this by earning the first win badge.",
-    previewTone: "first-star-pin"
+    previewTone: "first-star-pin",
+    imageSrc: "/avatar-items/first-star-pin.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A small shiny star badge pin accessory, bright and cute, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   },
   {
     code: "accessory-streak-headset",
@@ -121,7 +160,11 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     unlockType: "shop",
     collectionName: "Sporty Pop",
     helper: "Feels premium without forcing the whole system into pay-to-look-good.",
-    previewTone: "streak-headset"
+    previewTone: "streak-headset",
+    imageSrc: "/avatar-items/streak-headset.png.svg",
+    imageReady: true,
+    imagePrompt:
+      "A sporty premium headset accessory with a lively student energy, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
   }
 ];
 

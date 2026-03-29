@@ -31,6 +31,9 @@ type ClosetSnapshot = {
     slot: string;
     slotName: string;
     owned: boolean;
+    imageSrc?: string;
+    imageReady?: boolean;
+    imagePrompt?: string;
   }[];
   equipped: {
     slot: string;
@@ -463,6 +466,25 @@ export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
               } ${item.unlockType === "shop" && !item.owned ? "is-shop-card" : ""}`}
               key={item.code}
             >
+              <div className="avatar-v4-item-visual">
+                {item.imageReady ? (
+                  <img
+                    alt={item.name}
+                    className="avatar-v4-item-image"
+                    loading="lazy"
+                    src={item.imageSrc}
+                  />
+                ) : (
+                  <div className="avatar-v4-item-image-placeholder">
+                    <span className="dashboard-label">{item.slotName}</span>
+                    <strong>{isMalay ? "Slot grafik AI sedia" : "AI art slot ready"}</strong>
+                    <p className="dashboard-helper">
+                      {isMalay ? "Letakkan fail ini untuk aktifkan imej:" : "Drop this file in to activate the image:"}
+                    </p>
+                    <code>{item.imageSrc}</code>
+                  </div>
+                )}
+              </div>
               <div className="module-card-head">
                 <div>
                   <p className="dashboard-label">{item.collectionName}</p>
