@@ -5,7 +5,7 @@ import {
   formatDateOnly,
   getMonday
 } from "../../../lib/achievements";
-import { hasPublicSupabaseEnv } from "../../../lib/env";
+import { hasPublicSupabaseEnv, isFullAccessTestingEnabled } from "../../../lib/env";
 import { normalizeLocale, type AppLocale } from "../../../lib/locale";
 import { resolveAccessSnapshot } from "../../../lib/access";
 import { subjectDefinitions } from "../../../lib/subjects";
@@ -622,15 +622,19 @@ export async function POST(request: Request) {
         unlockedSubjectNames: unlockedNames,
         unlockedCount: unlockedCodes.length,
         nextFocus,
-        membershipLabel: access.trialActive
+        membershipLabel: isFullAccessTestingEnabled()
           ? locale === "ms"
-            ? "Percubaan akses penuh 7 hari"
-            : "7-day full access trial"
-          : access.activePlanCodes.length
-            ? access.activePlanCodes.join(", ")
-            : locale === "ms"
-              ? "Akses permulaan percuma"
-              : "Free starter access",
+            ? "Akses penuh mod ujian"
+            : "Testing full access"
+          : access.trialActive
+            ? locale === "ms"
+              ? "Percubaan akses penuh 7 hari"
+              : "7-day full access trial"
+            : access.activePlanCodes.length
+              ? access.activePlanCodes.join(", ")
+              : locale === "ms"
+                ? "Akses permulaan percuma"
+                : "Free starter access",
         streakDays,
         weeklyTarget,
         weeklyCompletedCount,

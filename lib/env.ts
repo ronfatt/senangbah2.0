@@ -4,3 +4,7 @@ export function hasPublicSupabaseEnv() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 }
+
+export function isFullAccessTestingEnabled() {
+  return process.env.FULL_ACCESS_TESTING === "true";
+}

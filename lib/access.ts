@@ -1,4 +1,4 @@
-import { hasPublicSupabaseEnv } from "./env";
+import { hasPublicSupabaseEnv, isFullAccessTestingEnabled } from "./env";
 import { getSupabaseServerClient } from "./supabase/server";
 
 type AccessSnapshot = {
@@ -47,6 +47,15 @@ export async function resolveAccessSnapshot({
 
     if (!user) {
       return emptySnapshot();
+    }
+
+    if (isFullAccessTestingEnabled()) {
+      return {
+        foundUser: true,
+        trialActive: false,
+        activePlanCodes: ["all_access"],
+        unlockedSubjectCodes: ["english", "bahasa_melayu", "sejarah", "geografi", "math", "add_math"]
+      };
     }
 
     const now = new Date().toISOString();
