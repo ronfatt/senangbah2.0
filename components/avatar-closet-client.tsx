@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AvatarPreviewFigure } from "./avatar-preview-figure";
-import { getCollectionMission } from "../lib/avatar-catalog";
+import { getCollectionMission, getWeeklyDrop, getWeeklyDropUrgency } from "../lib/avatar-catalog";
 import { hasPublicSupabaseEnv } from "../lib/env";
 import { type AppLocale } from "../lib/locale";
 import { getRankFromPoints } from "../lib/rewards";
@@ -143,6 +143,9 @@ export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
   }
 
   const equippedBySlot = new Map((closet?.equipped || []).map((item) => [item.slot, item]));
+  const weeklyDrop = getWeeklyDrop();
+  const weeklyDropUrgency = weeklyDrop ? getWeeklyDropUrgency(weeklyDrop.endIso) : null;
+
   const sortedItems = useMemo(() => {
     const currentItems = closet?.items || [];
     const availablePoints = closet?.availablePoints || 0;
@@ -175,6 +178,25 @@ export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
     });
   }, [closet?.availablePoints, closet?.items]);
 
+  const ownedItemsCount = (closet?.items || []).filter((item) => item.owned).length;
+  const achievementReadyCount = (closet?.items || []).filter(
+    (item) => item.unlockType === "achievement" && item.badgeUnlocked && !item.owned
+  ).length;
+  const equippedCount = (closet?.equipped || []).length;
+  const nextShopItem = sortedItems.find((item) => item.unlockType === "shop" && !item.owned);
+  const readyToBuyItem = sortedItems.find(
+    (item) => item.unlockType === "shop" && !item.owned && item.pricePoints <= (closet?.availablePoints || 0)
+  );
+  const topCollection = [...(closet?.collectionProgress || [])].sort((left, right) => right.progressPercent - left.progressPercent)[0];
+
+  const setupRows = [
+    { slot: isMalay ? "Rambut" : "Hair", value: equippedBySlot.get("hair")?.itemName || (isMalay ? "Tiada lagi" : "Nothing yet") },
+    { slot: isMalay ? "Atas" : "Top", value: equippedBySlot.get("top")?.itemName || (isMalay ? "Tiada lagi" : "Nothing yet") },
+    { slot: isMalay ? "Bawah" : "Bottom", value: equippedBySlot.get("bottom")?.itemName || (isMalay ? "Tiada lagi" : "Nothing yet") },
+    { slot: isMalay ? "Kasut" : "Shoes", value: equippedBySlot.get("shoes")?.itemName || (isMalay ? "Tiada lagi" : "Nothing yet") },
+    { slot: isMalay ? "Aksesori" : "Accessory", value: equippedBySlot.get("accessory")?.itemName || (isMalay ? "Tiada lagi" : "Nothing yet") }
+  ];
+
   if (status === "env_missing") {
     return <p className="dashboard-helper">{isMalay ? "Env Supabase masih tiada, jadi almari hanya boleh kekal dalam mod pratonton." : "Supabase env is still missing, so the closet can only stay in preview mode."}</p>;
   }
@@ -202,7 +224,7 @@ export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
   }
 
   return (
-    <div className="closet-live-grid">
+    <div className="avatar-page-v4-body">
       {celebration ? (
         <article className={`closet-celebration closet-celebration-${celebration.type}`}>
           <div className="closet-celebration-copy">
@@ -245,142 +267,333 @@ export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
         </article>
       ) : null}
 
-      <article className="feature-panel avatar-live-preview">
-        <p className="eyebrow">{isMalay ? "Pratonton langsung" : "Live preview"}</p>
-        <h2>{isMalay ? "Avatar anda berubah mengikut item yang dipakai." : "Your avatar updates from equipped items."}</h2>
-        <AvatarPreviewFigure equippedBySlot={equippedBySlot} />
-        <p className="dashboard-helper">
-          {isMalay
-            ? "Beli dan pakai item di bawah, kemudian pratonton ini berubah serta-merta. Itu menjadikan gelung ganjaran terasa lebih nyata."
-            : "Buy and equip an item below, then this preview changes immediately. That makes the reward loop feel much more real."}
-        </p>
-      </article>
+      <section className="avatar-v4-top-grid">
+        <article className="avatar-v4-balance-card">
+          <div className="avatar-v4-card-head">
+            <div>
+              <p className="dashboard-label">{isMalay ? "Baki semasa" : "Current balance"}</p>
+              <h2>{closet?.availablePoints || 0} pts</h2>
+            </div>
+            <span className="dashboard-v3-status">{isMalay ? "Sedia" : "Ready"}</span>
+          </div>
+          <p className="dashboard-helper">
+            {isMalay ? "Mata ini boleh terus digunakan untuk membeli item, membuka gaya baharu, atau mengejar koleksi seterusnya." : "These points are ready for new items, fresh looks, or the next collection push."}
+          </p>
+          <div className="avatar-v4-balance-stats">
+            <div className="avatar-v4-mini-stat">
+              <span className="dashboard-label">{isMalay ? "Jumlah mata" : "Total points"}</span>
+              <strong>{closet?.totalPoints || 0}</strong>
+            </div>
+            <div className="avatar-v4-mini-stat">
+              <span className="dashboard-label">{isMalay ? "Dibelanja" : "Spent"}</span>
+              <strong>{closet?.spentPoints || 0}</strong>
+            </div>
+            <div className="avatar-v4-mini-stat">
+              <span className="dashboard-label">{isMalay ? "Peringkat" : "Rank"}</span>
+              <strong>{getRankFromPoints(closet?.totalPoints || 0)}</strong>
+            </div>
+          </div>
+          <div className="dashboard-v3-action-row">
+            <a className="btn btn-primary" href="/my-subjects">
+              {isMalay ? "Dapatkan lebih banyak mata" : "Earn more points"}
+            </a>
+            <a className="btn btn-secondary" href="/progress">
+              {isMalay ? "Lihat kemajuan" : "View progress"}
+            </a>
+          </div>
+        </article>
 
-      <article className="feature-panel">
-        <p className="eyebrow">{isMalay ? "Baki semasa" : "Live balance"}</p>
-        <h2>{closet?.availablePoints || 0} {isMalay ? "mata sedia dibelanja" : "pts ready to spend"}</h2>
-        <div className="momentum-stack">
-          <div className="momentum-item">
-            <span className="dashboard-label">{isMalay ? "Diperoleh" : "Earned"}</span>
-            <strong>{closet?.totalPoints || 0} {isMalay ? "mata" : "pts"}</strong>
+        <article className="avatar-v4-drop-card">
+          <div className="avatar-v4-card-head">
+            <div>
+              <p className="dashboard-label">{isMalay ? "Drop minggu ini" : "This week's drop"}</p>
+              <h2>{weeklyDrop?.name || (isMalay ? "Tiada drop" : "No drop")}</h2>
+            </div>
+            {weeklyDropUrgency ? <span className="dashboard-v3-status dashboard-v3-status-warm">{weeklyDropUrgency.label}</span> : null}
           </div>
-          <div className="momentum-item">
-            <span className="dashboard-label">{isMalay ? "Dibelanja" : "Spent"}</span>
-            <strong>{closet?.spentPoints || 0} {isMalay ? "mata" : "pts"}</strong>
+          <p className="dashboard-helper">{weeklyDrop?.helper || (isMalay ? "Drop mingguan akan muncul di sini." : "Weekly featured drops will appear here.")}</p>
+          <div className="avatar-v4-drop-list">
+            <div className="avatar-v4-drop-row">
+              <span className="dashboard-label">{isMalay ? "Harga" : "Price"}</span>
+              <strong>{weeklyDrop?.pricePoints || 0} pts</strong>
+            </div>
+            <div className="avatar-v4-drop-row">
+              <span className="dashboard-label">{isMalay ? "Koleksi" : "Collection"}</span>
+              <strong>{weeklyDrop?.collectionName || "-"}</strong>
+            </div>
+            <div className="avatar-v4-drop-row">
+              <span className="dashboard-label">{isMalay ? "Misi terbaik" : "Best mission"}</span>
+              <strong>{weeklyDrop?.mission?.title || "-"}</strong>
+            </div>
           </div>
-          <div className="momentum-item">
-            <span className="dashboard-label">{isMalay ? "Peringkat" : "Rank"}</span>
-            <strong>{getRankFromPoints(closet?.totalPoints || 0)}</strong>
+          <div className="dashboard-v3-action-row">
+            {weeklyDrop?.mission ? (
+              <a className="btn btn-primary" href={weeklyDrop.mission.href}>
+                {isMalay ? "Buka misi drop" : "Open drop mission"}
+              </a>
+            ) : null}
+            <a className="btn btn-secondary" href="/dashboard">
+              {isMalay ? "Kembali ke dashboard" : "Back to dashboard"}
+            </a>
+          </div>
+        </article>
+      </section>
+
+      <section className="avatar-v4-overview-grid">
+        <article className="avatar-v4-preview-card">
+          <div className="avatar-v4-section-head">
+            <div>
+              <p className="dashboard-label">{isMalay ? "Pratonton ganjaran" : "Preview rewards in action"}</p>
+              <h3>{isMalay ? "Avatar anda" : "Your avatar"}</h3>
+            </div>
+            <span className="closet-stock-pill closet-stock-pill-owned">{isMalay ? "Aktif" : "Live"}</span>
+          </div>
+          <div className="avatar-v4-preview-panel">
+            <AvatarPreviewFigure equippedBySlot={equippedBySlot} />
+          </div>
+          <p className="dashboard-helper">
+            {isMalay ? "Beli dan pakai item untuk melihat rupa anda berubah serta-merta." : "Buy and equip items to see your look change instantly."}
+          </p>
+        </article>
+
+        <div className="avatar-v4-overview-stack">
+          <article className="avatar-v4-small-card tone-blue">
+            <p className="dashboard-label">{isMalay ? "Sedia dibeli" : "Ready to buy"}</p>
+            <h3>{readyToBuyItem ? readyToBuyItem.name : isMalay ? "Terus kumpul mata" : "Keep earning points"}</h3>
+            <p className="dashboard-helper">
+              {readyToBuyItem
+                ? isMalay
+                  ? `${readyToBuyItem.pricePoints} mata untuk buka item seterusnya sekarang.`
+                  : `${readyToBuyItem.pricePoints} points unlocks your next item right now.`
+                : nextShopItem
+                  ? isMalay
+                    ? `Lagi ${Math.max(nextShopItem.pricePoints - (closet?.availablePoints || 0), 0)} mata untuk ${nextShopItem.name}.`
+                    : `${Math.max(nextShopItem.pricePoints - (closet?.availablePoints || 0), 0)} more points for ${nextShopItem.name}.`
+                  : isMalay
+                    ? "Semua item kedai sudah dimiliki."
+                    : "All shop items are already owned."}
+            </p>
+          </article>
+
+          <article className="avatar-v4-small-card tone-mint">
+            <p className="dashboard-label">{isMalay ? "Item dimiliki" : "Owned items"}</p>
+            <h3>{ownedItemsCount}</h3>
+            <p className="dashboard-helper">
+              {isMalay ? "Campur item starter, pembelian, dan ganjaran lencana untuk gaya yang lebih unik." : "Mix starter items, purchases, and badge rewards into a more personal look."}
+            </p>
+          </article>
+
+          <article className="avatar-v4-small-card tone-peach">
+            <p className="dashboard-label">{isMalay ? "Unlock pencapaian" : "Achievement unlocks"}</p>
+            <h3>{achievementReadyCount}</h3>
+            <p className="dashboard-helper">
+              {isMalay ? "Item achievement akan muncul apabila badge berkaitan sudah cukup." : "Achievement items become available as soon as the matching badge is ready."}
+            </p>
+          </article>
+
+          <article className="avatar-v4-small-card tone-lilac">
+            <p className="dashboard-label">{isMalay ? "Slot aktif" : "Equipped slots"}</p>
+            <h3>{equippedCount}/5</h3>
+            <p className="dashboard-helper">
+              {isMalay ? "Lima slot utama memberi ruang untuk bina gaya yang jelas." : "The five main slots are enough to give each student a clear style."}
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section className="avatar-v4-section">
+        <div className="avatar-v4-section-head">
+          <div>
+            <p className="dashboard-label">{isMalay ? "Koleksi anda" : "Your collection progress"}</p>
+            <h3>{isMalay ? "Gaya dibuka dengan konsistensi" : "Style unlocks through consistency"}</h3>
           </div>
         </div>
-      </article>
-
-      <article className="feature-panel alt">
-        <p className="eyebrow">{isMalay ? "Kemajuan koleksi" : "Collection progress"}</p>
-        <h2>{isMalay ? "Lihat set gaya mana yang paling hampir siap." : "See which style set is closest to completion."}</h2>
-        <div className="momentum-stack">
+        <div className="avatar-v4-progress-list">
           {(closet?.collectionProgress || []).map((collection) => (
-            <div className="momentum-item" key={collection.collectionName}>
-              <div className="mastery-meta">
-                <span className="dashboard-label">{collection.collectionName}</span>
-                <strong>
-                  {collection.ownedCount}/{collection.totalCount}
-                </strong>
+            <article className="avatar-v4-progress-row" key={collection.collectionName}>
+              <div className="avatar-v4-progress-copy">
+                <strong>{collection.collectionName}</strong>
+                <span>{collection.ownedCount}/{collection.totalCount}</span>
               </div>
               <div className="mastery-bar">
                 <div className="mastery-bar-fill" style={{ width: `${collection.progressPercent}%` }} />
               </div>
-              <p className="dashboard-helper">{collection.progressPercent}% {isMalay ? "siap" : "complete"}</p>
-              {getCollectionMission(collection.collectionName) ? (
-                <a className="mini-link" href={getCollectionMission(collection.collectionName)?.href}>
-                  {getCollectionMission(collection.collectionName)?.subject}: {getCollectionMission(collection.collectionName)?.title}
-                </a>
-              ) : null}
-            </div>
-          ))}
-        </div>
-      </article>
-
-      <article className="feature-panel alt">
-        <p className="eyebrow">{isMalay ? "Sedang dipakai" : "Equipped now"}</p>
-        <h2>{isMalay ? "Gaya semasa anda" : "Your current style setup"}</h2>
-        <div className="momentum-stack">
-          {["hair", "top", "bottom", "shoes", "accessory"].map((slot) => (
-            <div className="momentum-item" key={slot}>
-              <span className="dashboard-label">{slot}</span>
-              <strong>{equippedBySlot.get(slot)?.itemName || (isMalay ? "Belum pakai apa-apa" : "Nothing equipped yet")}</strong>
-            </div>
-          ))}
-        </div>
-      </article>
-
-      <div className="achievement-grid closet-item-grid">
-        <div className="closet-sort-note">
-          <p className="dashboard-label">{isMalay ? "Susunan kedai" : "Shop order"}</p>
-          <p className="dashboard-helper">{isMalay ? "Gaya yang dimiliki muncul dahulu, kemudian item yang anda mampu beli sekarang, kemudian sasaran jangka panjang." : "Owned looks come first, then items you can afford right now, then the longer-term targets."}</p>
-        </div>
-        {sortedItems.map((item) => (
-          <article
-            className={`achievement-card closet-shop-card ${item.owned ? "is-unlocked" : ""} ${
-              item.unlockType === "achievement" && !item.badgeUnlocked ? "is-locked-item" : ""
-            } ${item.unlockType === "shop" && !item.owned ? "is-shop-card" : ""}`}
-            key={item.code}
-          >
-            <div className="module-card-head">
-              <div>
-                <p className="dashboard-label">{item.collectionName}</p>
-                <h3>{item.name}</h3>
+              <div className="avatar-v4-progress-meta">
+                <span className="dashboard-helper">{collection.progressPercent}% {isMalay ? "siap" : "complete"}</span>
+                {getCollectionMission(collection.collectionName) ? (
+                  <a className="mini-link" href={getCollectionMission(collection.collectionName)?.href}>
+                    {getCollectionMission(collection.collectionName)?.subject}: {getCollectionMission(collection.collectionName)?.title}
+                  </a>
+                ) : null}
               </div>
-              <span className={`module-state ${item.rarity === "epic" ? "state-locked" : item.rarity === "rare" ? "state-ready" : "state-coming_soon"}`}>
-                {item.rarity}
-              </span>
-            </div>
-            <p className="dashboard-helper">
-              {item.slotName} · {item.unlockType === "shop" ? `${item.pricePoints} pts` : item.unlockType}
-            </p>
-            <div className="closet-meta-row">
-              <span className="closet-slot-pill">{item.slotName}</span>
-              <span className={`closet-stock-pill closet-stock-pill-${item.owned ? "owned" : item.unlockType}`}>
-                {item.owned ? "Owned" : item.unlockType === "shop" ? "Shop drop" : "Badge unlock"}
-              </span>
-            </div>
-            {item.unlockType === "achievement" ? (
-              <p className="dashboard-helper">
-                {item.badgeUnlocked
-                  ? `${item.requiredBadgeTitle || "Achievement"} reached. This item can unlock automatically.`
-                  : `Locked by ${item.requiredBadgeTitle || "an achievement"} right now.`}
-              </p>
-            ) : null}
-            <div className="hero-actions">
-              {item.owned ? (
-                <button
-                  className="btn btn-primary closet-action closet-cta"
-                  disabled={busyItemCode === item.code}
-                  onClick={() => runAction("equip", item.code)}
-                  type="button"
-                >
-                  {busyItemCode === item.code ? "Saving..." : "Wear this look"}
-                </button>
-              ) : item.unlockType === "shop" ? (
-                <button
-                  className="btn btn-primary closet-action closet-cta closet-buy-button"
-                  disabled={busyItemCode === item.code}
-                  onClick={() => runAction("purchase", item.code)}
-                  type="button"
-                >
-                  {busyItemCode === item.code ? "Saving..." : `Buy now · ${item.pricePoints} pts`}
-                </button>
-              ) : item.unlockType === "achievement" ? (
-                <span className={`status-pill ${item.badgeUnlocked ? "status-pill-ready" : "status-pill-locked"}`}>
-                  {item.badgeUnlocked ? "Ready to auto-unlock" : `Need ${item.requiredBadgeTitle || "badge"}`}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="avatar-v4-section">
+        <div className="avatar-v4-section-head">
+          <div>
+            <p className="dashboard-label">{isMalay ? "Gaya semasa" : "Current setup"}</p>
+            <h3>{isMalay ? "Apa yang sedang dipakai sekarang" : "What your avatar is wearing now"}</h3>
+          </div>
+        </div>
+        <div className="avatar-v4-setup-list">
+          {setupRows.map((row) => (
+            <article className="avatar-v4-setup-row" key={row.slot}>
+              <span className="dashboard-label">{row.slot}</span>
+              <strong>{row.value}</strong>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="avatar-v4-section">
+        <div className="avatar-v4-section-head">
+          <div>
+            <p className="dashboard-label">{isMalay ? "Item avatar" : "Avatar items"}</p>
+            <h3>{isMalay ? "Beli, pakai, dan buka lagi" : "Buy, equip, and unlock more"}</h3>
+          </div>
+        </div>
+        <div className="avatar-v4-shop-grid">
+          {sortedItems.map((item) => (
+            <article
+              className={`achievement-card closet-shop-card avatar-v4-shop-card ${item.owned ? "is-unlocked" : ""} ${
+                item.unlockType === "achievement" && !item.badgeUnlocked ? "is-locked-item" : ""
+              } ${item.unlockType === "shop" && !item.owned ? "is-shop-card" : ""}`}
+              key={item.code}
+            >
+              <div className="module-card-head">
+                <div>
+                  <p className="dashboard-label">{item.collectionName}</p>
+                  <h3>{item.name}</h3>
+                </div>
+                <span className={`module-state ${item.rarity === "epic" ? "state-locked" : item.rarity === "rare" ? "state-ready" : "state-coming_soon"}`}>
+                  {item.rarity}
                 </span>
-              ) : (
-                <span className="dashboard-helper">Unlock through achievements</span>
-              )}
-            </div>
+              </div>
+              <p className="dashboard-helper">
+                {item.slotName} · {item.unlockType === "shop" ? `${item.pricePoints} pts` : item.unlockType}
+              </p>
+              <div className="closet-meta-row">
+                <span className="closet-slot-pill">{item.slotName}</span>
+                <span className={`closet-stock-pill closet-stock-pill-${item.owned ? "owned" : item.unlockType}`}>
+                  {item.owned
+                    ? isMalay
+                      ? "Dimiliki"
+                      : "Owned"
+                    : item.unlockType === "shop"
+                      ? isMalay
+                        ? "Kedai"
+                        : "Shop drop"
+                      : isMalay
+                        ? "Lencana"
+                        : "Badge unlock"}
+                </span>
+              </div>
+              {item.unlockType === "achievement" ? (
+                <p className="dashboard-helper">
+                  {item.badgeUnlocked
+                    ? isMalay
+                      ? `${item.requiredBadgeTitle || "Achievement"} sudah sedia. Item ini boleh dibuka automatik.`
+                      : `${item.requiredBadgeTitle || "Achievement"} reached. This item can unlock automatically.`
+                    : isMalay
+                      ? `Masih perlukan ${item.requiredBadgeTitle || "badge"}.`
+                      : `Still needs ${item.requiredBadgeTitle || "badge"}.`}
+                </p>
+              ) : null}
+              <div className="hero-actions">
+                {item.owned ? (
+                  <button
+                    className="btn btn-primary closet-action closet-cta"
+                    disabled={busyItemCode === item.code}
+                    onClick={() => runAction("equip", item.code)}
+                    type="button"
+                  >
+                    {busyItemCode === item.code
+                      ? isMalay
+                        ? "Menyimpan..."
+                        : "Saving..."
+                      : isMalay
+                        ? "Pakai sekarang"
+                        : "Wear this look"}
+                  </button>
+                ) : item.unlockType === "shop" ? (
+                  <button
+                    className="btn btn-primary closet-action closet-cta closet-buy-button"
+                    disabled={busyItemCode === item.code}
+                    onClick={() => runAction("purchase", item.code)}
+                    type="button"
+                  >
+                    {busyItemCode === item.code
+                      ? isMalay
+                        ? "Menyimpan..."
+                        : "Saving..."
+                      : isMalay
+                        ? `Beli · ${item.pricePoints} mata`
+                        : `Buy now · ${item.pricePoints} pts`}
+                  </button>
+                ) : item.unlockType === "achievement" ? (
+                  <span className={`status-pill ${item.badgeUnlocked ? "status-pill-ready" : "status-pill-locked"}`}>
+                    {item.badgeUnlocked
+                      ? isMalay
+                        ? "Sedia dibuka"
+                        : "Ready to auto-unlock"
+                      : isMalay
+                        ? `Perlu ${item.requiredBadgeTitle || "badge"}`
+                        : `Need ${item.requiredBadgeTitle || "badge"}`}
+                  </span>
+                ) : (
+                  <span className="dashboard-helper">
+                    {isMalay ? "Buka melalui pencapaian" : "Unlock through achievements"}
+                  </span>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="avatar-v4-reward-strip">
+        <div className="avatar-v4-section-head">
+          <div>
+            <p className="dashboard-label">{isMalay ? "Belajar untuk gaya" : "Study wins = style rewards"}</p>
+            <h3>{isMalay ? "Setiap hari belajar bantu anda maju lebih jauh" : "Every study day moves your style further"}</h3>
+          </div>
+        </div>
+        <div className="avatar-v4-tip-grid">
+          <article className="avatar-v4-tip-card">
+            <strong>{isMalay ? "Misi harian" : "Daily missions"}</strong>
+            <p className="dashboard-helper">
+              {isMalay ? "Cara paling cepat untuk tambah mata dan mengekalkan rhythm." : "The fastest way to add points and keep momentum."}
+            </p>
           </article>
-        ))}
-      </div>
+          <article className="avatar-v4-tip-card">
+            <strong>{isMalay ? "Misi drop" : "Drop mission"}</strong>
+            <p className="dashboard-helper">
+              {isMalay ? "Misi featured bantu anda buru item minggu ini." : "Featured missions help you chase the weekly drop."}
+            </p>
+          </article>
+          <article className="avatar-v4-tip-card">
+            <strong>{isMalay ? "Koleksi hampir siap" : "Closest collection"}</strong>
+            <p className="dashboard-helper">
+              {topCollection
+                ? isMalay
+                  ? `${topCollection.collectionName} kini paling hampir siap.`
+                  : `${topCollection.collectionName} is the closest to completion right now.`
+                : isMalay
+                  ? "Kemajuan koleksi akan muncul di sini."
+                  : "Collection progress will show here."}
+            </p>
+          </article>
+          <article className="avatar-v4-tip-card">
+            <strong>{isMalay ? "Buka rank" : "Rank up"}</strong>
+            <p className="dashboard-helper">
+              {isMalay ? "Lebih banyak jumlah mata membuka rank yang lebih kuat dan rasa kemajuan yang jelas." : "Higher total points unlock stronger ranks and a clearer sense of progress."}
+            </p>
+          </article>
+        </div>
+      </section>
     </div>
   );
 }
