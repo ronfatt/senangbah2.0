@@ -21,26 +21,23 @@ export default async function SubjectHubPage({
   }
 
   return (
-    <main className="page-shell">
-      <section className="subject-hero">
-        <div className="subject-hero-copy">
-          <p className="eyebrow">{subject.group}</p>
-          <h1 className="dashboard-title">{subject.name}</h1>
-          <p className="hero-text">{subject.summary}</p>
-          <div className="hero-actions">
-            <a className="btn btn-primary" href="#subject-guide">
-              {locale === "ms" ? "Lihat laluan terbaik" : "See best path"}
-            </a>
-            <a className="btn btn-secondary" href="/progress">
-              {locale === "ms" ? "Buka Laporan Kemajuan" : "Open Progress Report"}
-            </a>
-          </div>
-        </div>
-
-        <div className="hero-panel">
-          <p className="panel-label">{locale === "ms" ? "Paling sesuai untuk" : "Best for"}</p>
-          <h2>{subject.bundle}</h2>
-          <p className="hero-text">{subject.access}</p>
+    <main className="page-shell dashboard-shell dashboard-shell-v3">
+      <section className="dashboard-v3-hero dashboard-v3-page-hero">
+        <p className="dashboard-v3-welcome">{subject.group}</p>
+        <h1>{subject.name}</h1>
+        <p className="dashboard-v3-hero-copy">
+          {subject.summary}{" "}
+          {locale === "ms"
+            ? `Halaman ini menunjukkan laluan terbaik, bahagian yang perlu dibaiki, dan semua modul yang boleh anda buka dalam ${subject.name}.`
+            : `This page shows the best path, what needs work, and every module you can open inside ${subject.name}.`}
+        </p>
+        <div className="dashboard-v3-hero-actions">
+          <a className="btn btn-primary" href="#subject-guide">
+            {locale === "ms" ? "Lihat Laluan Terbaik" : "See Best Path"}
+          </a>
+          <a className="btn btn-secondary" href="/my-subjects">
+            {locale === "ms" ? "Kembali ke My Subjects" : "Back to My Subjects"}
+          </a>
         </div>
       </section>
 

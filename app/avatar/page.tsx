@@ -23,39 +23,23 @@ export default async function AvatarPage() {
   const weeklyDropUrgency = weeklyDrop ? getWeeklyDropUrgency(weeklyDrop.endIso) : null;
 
   return (
-    <main className="page-shell">
-      <section className="subject-hero">
-        <div className="subject-hero-copy">
-          <p className="eyebrow">{isMalay ? "Almari Avatar" : "Avatar Closet"}</p>
-          <h1 className="dashboard-title">
-            {isMalay
-              ? "Tukar kemenangan belajar menjadi avatar yang benar-benar terasa milik anda."
-              : "Turn study wins into a character that actually feels yours."}
-          </h1>
-          <p className="hero-text">
-            {isMalay
-              ? "SenangBah 2.0 menggunakan Mata Bintang untuk membuka pakaian, aksesori, dan koleksi gaya. Matlamatnya mudah: kemajuan belajar perlu terasa nyata, peribadi, dan seronok untuk terus dibina."
-              : "SenangBah 2.0 uses Star Points to unlock outfits, accessories, and style collections. The goal is simple: stronger learning should feel visible, personal, and fun to keep building."}
-          </p>
-          <div className="hero-actions">
-            <a className="btn btn-primary" href="/dashboard">
-              {isMalay ? "Kembali ke Dashboard" : "Back to dashboard"}
-            </a>
-            <a className="btn btn-secondary" href="/my-subjects">
-              {isMalay ? "Dapatkan lebih banyak Mata Bintang" : "Earn more Star Points"}
-            </a>
-          </div>
+    <main className="page-shell dashboard-shell dashboard-shell-v3 avatar-v3-shell">
+      <section className="dashboard-v3-hero dashboard-v3-page-hero">
+        <p className="dashboard-v3-welcome">{isMalay ? "Gaya dan ganjaran" : "Style and rewards"}</p>
+        <h1>{isMalay ? "Avatar Closet" : "Avatar Closet"} ✨</h1>
+        <p className="dashboard-v3-hero-copy">
+          {isMalay
+            ? "Tukar kemenangan belajar menjadi gaya yang terasa milik anda. Kumpul Mata Bintang, buka item baru, dan pastikan kemajuan anda benar-benar kelihatan."
+            : "Turn study wins into a style that feels like yours. Collect Star Points, unlock new items, and make your progress feel visible."}
+        </p>
+        <div className="dashboard-v3-hero-actions">
+          <a className="btn btn-primary" href="/dashboard">
+            {isMalay ? "Kembali ke Dashboard" : "Back to Dashboard"}
+          </a>
+          <a className="btn btn-secondary" href="/my-subjects">
+            {isMalay ? "Dapatkan lebih banyak Mata Bintang" : "Earn More Star Points"}
+          </a>
         </div>
-
-        <aside className="feature-panel alt avatar-preview-card">
-          <p className="eyebrow">{isMalay ? "Matlamat almari" : "Closet goal"}</p>
-          <h2>{isMalay ? "Jadikan kemajuan jelas pada watak, bukan hanya pada carta." : "Make progress visible on the character, not only on charts."}</h2>
-          <p className="dashboard-helper">
-            {isMalay
-              ? "Pratonton langsung di bawah kini berubah mengikut item yang dipakai. Bahagian atas ini mengekalkan idea produk yang sama: keputusan belajar yang lebih kuat perlu membuat avatar terasa lebih menarik."
-              : "The live preview below now changes from equipped items. This top block stays focused on the product idea: students should feel that stronger study results make their avatar more interesting."}
-          </p>
-        </aside>
       </section>
 
       <section className="section">

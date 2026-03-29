@@ -83,10 +83,19 @@ export function OnboardingWelcomeClient({ locale }: { locale: AppLocale }) {
   }
 
   return (
-    <section className="section section-split">
-        <article className="feature-panel">
-        <p className="eyebrow">{locale === "ms" ? "Pilih subjek pertama anda" : "Pick your first subject"}</p>
-        <h2>{locale === "ms" ? "Mulakan dengan subjek yang anda mahu perbaiki dahulu." : "Start with the subject you want to improve first."}</h2>
+    <section className="dashboard-v3 welcome-v3-grid">
+      <section className="dashboard-v3-summary-grid welcome-v3-choices">
+        <article className="dashboard-v3-summary-card tone-blue">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Langkah 1" : "Step 1"}</p></div>
+            <span className="dashboard-v3-icon-box tone-progress">S</span>
+          </div>
+          <p className="dashboard-v3-summary-title">
+            {locale === "ms" ? "Pilih subjek pertama anda" : "Pick your first subject"}
+          </p>
+          <p className="dashboard-helper">
+            {locale === "ms" ? "Mulakan dengan subjek yang anda mahu perbaiki dahulu." : "Start with the subject you want to improve first."}
+          </p>
         <div className="onboarding-option-grid">
           {subjectDefinitions.map((subject) => (
             <button
@@ -101,11 +110,19 @@ export function OnboardingWelcomeClient({ locale }: { locale: AppLocale }) {
             </button>
           ))}
         </div>
-      </article>
+        </article>
 
-        <article className="feature-panel alt">
-        <p className="eyebrow">{locale === "ms" ? "Pilih gaya misi anda" : "Pick your mission style"}</p>
-        <h2>{locale === "ms" ? "Pilih jenis bantuan yang anda mahu dahulu." : "Choose the kind of help you want first."}</h2>
+        <article className="dashboard-v3-summary-card tone-pink">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Langkah 2" : "Step 2"}</p></div>
+            <span className="dashboard-v3-icon-box tone-achievements">AI</span>
+          </div>
+          <p className="dashboard-v3-summary-title">
+            {locale === "ms" ? "Pilih gaya misi anda" : "Pick your mission style"}
+          </p>
+          <p className="dashboard-helper">
+            {locale === "ms" ? "Pilih jenis bantuan yang anda mahu dahulu." : "Choose the kind of help you want first."}
+          </p>
         <div className="onboarding-option-grid">
           {missionOptions.map((option) => (
             <button
@@ -140,7 +157,7 @@ export function OnboardingWelcomeClient({ locale }: { locale: AppLocale }) {
             </button>
           ))}
         </div>
-        <div className="hero-actions">
+        <div className="dashboard-v3-hero-actions welcome-v3-actions">
           <button className="btn btn-primary" disabled={isSaving} onClick={handleContinue} type="button">
             {isSaving
               ? locale === "ms"
@@ -152,7 +169,8 @@ export function OnboardingWelcomeClient({ locale }: { locale: AppLocale }) {
           </button>
         </div>
         <p className="auth-status">{status}</p>
-      </article>
+        </article>
+      </section>
     </section>
   );
 }

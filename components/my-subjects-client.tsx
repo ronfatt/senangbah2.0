@@ -115,6 +115,7 @@ export function MySubjectsClient({ locale }: { locale: AppLocale }) {
 
       return {
         code: subject.code,
+        slug: subject.slug,
         name: getSubjectDisplayName(subject.name, locale),
         bundle:
           locale === "ms"
@@ -126,6 +127,7 @@ export function MySubjectsClient({ locale }: { locale: AppLocale }) {
             : subject.bundle,
         summary: subject.summary,
         unlocked,
+        totalModules: subject.modules.length,
         readyCount: readyModules.length,
         nextLabel: firstModule?.name || (locale === "ms" ? "Buka subjek" : "Open subject"),
         needsWork:
@@ -148,6 +150,18 @@ export function MySubjectsClient({ locale }: { locale: AppLocale }) {
               : "Available after unlock"),
         nextHref: firstModule ? `/subjects/${subject.slug}/${firstModule.slug}` : `/subjects/${subject.slug}`,
         href: `/subjects/${subject.slug}`,
+        iconLabel:
+          subject.slug === "english"
+            ? "EN"
+            : subject.slug === "bahasa-melayu"
+              ? "BM"
+              : subject.slug === "sejarah"
+                ? "SJ"
+                : subject.slug === "geografi"
+                  ? "GEO"
+                  : subject.slug === "math"
+                    ? "M"
+                    : "AM",
         tone:
           subject.bundle === "Language Pack"
             ? "tone-language"
@@ -159,120 +173,143 @@ export function MySubjectsClient({ locale }: { locale: AppLocale }) {
   }, [locale, state]);
 
   return (
-    <>
-      <section className="section">
-        <div className="dashboard-card-grid">
-          <article className="dashboard-card">
-            <p className="dashboard-label">How to use this page</p>
-            <h2>{locale === "ms" ? "Buka satu subjek. Mula satu misi." : "Open one subject. Start one mission."}</h2>
-            <p className="dashboard-helper">
-              {locale === "ms"
-                ? "Halaman ini untuk aliran belajar anda. Pilih subjek yang anda mahu perbaiki, kemudian terus masuk ke misi yang paling jelas."
-                : "This page is for your study flow. Pick the subject you want to improve, then jump straight into the clearest mission."}
-            </p>
-          </article>
-
-          <article className="dashboard-card">
-            <p className="dashboard-label">{locale === "ms" ? "Akses anda" : "Your access"}</p>
-            <h2>{state.status === "ready" ? state.snapshot.membershipLabel : locale === "ms" ? "Sedang menyemak akses anda..." : "Checking your access..."}</h2>
-            <p className="dashboard-helper">
-              {state.status === "ready"
-                ? state.snapshot.nextFocus
-                : locale === "ms"
-                  ? "Kami sedang memuatkan subjek yang sudah dibuka dan langkah terbaik anda seterusnya."
-                  : "We are loading your unlocked subjects and your next best move."}
-            </p>
-          </article>
+    <div className="dashboard-v3 my-subjects-v3">
+      <section className="dashboard-v3-hero dashboard-v3-page-hero">
+        <p className="dashboard-v3-welcome">{locale === "ms" ? "Subjek dan laluan" : "Subjects and paths"}</p>
+        <h1>{locale === "ms" ? "My Subjects" : "My Subjects"} 📚</h1>
+        <p className="dashboard-v3-hero-copy">
+          {state.status === "ready"
+            ? locale === "ms"
+              ? `Akses anda sekarang: ${state.snapshot.membershipLabel}. Buka satu subjek, mula satu misi, dan teruskan dengan AI yang menunjukkan apa yang perlu dibaiki seterusnya.`
+              : `Your access is now ${state.snapshot.membershipLabel}. Open one subject, start one mission, and keep moving with AI showing what to fix next.`
+            : locale === "ms"
+              ? "Buka satu subjek, mula satu misi, dan bina rentak belajar yang jelas."
+              : "Open one subject, start one mission, and build a clear study rhythm."}
+        </p>
+        <div className="dashboard-v3-hero-actions">
+          <a className="btn btn-primary" href="/dashboard">
+            {locale === "ms" ? "Kembali ke Dashboard" : "Back to Dashboard"}
+          </a>
+          <a className="btn btn-secondary" href="/progress">
+            {locale === "ms" ? "Buka Laporan Kemajuan" : "Open Progress Report"}
+          </a>
         </div>
       </section>
 
-      <section className="section">
-        <div className="my-subjects-priority-grid">
-          <article className="dashboard-card my-subjects-priority-card">
-            <p className="dashboard-label">{locale === "ms" ? "Mula di sini" : "Start here"}</p>
-            <h2>{locale === "ms" ? "Buka subjek yang terasa paling mudah untuk dimulakan hari ini." : "Open the subject that feels easiest to start today."}</h2>
-            <p className="dashboard-helper">
-              {locale === "ms"
-                ? "Bagi kebanyakan pelajar, satu misi ringkas lebih baik daripada cuba merancang seluruh minggu sekaligus."
-                : "For most students, one short mission is better than trying to plan the whole week at once."}
-            </p>
-          </article>
-          <article className="dashboard-card my-subjects-priority-card">
-            <p className="dashboard-label">{locale === "ms" ? "Perlu dibaiki" : "Needs work"}</p>
-            <h2>{locale === "ms" ? "Cari modul paling lemah dalam setiap kad subjek." : "Look for the weakest module inside each subject card."}</h2>
-            <p className="dashboard-helper">
-              {locale === "ms"
-                ? "Itulah biasanya tempat paling jelas di mana AI boleh membantu anda bertambah baik dengan lebih cepat."
-                : "That is usually the clearest place where AI can help you improve faster."}
-            </p>
-          </article>
-          <article className="dashboard-card my-subjects-priority-card">
-            <p className="dashboard-label">{locale === "ms" ? "Sedang bertambah baik" : "Improving now"}</p>
-            <h2>{locale === "ms" ? "Kekalkan satu bahagian yang lebih kuat sambil membaiki satu titik lemah." : "Keep one stronger area moving while you fix one weak point."}</h2>
-            <p className="dashboard-helper">
-              {locale === "ms"
-                ? "Ini menjadikan kemajuan lebih jelas dan mengelakkan semua subjek terasa sukar pada masa yang sama."
-                : "This keeps progress visible instead of making every subject feel hard at the same time."}
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">{locale === "ms" ? "Subjek saya" : "My subjects"}</p>
-            <h2>{locale === "ms" ? "Inilah subjek yang ada dalam dashboard pelajar anda." : "These are the subjects inside your student dashboard."}</h2>
+      <section className="dashboard-v3-summary-grid dashboard-v3-summary-grid-compact">
+        <article className="dashboard-v3-summary-card tone-blue">
+          <div className="dashboard-v3-summary-head">
+            <div>
+              <p className="dashboard-label">{locale === "ms" ? "Mula di sini" : "Start here"}</p>
+            </div>
+            <span className="dashboard-v3-icon-box tone-blue">→</span>
           </div>
+          <p className="dashboard-v3-summary-title">
+            {locale === "ms" ? "Buka subjek yang paling mudah untuk dimulakan hari ini." : "Open the subject that feels easiest to start today."}
+          </p>
+          <p className="dashboard-helper">
+            {locale === "ms"
+              ? "Satu misi ringkas lebih baik daripada cuba merancang semua subjek sekaligus."
+              : "One short mission is better than trying to plan every subject at once."}
+          </p>
+        </article>
+
+        <article className="dashboard-v3-summary-card tone-pink">
+          <div className="dashboard-v3-summary-head">
+            <div>
+              <p className="dashboard-label">{locale === "ms" ? "Perlu dibaiki" : "Needs work"}</p>
+            </div>
+            <span className="dashboard-v3-icon-box tone-achievements">!</span>
+          </div>
+          <p className="dashboard-v3-summary-title">
+            {locale === "ms" ? "Cari modul paling lemah dalam setiap kad subjek." : "Look for the weakest module inside each subject card."}
+          </p>
+          <p className="dashboard-helper">
+            {locale === "ms"
+              ? "Biasanya di situlah AI boleh memberi peningkatan paling cepat."
+              : "That is usually where AI can create the fastest improvement."}
+          </p>
+        </article>
+
+        <article className="dashboard-v3-summary-card tone-blue">
+          <div className="dashboard-v3-summary-head">
+            <div>
+              <p className="dashboard-label">{locale === "ms" ? "Sedang bertambah baik" : "Improving now"}</p>
+            </div>
+            <span className="dashboard-v3-icon-box tone-live">↑</span>
+          </div>
+          <p className="dashboard-v3-summary-title">
+            {locale === "ms" ? "Kekalkan satu bahagian kuat sambil membaiki satu titik lemah." : "Keep one stronger area moving while you fix one weak point."}
+          </p>
+          <p className="dashboard-helper">
+            {locale === "ms"
+              ? "Ini menjadikan kemajuan lebih jelas dari hari ke hari."
+              : "This keeps progress easier to see from day to day."}
+          </p>
+        </article>
+      </section>
+
+      <section className="dashboard-v3-subjects">
+        <div className="dashboard-v3-section-copy">
+          <p className="eyebrow">{locale === "ms" ? "Subjek saya" : "My subjects"}</p>
+          <h2>{locale === "ms" ? "Pilih satu subjek dan lompat terus ke misi yang paling jelas." : "Choose one subject and jump straight into the clearest mission."}</h2>
         </div>
 
-        <div className="subject-lane-grid">
+        <div className="dashboard-v3-subject-grid">
           {subjectLanes.map((subject) => (
-            <article className={`subject-lane-card ${subject.tone}`} key={subject.code}>
-              <div className="module-card-head">
+            <article className={`dashboard-v3-subject-card ${subject.tone}`} key={subject.code}>
+              <div className="dashboard-v3-subject-head">
                 <div>
-                  <p className="dashboard-label">{subject.bundle}</p>
+                  <div className="dashboard-v3-subject-meta">
+                    <span className="dashboard-label">{subject.bundle}</span>
+                    <span className="dashboard-v3-status">
+                      {subject.unlocked ? (locale === "ms" ? "Sedia" : "Ready") : locale === "ms" ? "Terkunci" : "Locked"}
+                    </span>
+                  </div>
                   <h3>{subject.name}</h3>
                 </div>
-                <span className={`module-state ${subject.unlocked ? "state-ready" : "state-locked"}`}>
-                  {subject.unlocked ? (locale === "ms" ? "Terbuka" : "Open") : locale === "ms" ? "Terkunci" : "Locked"}
-                </span>
+                <span className={`dashboard-v3-icon-box ${subject.tone}`}>{subject.iconLabel}</span>
               </div>
+
               <p className="dashboard-helper">{subject.summary}</p>
-              <div className="momentum-stack">
-                <div className="momentum-item">
+
+              <div className="dashboard-v3-metrics">
+                <div>
+                  <span className="dashboard-label">{locale === "ms" ? "Jumlah modul" : "Total modules"}</span>
+                  <strong>{subject.totalModules}</strong>
+                </div>
+                <div>
                   <span className="dashboard-label">{locale === "ms" ? "Modul sedia" : "Ready modules"}</span>
                   <strong>{subject.readyCount}</strong>
                 </div>
-                <div className="momentum-item">
-                  <span className="dashboard-label">{locale === "ms" ? "Mula di sini" : "Start here"}</span>
-                  <strong>{subject.nextLabel}</strong>
-                </div>
-                <div className="momentum-item">
+                <div>
                   <span className="dashboard-label">{locale === "ms" ? "Perlu dibaiki" : "Needs work"}</span>
                   <strong>{subject.needsWork}</strong>
                 </div>
-                <div className="momentum-item">
-                  <span className="dashboard-label">{locale === "ms" ? "Sedang bertambah baik" : "Improving now"}</span>
-                  <strong>{subject.improvingNow}</strong>
-                </div>
               </div>
-              <div className="my-subjects-start-row">
-                <span className="my-subjects-start-chip">{locale === "ms" ? "Mula sekarang" : "Start now"}</span>
+
+              <div className="dashboard-v3-start-block">
+                <span className="dashboard-label">{locale === "ms" ? "Sedang bertambah baik" : "Improving now"}</span>
+                <strong>{subject.improvingNow}</strong>
+              </div>
+
+              <div className="dashboard-v3-start-block">
+                <span className="dashboard-label">{locale === "ms" ? "Mula dari" : "Start from"}</span>
                 <strong>{subject.nextLabel}</strong>
               </div>
-              <div className="hero-actions">
-                <a className="btn btn-primary" href={subject.unlocked ? subject.nextHref : "/pricing"}>
-                  {subject.unlocked ? (locale === "ms" ? "Mula sekarang" : "Start now") : locale === "ms" ? "Buka kunci subjek" : "Unlock subject"}
+
+              <div className="dashboard-v3-action-row">
+                <a className={`dashboard-v3-action-primary ${subject.tone}`} href={subject.unlocked ? subject.nextHref : "/pricing"}>
+                  {subject.unlocked ? (locale === "ms" ? "Mula Pelajaran" : "Start Lesson") : locale === "ms" ? "Buka Kunci Subjek" : "Unlock Subject"}
                 </a>
-                <a className="btn btn-secondary" href={subject.href}>
-                  {locale === "ms" ? "Buka butiran" : "Open details"}
+                <a className="dashboard-v3-action-secondary" href={subject.href}>
+                  {locale === "ms" ? `Buka ${subject.name}` : `Open ${subject.name}`}
                 </a>
               </div>
             </article>
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 }

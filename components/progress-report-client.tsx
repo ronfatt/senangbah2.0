@@ -117,23 +117,28 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
     return [
       {
         name: getSubjectDisplayName("English", locale),
-        modules: state.snapshot.englishModules
+        modules: state.snapshot.englishModules,
+        tone: "tone-language"
       },
       {
         name: getSubjectDisplayName("Bahasa Melayu", locale),
-        modules: state.snapshot.bahasaMelayuModules
+        modules: state.snapshot.bahasaMelayuModules,
+        tone: "tone-language"
       },
       {
         name: getSubjectDisplayName("Humanities", locale),
-        modules: state.snapshot.humanitiesModules
+        modules: state.snapshot.humanitiesModules,
+        tone: "tone-humanities"
       },
       {
         name: getSubjectDisplayName("Math", locale),
-        modules: state.snapshot.mathModules
+        modules: state.snapshot.mathModules,
+        tone: "tone-math"
       },
       {
         name: getSubjectDisplayName("Add Math", locale),
-        modules: state.snapshot.addMathModules
+        modules: state.snapshot.addMathModules,
+        tone: "tone-math"
       }
     ].map((subject) => {
       const started = subject.modules.filter((module) => module.attemptsCount > 0);
@@ -144,6 +149,7 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
 
       return {
         name: subject.name,
+        tone: subject.tone,
         mastery,
         startedCount: started.length,
         bestModule:
@@ -155,103 +161,110 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
 
   if (state.status === "env_missing") {
     return (
-      <section className="feature-panel">
-        <p className="eyebrow">Progress report</p>
-        <h2>{locale === "ms" ? "Env Supabase tiada." : "Supabase env is missing."}</h2>
-        <p className="dashboard-helper">
-          {locale === "ms"
-            ? "Tambah kunci awam Supabase dahulu supaya laporan boleh dimuatkan."
-            : "Add your public Supabase keys first so the report can load."}
-        </p>
-      </section>
+      <div className="dashboard-v3">
+        <section className="dashboard-v3-signed-out">
+          <div className="dashboard-v3-signed-out-card">
+            <p className="eyebrow">Progress report</p>
+            <h1>{locale === "ms" ? "Env Supabase tiada." : "Supabase env is missing."}</h1>
+            <p className="dashboard-helper">
+              {locale === "ms"
+                ? "Tambah kunci awam Supabase dahulu supaya laporan boleh dimuatkan."
+                : "Add your public Supabase keys first so the report can load."}
+            </p>
+          </div>
+        </section>
+      </div>
     );
   }
 
   if (state.status === "signed_out") {
     return (
-      <section className="feature-panel">
-        <p className="eyebrow">{locale === "ms" ? "Laporan kemajuan" : "Progress report"}</p>
-        <h2>{locale === "ms" ? "Log masuk untuk lihat laporan anda." : "Login to see your report."}</h2>
-        <p className="dashboard-helper">
-          {locale === "ms"
-            ? "Subjek terkuat anda, bahagian yang lemah, dan langkah seterusnya daripada AI akan muncul di sini selepas anda log masuk."
-            : "Your strongest subject, weak spots, and AI next steps will show here after you sign in."}
-        </p>
-        <div className="hero-actions">
-          <a className="btn btn-primary" href="/login">
-            {locale === "ms" ? "Log Masuk untuk Terus Belajar" : "Login to Continue Learning"}
-          </a>
-          <a className="btn btn-secondary" href="/register">
-            {locale === "ms" ? "Daftar sebagai Ahli" : "Register as Member"}
-          </a>
-        </div>
-      </section>
+      <div className="dashboard-v3">
+        <section className="dashboard-v3-signed-out">
+          <div className="dashboard-v3-signed-out-card">
+            <p className="eyebrow">{locale === "ms" ? "Laporan kemajuan" : "Progress report"}</p>
+            <h1>{locale === "ms" ? "Log masuk untuk lihat laporan anda." : "Login to see your report."}</h1>
+            <p className="dashboard-helper">
+              {locale === "ms"
+                ? "Subjek terkuat anda, bahagian yang lemah, dan langkah seterusnya daripada AI akan muncul di sini selepas anda log masuk."
+                : "Your strongest subject, weak spots, and AI next steps will show here after you sign in."}
+            </p>
+            <div className="hero-actions">
+              <a className="btn btn-primary" href="/login">
+                {locale === "ms" ? "Log Masuk untuk Terus Belajar" : "Login to Continue Learning"}
+              </a>
+              <a className="btn btn-secondary" href="/register">
+                {locale === "ms" ? "Daftar sebagai Ahli" : "Register as Member"}
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
     );
   }
 
   if (state.status === "loading" || !state.snapshot) {
     return (
-      <section className="feature-panel">
-        <p className="eyebrow">{locale === "ms" ? "Laporan kemajuan" : "Progress report"}</p>
-        <h2>{locale === "ms" ? "Sedang memuatkan laporan anda..." : "Loading your report..."}</h2>
-      </section>
+      <div className="dashboard-v3">
+        <section className="dashboard-v3-signed-out">
+          <div className="dashboard-v3-signed-out-card">
+            <p className="eyebrow">{locale === "ms" ? "Laporan kemajuan" : "Progress report"}</p>
+            <h1>{locale === "ms" ? "Sedang memuatkan laporan anda..." : "Loading your report..."}</h1>
+          </div>
+        </section>
+      </div>
     );
   }
 
   const snapshot = state.snapshot;
 
   return (
-    <>
-      <section className="section section-split">
-        <article className="feature-panel">
-          <p className="eyebrow">{locale === "ms" ? "Rumusan AI" : "AI summary"}</p>
-          <h1 className="dashboard-title">{snapshot.reportSummary?.headline || "Your study story is starting to form."}</h1>
-          <p className="landing-lead">
-            {locale === "ms"
-              ? `${snapshot.displayName}, halaman ini menunjukkan apa yang sedang bertambah baik, apa yang masih perlu dibaiki, dan langkah paling jelas yang patut anda ambil sekarang.`
-              : `${snapshot.displayName}, this page shows what is improving, what still needs work, and the clearest next step to take now.`}
-          </p>
-          <div className="hero-actions">
-            <a className="btn btn-primary" href={snapshot.reportSummary?.nextActions?.[0]?.href || "/dashboard"}>
-              {snapshot.reportSummary?.nextActions?.[0]?.label ||
-                (locale === "ms" ? "Kembali ke Dashboard" : "Back to Dashboard")}
-            </a>
-            <a className="btn btn-secondary" href="/dashboard">
-              {locale === "ms" ? "Buka Dashboard" : "Open Dashboard"}
-            </a>
-          </div>
-        </article>
+    <div className="dashboard-v3 progress-v3">
+      <section className="dashboard-v3-hero dashboard-v3-page-hero">
+        <p className="dashboard-v3-welcome">{locale === "ms" ? "Rumusan AI" : "AI summary"}</p>
+        <h1>{locale === "ms" ? "Progress Report" : "Progress Report"} 📈</h1>
+        <p className="dashboard-v3-hero-copy">
+          {snapshot.reportSummary?.headline ||
+            (locale === "ms"
+              ? `${snapshot.displayName}, halaman ini menunjukkan apa yang bertambah baik, apa yang masih perlu dibaiki, dan langkah paling jelas yang patut anda ambil sekarang.`
+              : `${snapshot.displayName}, this page shows what is improving, what still needs work, and the clearest next step to take now.`)}
+        </p>
+        <div className="dashboard-v3-hero-actions">
+          <a className="btn btn-primary" href={snapshot.reportSummary?.nextActions?.[0]?.href || "/dashboard"}>
+            {snapshot.reportSummary?.nextActions?.[0]?.label || (locale === "ms" ? "Kembali ke Dashboard" : "Back to Dashboard")}
+          </a>
+          <a className="btn btn-secondary" href="/dashboard">
+            {locale === "ms" ? "Buka Dashboard" : "Open Dashboard"}
+          </a>
+        </div>
+      </section>
 
-        <article className="feature-panel alt">
-          <p className="eyebrow">{locale === "ms" ? "Ringkasan laporan" : "Report snapshot"}</p>
-          <div className="progress-metric-grid">
-            <div className="progress-metric">
-              <span className="dashboard-label">{locale === "ms" ? "Keahlian" : "Membership"}</span>
-              <strong>{snapshot.membershipLabel}</strong>
-            </div>
-            <div className="progress-metric">
-              <span className="dashboard-label">{locale === "ms" ? "Sasaran mingguan" : "Weekly target"}</span>
-              <strong>
-                {snapshot.weeklyCompletedCount}/{snapshot.weeklyTarget}
-              </strong>
-            </div>
-            <div className="progress-metric">
-              <span className="dashboard-label">{locale === "ms" ? "Purata ketepatan" : "Average accuracy"}</span>
-              <strong>{snapshot.averageAccuracy}%</strong>
-            </div>
-            <div className="progress-metric">
-              <span className="dashboard-label">{locale === "ms" ? "Mata bintang" : "Star points"}</span>
-              <strong>{snapshot.totalStarPoints} pts</strong>
-            </div>
-          </div>
+      <section className="dashboard-v3-summary-grid progress-v3-metric-grid">
+        <article className="dashboard-v3-summary-card tone-blue">
+          <p className="dashboard-label">{locale === "ms" ? "Keahlian" : "Membership"}</p>
+          <h2>{snapshot.membershipLabel}</h2>
+        </article>
+        <article className="dashboard-v3-summary-card tone-pink">
+          <p className="dashboard-label">{locale === "ms" ? "Sasaran mingguan" : "Weekly target"}</p>
+          <h2>{snapshot.weeklyCompletedCount}/{snapshot.weeklyTarget}</h2>
+        </article>
+        <article className="dashboard-v3-summary-card tone-blue">
+          <p className="dashboard-label">{locale === "ms" ? "Purata ketepatan" : "Average accuracy"}</p>
+          <h2>{snapshot.averageAccuracy}%</h2>
+        </article>
+        <article className="dashboard-v3-summary-card tone-pink">
+          <p className="dashboard-label">{locale === "ms" ? "Mata bintang" : "Star points"}</p>
+          <h2>{snapshot.totalStarPoints} pts</h2>
         </article>
       </section>
 
-      <section className="section section-split">
-        <article className="feature-panel">
-          <p className="eyebrow">{locale === "ms" ? "Yang sedang bertambah baik" : "What is improving"}</p>
-          <h2>{locale === "ms" ? "Inilah bahagian anda yang lebih kuat sekarang." : "These are your stronger areas right now."}</h2>
-          <ul className="feature-list">
+      <section className="dashboard-v3-summary-grid dashboard-v3-summary-grid-compact">
+        <article className="dashboard-v3-summary-card tone-blue">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Yang sedang bertambah baik" : "What is improving"}</p></div>
+            <span className="dashboard-v3-icon-box tone-live">↑</span>
+          </div>
+          <ul className="feature-list progress-v3-list">
             {(snapshot.reportSummary?.strongestNow.length
               ? snapshot.reportSummary.strongestNow
               : [locale === "ms" ? "Mulakan beberapa misi supaya bahagian terkuat anda muncul di sini." : "Start a few missions so your stronger areas show up here."]).map((item) => (
@@ -260,10 +273,12 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
           </ul>
         </article>
 
-        <article className="feature-panel alt">
-          <p className="eyebrow">{locale === "ms" ? "Perlu dibaiki sekarang" : "Needs work now"}</p>
-          <h2>{locale === "ms" ? "Inilah pembaikan yang paling berguna untuk dibuat seterusnya." : "These are the most useful fixes to make next."}</h2>
-          <ul className="feature-list">
+        <article className="dashboard-v3-summary-card tone-pink">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Perlu dibaiki sekarang" : "Needs work now"}</p></div>
+            <span className="dashboard-v3-icon-box tone-achievements">!</span>
+          </div>
+          <ul className="feature-list progress-v3-list">
             {(snapshot.reportSummary?.needsWorkNow.length
               ? snapshot.reportSummary.needsWorkNow
               : [locale === "ms" ? "Bahagian lemah seterusnya akan muncul di sini selepas beberapa cubaan disimpan." : "Your next weak spot will appear here after a few saved attempts."]).map((item) => (
@@ -273,49 +288,46 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
         </article>
       </section>
 
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">{locale === "ms" ? "Langkah seterusnya oleh AI" : "AI next steps"}</p>
-            <h2>{locale === "ms" ? "Buat ini seterusnya jika anda mahu peningkatan paling cepat." : "Do these next if you want the fastest improvement."}</h2>
-          </div>
+      <section className="dashboard-v3-journey">
+        <div className="dashboard-v3-section-copy">
+          <p className="eyebrow">{locale === "ms" ? "Langkah seterusnya oleh AI" : "AI next steps"}</p>
+          <h2>{locale === "ms" ? "Buat ini seterusnya jika anda mahu peningkatan paling cepat." : "Do these next if you want the fastest improvement."}</h2>
         </div>
-        <div className="subject-lane-grid">
-          {(snapshot.reportSummary?.nextActions || []).map((action) => (
-            <article className="subject-lane-card tone-language" key={action.href}>
-              <p className="dashboard-label">{locale === "ms" ? "Tindakan seterusnya" : "Next action"}</p>
-              <h3>{action.label}</h3>
-              <p className="dashboard-helper">{action.helper}</p>
-              <div className="hero-actions">
-                <a className="btn btn-primary" href={action.href}>
-                  {locale === "ms" ? "Mula sekarang" : "Start Now"}
-                </a>
+        <div className="dashboard-v3-journey-list">
+          {(snapshot.reportSummary?.nextActions || []).map((action, index) => (
+            <a className={`dashboard-v3-journey-card ${index % 2 === 0 ? "tone-progress" : "tone-goals"}`} href={action.href} key={action.href}>
+              <span className={`dashboard-v3-icon-box ${index % 2 === 0 ? "tone-progress" : "tone-goals"}`}>{index + 1}</span>
+              <div className="dashboard-v3-journey-copy">
+                <h3>{action.label}</h3>
+                <p>{action.helper}</p>
               </div>
-            </article>
+              <span className="dashboard-v3-arrow">›</span>
+            </a>
           ))}
         </div>
       </section>
 
-      <section className="section">
-        <div className="table-head">
-          <div>
-            <p className="eyebrow">{locale === "ms" ? "Kemajuan subjek" : "Subject progress"}</p>
-            <h2>{locale === "ms" ? "Lihat subjek mana yang bergerak dan yang mana masih perlukan dorongan pertama." : "See which subjects are moving and which still need a first push."}</h2>
-          </div>
+      <section className="dashboard-v3-subjects">
+        <div className="dashboard-v3-section-copy">
+          <p className="eyebrow">{locale === "ms" ? "Kemajuan subjek" : "Subject progress"}</p>
+          <h2>{locale === "ms" ? "Lihat subjek mana yang bergerak dan yang mana masih perlukan dorongan pertama." : "See which subjects are moving and which still need a first push."}</h2>
         </div>
-        <div className="subject-lane-grid">
+        <div className="dashboard-v3-subject-grid">
           {subjectCards.map((subject) => (
-            <article className="subject-lane-card tone-humanities" key={subject.name}>
-              <p className="dashboard-label">
-                {locale === "ms" ? `${subject.startedCount} modul dimulakan` : `${subject.startedCount} module(s) started`}
-              </p>
-              <h3>{subject.name}</h3>
-              <div className="momentum-stack">
-                <div className="momentum-item">
+            <article className={`dashboard-v3-subject-card ${subject.tone}`} key={subject.name}>
+              <div className="dashboard-v3-subject-head">
+                <div>
+                  <p className="dashboard-label">{locale === "ms" ? `${subject.startedCount} modul dimulakan` : `${subject.startedCount} module(s) started`}</p>
+                  <h3>{subject.name}</h3>
+                </div>
+                <span className={`dashboard-v3-icon-box ${subject.tone}`}>{subject.name.slice(0, 2).toUpperCase()}</span>
+              </div>
+              <div className="dashboard-v3-metrics">
+                <div>
                   <span className="dashboard-label">{locale === "ms" ? "Penguasaan" : "Mastery"}</span>
                   <strong>{subject.mastery}%</strong>
                 </div>
-                <div className="momentum-item">
+                <div>
                   <span className="dashboard-label">{locale === "ms" ? "Modul terbaik" : "Best module"}</span>
                   <strong>{subject.bestModule}</strong>
                 </div>
@@ -325,10 +337,12 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
         </div>
       </section>
 
-      <section className="section section-split">
-        <article className="feature-panel">
-          <p className="eyebrow">{locale === "ms" ? "Kejayaan terkini" : "Recent wins"}</p>
-          <h2>{locale === "ms" ? "Apa yang baru bertambah baik dalam sesi terbaru anda." : "What just improved in your latest sessions."}</h2>
+      <section className="dashboard-v3-summary-grid dashboard-v3-summary-grid-compact">
+        <article className="dashboard-v3-summary-card tone-blue">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Kejayaan terkini" : "Recent wins"}</p></div>
+            <span className="dashboard-v3-icon-box tone-blue">★</span>
+          </div>
           <div className="momentum-stack">
             {snapshot.recentActivity.slice(0, 4).map((activity) => (
               <div className="momentum-item" key={`${activity.createdAt}-${activity.moduleName}`}>
@@ -346,10 +360,12 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
           </div>
         </article>
 
-        <article className="feature-panel alt">
-          <p className="eyebrow">{locale === "ms" ? "Nasihat AI" : "AI advice"}</p>
-          <h2>{locale === "ms" ? "Nasihat ringkas yang boleh anda guna hari ini." : "Simple advice you can act on today."}</h2>
-          <ul className="feature-list">
+        <article className="dashboard-v3-summary-card tone-pink">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Nasihat AI" : "AI advice"}</p></div>
+            <span className="dashboard-v3-icon-box tone-pink">AI</span>
+          </div>
+          <ul className="feature-list progress-v3-list">
             {(snapshot.reportSummary?.aiAdvice?.length
               ? snapshot.reportSummary.aiAdvice
               : [
@@ -368,6 +384,6 @@ export function ProgressReportClient({ locale }: { locale: AppLocale }) {
           </ul>
         </article>
       </section>
-    </>
+    </div>
   );
 }

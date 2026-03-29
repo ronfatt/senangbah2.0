@@ -116,16 +116,19 @@ export function UpgradeIntentPanel({ planCode, planName, priceLabel, locale }: U
   }
 
   return (
-    <section className="feature-panel">
-      <p className="eyebrow">{isMalay ? "Langkah seterusnya" : "Next step"}</p>
-      <h2>{isMalay ? `Sediakan ${planName}.` : `Get ${planName} ready.`}</h2>
+    <section className="dashboard-v3-summary-card tone-pink upgrade-v3-intent-card">
+      <div className="dashboard-v3-summary-head">
+        <div><p className="dashboard-label">{isMalay ? "Langkah seterusnya" : "Next step"}</p></div>
+        <span className="dashboard-v3-icon-box tone-achievements">→</span>
+      </div>
+      <p className="dashboard-v3-summary-title">{isMalay ? `Sediakan ${planName}.` : `Get ${planName} ready.`}</p>
       <p className="dashboard-helper">
         {isMalay
           ? `Laluan keahlian ${priceLabel}. Ini akan mengesahkan pelan, akaun anda, dan langkah pembayaran seterusnya.`
           : `${priceLabel} membership path. This will confirm the plan, your account, and the next payment step.`}
       </p>
 
-      <div className="hero-actions">
+      <div className="dashboard-v3-action-row">
         <button className="btn btn-primary" disabled={isSubmitting} onClick={handlePrepare} type="button">
           {isSubmitting
             ? isMalay

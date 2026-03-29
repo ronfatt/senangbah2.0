@@ -57,33 +57,35 @@ export default async function SubjectModulePage({
   }
 
   return (
-    <main className="page-shell">
-      <section className="subject-hero">
-        <div className="subject-hero-copy">
-          <p className="eyebrow">{subject.name}</p>
-          <h1 className="dashboard-title">{module.name}</h1>
-          <p className="hero-text">{module.summary}</p>
-          <div className="hero-actions">
-            <a className="btn btn-primary" href="#practice-task">
-              {locale === "ms" ? "Mulakan misi" : "Start mission"}
-            </a>
-            <a className="btn btn-secondary" href={`/subjects/${subject.slug}`}>
-              {locale === "ms" ? `Kembali ke ${subject.name}` : `Back to ${subject.name}`}
-            </a>
-          </div>
-        </div>
-
-        <div className="hero-panel">
-          <p className="panel-label">{locale === "ms" ? "Tugasan hari ini" : "Today&apos;s task"}</p>
-          <h2>{module.lessonFormat}</h2>
-          <p className="hero-text">{module.mission}</p>
+    <main className="page-shell dashboard-shell dashboard-shell-v3 module-page-v3">
+      <section className="dashboard-v3-hero dashboard-v3-page-hero">
+        <p className="dashboard-v3-welcome">{subject.name}</p>
+        <h1>{module.name}</h1>
+        <p className="dashboard-v3-hero-copy">
+          {module.summary}{" "}
+          {locale === "ms"
+            ? "Selesaikan satu tugasan ringkas, semak maklum balas AI, dan teruskan dengan langkah seterusnya yang jelas."
+            : "Finish one short task, review the AI feedback, and continue with a clear next step."}
+        </p>
+        <div className="dashboard-v3-hero-actions">
+          <a className="btn btn-primary" href="#practice-task">
+            {locale === "ms" ? "Mulakan Misi" : "Start Mission"}
+          </a>
+          <a className="btn btn-secondary" href={`/subjects/${subject.slug}`}>
+            {locale === "ms" ? `Kembali ke ${subject.name}` : `Back to ${subject.name}`}
+          </a>
         </div>
       </section>
 
-      <section className="section section-split practice-intro-grid">
-        <article className="feature-panel">
-          <p className="eyebrow">{locale === "ms" ? "Apa yang perlu dibuat" : "What to do"}</p>
-          <h2>{locale === "ms" ? "Selesaikan satu misi ringkas dan dapatkan maklum balas segera." : "Finish one short mission and get instant feedback."}</h2>
+      <section className="dashboard-v3-summary-grid dashboard-v3-summary-grid-compact module-page-v3-intro">
+        <article className="dashboard-v3-summary-card tone-blue">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Apa yang perlu dibuat" : "What to do"}</p></div>
+            <span className="dashboard-v3-icon-box tone-progress">1</span>
+          </div>
+          <p className="dashboard-v3-summary-title">
+            {locale === "ms" ? "Selesaikan satu misi ringkas dan dapatkan maklum balas segera." : "Finish one short mission and get instant feedback."}
+          </p>
           <ul className="feature-list">
             <li>{locale === "ms" ? "Baca tugasan dahulu" : "Read the task first"}</li>
             <li>{locale === "ms" ? "Jawab atau tulis dengan jelas" : "Answer or write clearly"}</li>
@@ -91,14 +93,28 @@ export default async function SubjectModulePage({
           </ul>
         </article>
 
-        <article className="feature-panel alt">
-          <p className="eyebrow">{locale === "ms" ? "Apa yang anda dapat" : "What you get"}</p>
-          <h2>{locale === "ms" ? "Satu misi akan mengemas kini bintang, mata, dan kemajuan anda." : "One mission updates your stars, points, and progress."}</h2>
+        <article className="dashboard-v3-summary-card tone-pink">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Apa yang anda dapat" : "What you get"}</p></div>
+            <span className="dashboard-v3-icon-box tone-achievements">AI</span>
+          </div>
+          <p className="dashboard-v3-summary-title">
+            {locale === "ms" ? "Satu misi akan mengemas kini bintang, mata, dan kemajuan anda." : "One mission updates your stars, points, and progress."}
+          </p>
           <ul className="feature-list">
             <li>{locale === "ms" ? "Maklum balas gaya AI" : "AI-style feedback"}</li>
             <li>{locale === "ms" ? "Kemajuan kembali ke dashboard" : "Progress back to dashboard"}</li>
             <li>{locale === "ms" ? "Langkah seterusnya yang jelas selepas anda selesai" : "Clear next move after you finish"}</li>
           </ul>
+        </article>
+
+        <article className="dashboard-v3-summary-card tone-blue">
+          <div className="dashboard-v3-summary-head">
+            <div><p className="dashboard-label">{locale === "ms" ? "Tugasan hari ini" : "Today’s task"}</p></div>
+            <span className="dashboard-v3-icon-box tone-live">→</span>
+          </div>
+          <p className="dashboard-v3-summary-title">{module.lessonFormat}</p>
+          <p className="dashboard-helper">{module.mission}</p>
         </article>
       </section>
 
