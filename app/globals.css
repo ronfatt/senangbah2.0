@@ -5417,6 +5417,17 @@ a {
   padding-bottom: 18px;
 }
 
+.avatar-layered-preview {
+  position: relative;
+  width: min(100%, 220px);
+  display: grid;
+  place-items: center;
+}
+
+.avatar-layered-preview-compact {
+  width: min(100%, 184px);
+}
+
 .avatar-body {
   width: 192px;
   min-height: 280px;
@@ -5666,6 +5677,15 @@ a {
 
 .avatar-default-image-compact {
   width: min(100%, 180px);
+}
+
+.avatar-overlay-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .avatar-hair-study-bob {

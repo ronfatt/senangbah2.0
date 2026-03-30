@@ -1,0 +1,12 @@
+<svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shoe" x1="270" y1="590" x2="500" y2="668" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7E74FF"/>
+      <stop offset="1" stop-color="#3CC1FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M290 618H374C390 618 404 630 404 646C404 662 390 674 374 674H290C274 674 260 662 260 646C260 630 274 618 290 618Z" fill="url(#shoe)"/>
+  <path d="M394 618H478C494 618 508 630 508 646C508 662 494 674 478 674H394C378 674 364 662 364 646C364 630 378 618 394 618Z" fill="url(#shoe)"/>
+  <path d="M304 638H374" stroke="#F5FCFF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M408 638H478" stroke="#F5FCFF" stroke-width="10" stroke-linecap="round"/>
+</svg>

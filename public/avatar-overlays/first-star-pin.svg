@@ -1,0 +1,10 @@
+<svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="star" x1="402" y1="318" x2="476" y2="396" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD84D"/>
+      <stop offset="1" stop-color="#FF9F2A"/>
+    </linearGradient>
+  </defs>
+  <path d="M436 320L448 346H476L454 362L464 388L436 372L408 388L418 362L396 346H424L436 320Z" fill="url(#star)"/>
+  <circle cx="436" cy="348" r="10" fill="#FFF5CC"/>
+</svg>

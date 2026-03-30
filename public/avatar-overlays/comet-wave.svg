@@ -1,0 +1,12 @@
+<svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hair" x1="280" y1="74" x2="504" y2="270" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6E48D3"/>
+      <stop offset="0.6" stop-color="#5E68FF"/>
+      <stop offset="1" stop-color="#FF57BE"/>
+    </linearGradient>
+  </defs>
+  <path d="M278 92C314 52 350 34 384 34C424 34 468 58 496 98L516 130L496 214C484 262 450 290 412 296H352C314 290 280 262 268 214L250 132L278 92Z" fill="url(#hair)"/>
+  <path d="M300 112C330 86 352 76 384 76C416 76 440 90 468 116" stroke="#FFF0FF" stroke-opacity="0.24" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="496" cy="82" r="16" fill="#FFD84D"/>
+</svg>

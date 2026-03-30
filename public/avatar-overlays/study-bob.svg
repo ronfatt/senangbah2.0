@@ -1,0 +1,10 @@
+<svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hair" x1="286" y1="84" x2="496" y2="270" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6F5545"/>
+      <stop offset="1" stop-color="#4E392D"/>
+    </linearGradient>
+  </defs>
+  <path d="M286 94C314 56 352 36 384 36C416 36 454 56 482 94L506 128L492 208C480 248 452 274 418 286H350C316 274 288 248 276 208L262 128L286 94Z" fill="url(#hair)"/>
+  <path d="M302 110C326 84 352 72 384 72C416 72 442 84 466 110" stroke="#B79780" stroke-opacity="0.28" stroke-width="16" stroke-linecap="round"/>
+</svg>

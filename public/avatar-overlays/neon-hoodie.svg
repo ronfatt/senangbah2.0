@@ -1,0 +1,15 @@
+<svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hoodie" x1="278" y1="252" x2="494" y2="484" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A346FF"/>
+      <stop offset="1" stop-color="#FF4DB1"/>
+    </linearGradient>
+  </defs>
+  <path d="M300 252H468L522 312L500 470H268L246 312L300 252Z" fill="url(#hoodie)"/>
+  <path d="M334 232C334 204 356 182 384 182C412 182 434 204 434 232V274H334V232Z" fill="#C76EFF"/>
+  <path d="M286 292L242 422" stroke="#7A2BE3" stroke-width="42" stroke-linecap="round"/>
+  <path d="M482 292L526 422" stroke="#7A2BE3" stroke-width="42" stroke-linecap="round"/>
+  <path d="M354 320L366 364" stroke="#FDEBFF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M414 320L402 364" stroke="#FDEBFF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M334 392H434" stroke="#FFD84D" stroke-width="16" stroke-linecap="round"/>
+</svg>

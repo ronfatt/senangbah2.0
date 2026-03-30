@@ -13,6 +13,7 @@ export type AvatarCatalogItem = {
   imageSrc: string;
   imageReady: boolean;
   imagePrompt: string;
+  overlaySrc?: string;
 };
 
 export const avatarCatalog: AvatarCatalogItem[] = [
@@ -29,7 +30,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/study-bob.png",
     imageReady: true,
     imagePrompt:
-      "A neat student hairstyle, short bob haircut, simple and clean, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A neat student hairstyle, short bob haircut, simple and clean, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/study-bob.svg"
   },
   {
     code: "hair-comet-wave",
@@ -44,7 +46,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/comet-wave.png",
     imageReady: true,
     imagePrompt:
-      "A stylish wavy hairstyle with a slightly cosmic playful feel, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A stylish wavy hairstyle with a slightly cosmic playful feel, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/comet-wave.svg"
   },
   {
     code: "top-campus-tee",
@@ -59,7 +62,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/campus-tee.png",
     imageReady: true,
     imagePrompt:
-      "A purple student t-shirt with a small school badge on the chest, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A purple student t-shirt with a small school badge on the chest, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/campus-tee.svg"
   },
   {
     code: "top-neon-hoodie",
@@ -74,7 +78,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/neon-hoodie.png",
     imageReady: true,
     imagePrompt:
-      "A bright neon purple hoodie with sporty futuristic details, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A bright neon purple hoodie with sporty futuristic details, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/neon-hoodie.svg"
   },
   {
     code: "bottom-classic-pants",
@@ -89,7 +94,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/classic-pants.png",
     imageReady: true,
     imagePrompt:
-      "A pair of simple light beige student pants, clean and classic, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A pair of simple light beige student pants, clean and classic, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/classic-pants.svg"
   },
   {
     code: "bottom-explorer-cargo",
@@ -104,7 +110,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/explorer-cargo.png",
     imageReady: true,
     imagePrompt:
-      "A pair of explorer-style cargo pants with pocket details, adventurous but clean, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A pair of explorer-style cargo pants with pocket details, adventurous but clean, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/explorer-cargo.svg"
   },
   {
     code: "shoes-daily-runner",
@@ -119,7 +126,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/daily-runner.png",
     imageReady: true,
     imagePrompt:
-      "A pair of sporty everyday sneakers, simple and energetic, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A pair of sporty everyday sneakers, simple and energetic, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/daily-runner.svg"
   },
   {
     code: "shoes-cosmic-high",
@@ -134,7 +142,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/cosmic-high-tops.png",
     imageReady: true,
     imagePrompt:
-      "A pair of high-top cosmic sneakers with bright futuristic details, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A pair of high-top cosmic sneakers with bright futuristic details, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/cosmic-high-tops.svg"
   },
   {
     code: "accessory-first-star-pin",
@@ -149,7 +158,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/first-star-pin.png",
     imageReady: true,
     imagePrompt:
-      "A small shiny star badge pin accessory, bright and cute, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A small shiny star badge pin accessory, bright and cute, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/first-star-pin.svg"
   },
   {
     code: "accessory-streak-headset",
@@ -164,7 +174,8 @@ export const avatarCatalog: AvatarCatalogItem[] = [
     imageSrc: "/avatar-items/streak-headset.png",
     imageReady: true,
     imagePrompt:
-      "A sporty premium headset accessory with a lively student energy, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects."
+      "A sporty premium headset accessory with a lively student energy, cute 2.5D wearable item icon, slightly Roblox-like, front-facing, centered, rounded blocky shapes, toy-like material, soft studio lighting, subtle depth and shadow, polished mobile game asset style, transparent background, no text, no background scene, no extra objects.",
+    overlaySrc: "/avatar-overlays/streak-headset.svg"
   }
 ];
 
@@ -245,6 +256,10 @@ function getWeekKey(referenceDate: Date) {
 
 export function getAvatarPreviewTone(itemCode: string | null | undefined) {
   return avatarCatalog.find((item) => item.code === itemCode)?.previewTone || null;
+}
+
+export function getAvatarOverlaySrc(itemCode: string | null | undefined) {
+  return avatarCatalog.find((item) => item.code === itemCode)?.overlaySrc || null;
 }
 
 export function getCollectionMission(collectionName: string) {
