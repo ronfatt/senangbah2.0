@@ -14,6 +14,13 @@ export type SubjectDefinition = {
     mission: string;
   }[];
   focusAreas: string[];
+  weeklyFocus: {
+    headline: string;
+    headlineMs: string;
+    why: string;
+    whyMs: string;
+    moduleSlug: string;
+  };
   launchState: string;
   isCore: boolean;
   bundle: string;
@@ -62,6 +69,13 @@ export const subjectDefinitions: SubjectDefinition[] = [
       }
     ],
     focusAreas: ["Daily mission flow", "Skill-tagged feedback", "SPM-aligned revision"],
+    weeklyFocus: {
+      headline: "Sentence clarity",
+      headlineMs: "Kejelasan ayat",
+      why: "Clearer sentence flow helps essays sound stronger and more mature.",
+      whyMs: "Aliran ayat yang lebih jelas membantu karangan berbunyi lebih kuat dan matang.",
+      moduleSlug: "writing-coach"
+    },
     launchState: "Core launch",
     isCore: true,
     bundle: "Language Pack"
@@ -100,6 +114,13 @@ export const subjectDefinitions: SubjectDefinition[] = [
       }
     ],
     focusAreas: ["Language confidence", "Revision rhythm", "Writing structure support"],
+    weeklyFocus: {
+      headline: "Ayat gramatis",
+      headlineMs: "Ayat gramatis",
+      why: "Stronger sentence structure supports both tatabahasa and karangan marks.",
+      whyMs: "Struktur ayat yang lebih kuat membantu markah tatabahasa dan karangan.",
+      moduleSlug: "tatabahasa"
+    },
     launchState: "Core launch",
     isCore: true,
     bundle: "Language Pack"
@@ -138,6 +159,13 @@ export const subjectDefinitions: SubjectDefinition[] = [
       }
     ],
     focusAreas: ["Fact retention", "Chronology review", "Source-based answering"],
+    weeklyFocus: {
+      headline: "Fakta + huraian",
+      headlineMs: "Fakta + huraian",
+      why: "Students score better when facts are linked to a clearer explanation.",
+      whyMs: "Pelajar skor lebih baik apabila fakta dihubungkan dengan huraian yang lebih jelas.",
+      moduleSlug: "source-question-drill"
+    },
     launchState: "Premium expansion",
     isCore: false,
     bundle: "Humanities Pack"
@@ -176,6 +204,13 @@ export const subjectDefinitions: SubjectDefinition[] = [
       }
     ],
     focusAreas: ["Map literacy", "Data interpretation", "Answer structure"],
+    weeklyFocus: {
+      headline: "Data reading",
+      headlineMs: "Pembacaan data",
+      why: "Reading maps and charts more clearly reduces vague Geografi answers.",
+      whyMs: "Membaca peta dan carta dengan lebih jelas mengurangkan jawapan Geografi yang kabur.",
+      moduleSlug: "map-and-data-drill"
+    },
     launchState: "Premium expansion",
     isCore: false,
     bundle: "Humanities Pack"
@@ -214,6 +249,13 @@ export const subjectDefinitions: SubjectDefinition[] = [
       }
     ],
     focusAreas: ["Topic mastery", "Mistake tracking", "Revision accuracy"],
+    weeklyFocus: {
+      headline: "Algebra steps",
+      headlineMs: "Langkah algebra",
+      why: "Cleaner algebra working reduces method mistakes across many topics.",
+      whyMs: "Langkah algebra yang lebih kemas mengurangkan kesilapan kaedah dalam banyak topik.",
+      moduleSlug: "topic-practice"
+    },
     launchState: "Premium expansion",
     isCore: false,
     bundle: "Math Pack"
@@ -252,6 +294,13 @@ export const subjectDefinitions: SubjectDefinition[] = [
       }
     ],
     focusAreas: ["Step precision", "Advanced topics", "Higher difficulty confidence"],
+    weeklyFocus: {
+      headline: "Step precision",
+      headlineMs: "Ketepatan langkah",
+      why: "One clean step at a time builds confidence on harder Add Math questions.",
+      whyMs: "Satu langkah yang tepat pada satu masa membina keyakinan untuk soalan Add Math yang lebih sukar.",
+      moduleSlug: "step-check-drill"
+    },
     launchState: "Premium expansion",
     isCore: false,
     bundle: "Math Pack"

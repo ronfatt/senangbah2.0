@@ -130,6 +130,9 @@ export function MySubjectsClient({ locale }: { locale: AppLocale }) {
         totalModules: subject.modules.length,
         readyCount: readyModules.length,
         nextLabel: firstModule?.name || (locale === "ms" ? "Buka subjek" : "Open subject"),
+        weeklyFocusHeadline: locale === "ms" ? subject.weeklyFocus.headlineMs : subject.weeklyFocus.headline,
+        weeklyFocusWhy: locale === "ms" ? subject.weeklyFocus.whyMs : subject.weeklyFocus.why,
+        weeklyFocusHref: `/subjects/${subject.slug}/${subject.weeklyFocus.moduleSlug}`,
         needsWork:
           subjectCoach?.weakest?.name ||
           (unlocked
@@ -272,6 +275,21 @@ export function MySubjectsClient({ locale }: { locale: AppLocale }) {
               </div>
 
               <p className="dashboard-helper">{subject.summary}</p>
+
+              <div className="dashboard-v3-focus-block">
+                <span className="dashboard-label">{locale === "ms" ? "Fokus minggu ini" : "Weekly focus"}</span>
+                <strong>{subject.weeklyFocusHeadline}</strong>
+                <p className="dashboard-helper">{subject.weeklyFocusWhy}</p>
+                <a className="mini-link" href={subject.unlocked ? subject.weeklyFocusHref : "/pricing"}>
+                  {subject.unlocked
+                    ? locale === "ms"
+                      ? "Buka fokus minggu ini"
+                      : "Open this week's focus"
+                    : locale === "ms"
+                      ? "Buka kunci fokus ini"
+                      : "Unlock this focus"}
+                </a>
+              </div>
 
               <div className="dashboard-v3-metrics">
                 <div>

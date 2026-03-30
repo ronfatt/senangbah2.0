@@ -284,18 +284,34 @@ export function SubjectHubClient({ subject, locale }: { subject: SubjectDefiniti
         <article className="dashboard-v3-summary-card tone-blue">
           <div className="dashboard-v3-summary-head">
             <div>
-              <p className="dashboard-label">{locale === "ms" ? "Subjek ini membantu anda" : "This subject helps you"}</p>
+              <p className="dashboard-label">{locale === "ms" ? "Fokus minggu ini" : "Weekly focus"}</p>
             </div>
             <span className="dashboard-v3-icon-box tone-live">↑</span>
           </div>
           <p className="dashboard-v3-summary-title">
             {locale === "ms"
-              ? "Fokus pada satu kemahiran penting dahulu, kemudian tambah yang lain."
-              : "Focus on one important skill first, then add the rest."}
+              ? subject.weeklyFocus.headlineMs
+              : subject.weeklyFocus.headline}
           </p>
           <p className="dashboard-helper">
-            {subject.focusAreas[0]}
+            {locale === "ms"
+              ? subject.weeklyFocus.whyMs
+              : subject.weeklyFocus.why}
           </p>
+          <div className="dashboard-v3-action-row">
+            <a
+              className={`dashboard-v3-action-primary ${toneClass}`}
+              href={access.isUnlocked || subject.isCore ? `/subjects/${subject.slug}/${subject.weeklyFocus.moduleSlug}` : "/pricing"}
+            >
+              {access.isUnlocked || subject.isCore
+                ? locale === "ms"
+                  ? "Mula fokus minggu ini"
+                  : "Start weekly focus"
+                : locale === "ms"
+                  ? "Lihat keahlian"
+                  : "View memberships"}
+            </a>
+          </div>
         </article>
       </section>
 
