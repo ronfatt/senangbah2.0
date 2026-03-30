@@ -7,6 +7,7 @@ export function AvatarPreviewFigure({
   equippedBySlot: Map<string, { itemCode: string; itemName: string }>;
   compact?: boolean;
 }) {
+  const defaultBaseAvatarSrc = "/avatar-items/default-avatar-base.png";
   const hairItemCode = equippedBySlot.get("hair")?.itemCode;
   const topItemCode = equippedBySlot.get("top")?.itemCode;
   const bottomItemCode = equippedBySlot.get("bottom")?.itemCode;
@@ -27,6 +28,21 @@ export function AvatarPreviewFigure({
 
   const showAccessory = Boolean(accessoryTone);
   const showTopBadge = Boolean(topTone) && topItemCode !== "top-campus-tee";
+
+  if (isDefaultBase) {
+    return (
+      <div className={`avatar-figure${compact ? " avatar-figure-compact" : ""}`}>
+        <div className="avatar-stage avatar-stage-default avatar-stage-image">
+          <img
+            alt="Default avatar base"
+            className={`avatar-default-image${compact ? " avatar-default-image-compact" : ""}`}
+            src={defaultBaseAvatarSrc}
+          />
+          <div className="avatar-shadow avatar-shadow-image" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`avatar-figure${compact ? " avatar-figure-compact" : ""}`}>

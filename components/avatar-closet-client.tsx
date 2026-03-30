@@ -52,7 +52,6 @@ type ClosetCelebration = {
 
 export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
   const isMalay = locale === "ms";
-  const defaultBaseAvatarSrc = "/avatar-items/default-avatar-base.png";
   const [closet, setCloset] = useState<ClosetSnapshot | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "signed_out" | "env_missing" | "schema_missing" | "error">(
     hasPublicSupabaseEnv() ? "loading" : "env_missing"
@@ -354,24 +353,6 @@ export function AvatarClosetClient({ locale }: { locale: AppLocale }) {
           </div>
           <div className="avatar-v4-preview-panel">
             <AvatarPreviewFigure equippedBySlot={equippedBySlot} />
-          </div>
-          <div className="avatar-v4-default-base-card">
-            <div className="avatar-v4-default-base-copy">
-              <p className="dashboard-label">{isMalay ? "Bentuk asas" : "Default base"}</p>
-              <strong>{isMalay ? "Rupa permulaan avatar" : "Starter avatar look"}</strong>
-              <p className="dashboard-helper">
-                {isMalay
-                  ? "Ini ialah arah gaya asas 2.5D comel yang digunakan untuk rupa permulaan sebelum lebih banyak item ditambah."
-                  : "This is the cute 2.5D base direction for the starter look before more items are layered on."}
-              </p>
-            </div>
-            <div className="avatar-v4-default-base-visual">
-              <img
-                alt={isMalay ? "Avatar asas lalai" : "Default base avatar"}
-                className="avatar-v4-default-base-image"
-                src={defaultBaseAvatarSrc}
-              />
-            </div>
           </div>
           <p className="dashboard-helper">
             {isMalay ? "Beli dan pakai item untuk melihat rupa anda berubah serta-merta." : "Buy and equip items to see your look change instantly."}
