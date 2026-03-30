@@ -5681,11 +5681,63 @@ a {
 
 .avatar-overlay-image {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  left: 50%;
+  top: 50%;
   height: auto;
   object-fit: contain;
   pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.avatar-overlay-hair {
+  width: 61%;
+  top: 26%;
+  z-index: 4;
+}
+
+.avatar-overlay-top {
+  width: 62%;
+  top: 50.5%;
+  z-index: 3;
+}
+
+.avatar-overlay-bottom {
+  width: 49%;
+  top: 66.5%;
+  z-index: 2;
+}
+
+.avatar-overlay-shoes {
+  width: 50%;
+  top: 84.5%;
+  z-index: 2;
+}
+
+.avatar-overlay-accessory {
+  width: 20%;
+  top: 42%;
+  left: 58%;
+  z-index: 5;
+}
+
+.avatar-overlay-compact.avatar-overlay-hair {
+  width: 63%;
+}
+
+.avatar-overlay-compact.avatar-overlay-top {
+  width: 64%;
+}
+
+.avatar-overlay-compact.avatar-overlay-bottom {
+  width: 50%;
+}
+
+.avatar-overlay-compact.avatar-overlay-shoes {
+  width: 52%;
+}
+
+.avatar-overlay-compact.avatar-overlay-accessory {
+  width: 22%;
 }
 
 .avatar-hair-study-bob {

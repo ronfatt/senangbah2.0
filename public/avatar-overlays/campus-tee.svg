@@ -1,16 +1,38 @@
 <svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="top" x1="282" y1="260" x2="486" y2="470" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7D68FF"/>
-      <stop offset="1" stop-color="#5E63F0"/>
+    <linearGradient id="teeBody" x1="270" y1="266" x2="502" y2="504" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C8A7FF"/>
+      <stop offset="0.55" stop-color="#A98AFC"/>
+      <stop offset="1" stop-color="#8B73F4"/>
+    </linearGradient>
+    <linearGradient id="teeShade" x1="326" y1="302" x2="450" y2="508" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#6F5DE2" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="teeTrim" x1="316" y1="270" x2="456" y2="326" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7FF"/>
+      <stop offset="1" stop-color="#F0E6FF"/>
+    </linearGradient>
+    <linearGradient id="badgeGold" x1="442" y1="338" x2="514" y2="404" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE7A5"/>
+      <stop offset="1" stop-color="#FFB92C"/>
     </linearGradient>
   </defs>
-  <path d="M296 258H472L516 304L496 470H272L252 304L296 258Z" fill="url(#top)"/>
-  <path d="M308 270H460L496 308L482 456H286L272 308L308 270Z" fill="rgba(255,255,255,0.08)"/>
-  <path d="M276 286L240 408" stroke="#6E53DB" stroke-width="40" stroke-linecap="round"/>
-  <path d="M492 286L528 408" stroke="#6E53DB" stroke-width="40" stroke-linecap="round"/>
-  <path d="M324 286C344 272 424 272 444 286" stroke="#D5CCFF" stroke-width="20" stroke-linecap="round"/>
-  <rect x="418" y="312" width="52" height="72" rx="18" fill="#FFF4D8"/>
-  <path d="M432 334H456" stroke="#8D6BFF" stroke-width="8" stroke-linecap="round"/>
-  <path d="M444 322V346" stroke="#8D6BFF" stroke-width="8" stroke-linecap="round"/>
+  <path d="M290 294C308 272 334 258 362 258H406C434 258 460 272 478 294L518 336C525 343 528 352 527 362L515 500C513 526 492 546 466 546H302C276 546 255 526 253 500L241 362C240 352 243 343 250 336L290 294Z" fill="url(#teeBody)"/>
+  <path d="M312 312C324 298 341 290 360 290H408C427 290 444 298 456 312L486 346C492 352 495 360 494 368L486 492C485 509 471 522 454 522H314C297 522 283 509 282 492L274 368C273 360 276 352 282 346L312 312Z" fill="url(#teeShade)"/>
+  <path d="M301 300L265 402" stroke="#8B73F4" stroke-width="40" stroke-linecap="round"/>
+  <path d="M467 300L503 402" stroke="#8B73F4" stroke-width="40" stroke-linecap="round"/>
+  <path d="M336 280C351 270 417 270 432 280" stroke="#704EE8" stroke-width="22" stroke-linecap="round"/>
+  <path d="M328 283C347 271 421 271 440 283" stroke="url(#teeTrim)" stroke-width="14" stroke-linecap="round"/>
+  <path d="M280 365L321 355" stroke="#F3EAFF" stroke-width="14" stroke-linecap="round"/>
+  <path d="M276 386L317 376" stroke="#F3EAFF" stroke-width="14" stroke-linecap="round"/>
+  <path d="M488 355L529 365" stroke="#F3EAFF" stroke-width="14" stroke-linecap="round"/>
+  <path d="M492 376L533 386" stroke="#F3EAFF" stroke-width="14" stroke-linecap="round"/>
+  <path d="M306 510H462" stroke="#F3EAFF" stroke-width="14" stroke-linecap="round"/>
+  <path d="M306 528H462" stroke="#DCCBFF" stroke-width="8" stroke-linecap="round"/>
+  <path d="M420 334C420 326 426 320 434 320H481C489 320 495 326 495 334V390C495 396 491 402 485 405L458 419C454 421 449 421 445 419L422 405C416 402 412 396 412 390V348C412 343 415 338 420 334Z" fill="url(#badgeGold)" stroke="#F8F0C8" stroke-width="4"/>
+  <path d="M430 344C430 338 434 334 440 334H475C481 334 485 338 485 344V386L457 401L430 386V344Z" fill="#9C7CFF"/>
+  <path d="M443 367H472" stroke="#FFF9F3" stroke-width="6" stroke-linecap="round"/>
+  <path d="M457 353V381" stroke="#FFF9F3" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="352" cy="334" rx="22" ry="10" fill="#FFFFFF" fill-opacity="0.18"/>
 </svg>

@@ -1,12 +1,37 @@
 <svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="shoe" x1="270" y1="590" x2="500" y2="668" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7E74FF"/>
-      <stop offset="1" stop-color="#3CC1FF"/>
+    <linearGradient id="runnerBlue" x1="260" y1="600" x2="518" y2="682" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9BD9FF"/>
+      <stop offset="1" stop-color="#69AFFF"/>
+    </linearGradient>
+    <linearGradient id="runnerPink" x1="285" y1="612" x2="472" y2="670" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF92B2"/>
+      <stop offset="1" stop-color="#FF7C94"/>
+    </linearGradient>
+    <linearGradient id="runnerYellow" x1="254" y1="652" x2="519" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD861"/>
+      <stop offset="1" stop-color="#F6B73B"/>
     </linearGradient>
   </defs>
-  <path d="M290 618H374C390 618 404 630 404 646C404 662 390 674 374 674H290C274 674 260 662 260 646C260 630 274 618 290 618Z" fill="url(#shoe)"/>
-  <path d="M394 618H478C494 618 508 630 508 646C508 662 494 674 478 674H394C378 674 364 662 364 646C364 630 378 618 394 618Z" fill="url(#shoe)"/>
-  <path d="M304 638H374" stroke="#F5FCFF" stroke-width="10" stroke-linecap="round"/>
-  <path d="M408 638H478" stroke="#F5FCFF" stroke-width="10" stroke-linecap="round"/>
+  <g>
+    <path d="M264 622C264 606 277 593 293 593H344C353 593 362 596 369 602L397 626C405 633 410 643 410 654C410 675 393 692 372 692H296C274 692 256 674 256 652C256 641 259 631 264 622Z" fill="#FFFDFB" stroke="#DABFD0" stroke-width="5"/>
+    <path d="M291 602H343C349 602 355 604 360 608L383 628L356 651H282L276 628C272 617 280 606 291 602Z" fill="url(#runnerBlue)"/>
+    <path d="M310 602L335 651" stroke="url(#runnerPink)" stroke-width="18" stroke-linecap="round"/>
+    <path d="M272 655H378" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <path d="M287 625H355" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M290 637H350" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M292 649H347" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M258 660H376" stroke="url(#runnerYellow)" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <g>
+    <path d="M372 622C372 606 385 593 401 593H452C461 593 470 596 477 602L505 626C513 633 518 643 518 654C518 675 501 692 480 692H404C382 692 364 674 364 652C364 641 367 631 372 622Z" fill="#FFFDFB" stroke="#DABFD0" stroke-width="5"/>
+    <path d="M399 602H451C457 602 463 604 468 608L491 628L464 651H390L384 628C380 617 388 606 399 602Z" fill="url(#runnerBlue)"/>
+    <path d="M418 602L443 651" stroke="url(#runnerPink)" stroke-width="18" stroke-linecap="round"/>
+    <path d="M386 655H492" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <path d="M401 625H469" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M404 637H464" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M406 649H461" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M378 660H496" stroke="url(#runnerYellow)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M464 622L479 618L492 628L482 639L464 634V622Z" fill="#FFD861"/>
+  </g>
 </svg>

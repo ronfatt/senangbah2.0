@@ -1,10 +1,14 @@
 <svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="star" x1="402" y1="318" x2="476" y2="396" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFD84D"/>
-      <stop offset="1" stop-color="#FF9F2A"/>
+    <linearGradient id="pinGold" x1="408" y1="294" x2="498" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE691"/>
+      <stop offset="1" stop-color="#FFB935"/>
     </linearGradient>
   </defs>
-  <path d="M436 320L448 346H476L454 362L464 388L436 372L408 388L418 362L396 346H424L436 320Z" fill="url(#star)"/>
-  <circle cx="436" cy="348" r="10" fill="#FFF5CC"/>
+  <path d="M456 306L466 328L490 330L472 346L478 370L456 358L434 370L440 346L422 330L446 328L456 306Z" fill="url(#pinGold)" stroke="#FFF0BC" stroke-width="4"/>
+  <circle cx="424" cy="360" r="10" fill="#F7A2D2"/>
+  <circle cx="488" cy="366" r="10" fill="#8FD8FF"/>
+  <path d="M424 329L430 334" stroke="#FFD55B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M494 318L500 323" stroke="#FFD55B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M504 360L512 360" stroke="#FFD55B" stroke-width="5" stroke-linecap="round"/>
 </svg>

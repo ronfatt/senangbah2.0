@@ -1,13 +1,25 @@
 <svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="band" x1="270" y1="88" x2="500" y2="282" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#6C57FF"/>
-      <stop offset="1" stop-color="#FF55A8"/>
+    <linearGradient id="headsetBand" x1="270" y1="48" x2="498" y2="164" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD95C"/>
+      <stop offset="0.45" stop-color="#FF9BC8"/>
+      <stop offset="1" stop-color="#86DFFF"/>
+    </linearGradient>
+    <linearGradient id="earPad" x1="252" y1="168" x2="520" y2="324" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8BE7FF"/>
+      <stop offset="1" stop-color="#72C8FF"/>
     </linearGradient>
   </defs>
-  <path d="M286 182C286 106 330 64 384 64C438 64 482 106 482 182" stroke="url(#band)" stroke-width="26" stroke-linecap="round"/>
-  <rect x="250" y="176" width="54" height="104" rx="26" fill="#6C57FF"/>
-  <rect x="464" y="176" width="54" height="104" rx="26" fill="#FF55A8"/>
-  <path d="M514 258L548 292" stroke="#FF55A8" stroke-width="16" stroke-linecap="round"/>
-  <circle cx="558" cy="302" r="18" fill="#FFD84D"/>
+  <path d="M280 78C307 52 343 38 384 38C425 38 461 52 488 78" stroke="url(#headsetBand)" stroke-width="28" stroke-linecap="round"/>
+  <path d="M300 96C323 74 350 64 384 64C418 64 445 74 468 96" stroke="#FFFFFF" stroke-opacity="0.9" stroke-width="12" stroke-linecap="round"/>
+  <rect x="248" y="164" width="60" height="96" rx="28" fill="url(#earPad)"/>
+  <rect x="460" y="164" width="60" height="96" rx="28" fill="url(#earPad)"/>
+  <rect x="262" y="178" width="32" height="68" rx="16" fill="#5E3FCC"/>
+  <rect x="474" y="178" width="32" height="68" rx="16" fill="#5E3FCC"/>
+  <circle cx="490" cy="212" r="28" fill="#F7F3FF" stroke="#D39BEA" stroke-width="5"/>
+  <path d="M490 194L497 206L510 206L500 214L504 227L490 219L476 227L480 214L470 206L483 206L490 194Z" fill="#FFD55B"/>
+  <path d="M470 246C490 256 499 277 493 296" stroke="#F3F0FF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M490 297L470 311" stroke="#F3F0FF" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="460" cy="317" rx="16" ry="11" fill="#FFD66B"/>
+  <ellipse cx="460" cy="317" rx="8" ry="6" fill="#8BCFFF"/>
 </svg>

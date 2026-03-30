@@ -1,12 +1,29 @@
 <svg width="768" height="768" viewBox="0 0 768 768" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="shorts" x1="302" y1="422" x2="464" y2="562" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F5F7FB"/>
-      <stop offset="1" stop-color="#DDE4F1"/>
+    <linearGradient id="pantsMain" x1="304" y1="430" x2="462" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8EE"/>
+      <stop offset="0.62" stop-color="#F7E7D3"/>
+      <stop offset="1" stop-color="#E9D0BC"/>
+    </linearGradient>
+    <linearGradient id="cuff" x1="298" y1="594" x2="474" y2="648" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4DBC7"/>
+      <stop offset="1" stop-color="#E6C8AF"/>
+    </linearGradient>
+    <linearGradient id="belt" x1="308" y1="420" x2="456" y2="450" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A66243"/>
+      <stop offset="1" stop-color="#7F412D"/>
     </linearGradient>
   </defs>
-  <rect x="296" y="426" width="176" height="112" rx="28" fill="url(#shorts)"/>
-  <path d="M384 426V538" stroke="#C8D2E3" stroke-width="8" stroke-linecap="round"/>
-  <rect x="302" y="516" width="74" height="20" rx="10" fill="#C8D0EA"/>
-  <rect x="392" y="516" width="74" height="20" rx="10" fill="#C8D0EA"/>
+  <path d="M312 430C312 418 322 408 334 408H434C446 408 456 418 456 430V476L438 610C436 629 420 644 401 644H367C348 644 332 629 330 610L312 476V430Z" fill="url(#pantsMain)"/>
+  <path d="M333 424H435C442 424 448 430 448 437V454H320V437C320 430 326 424 333 424Z" fill="url(#belt)"/>
+  <rect x="372" y="428" width="26" height="22" rx="6" fill="#E0AA43" stroke="#FFE3A4" stroke-width="4"/>
+  <path d="M384 454V522" stroke="#D5B6A0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M314 458L332 615C333 629 322 641 308 641H302C288 641 277 629 278 615L286 500C287 493 288 486 290 479L297 452L314 458Z" fill="url(#pantsMain)"/>
+  <path d="M454 458L436 615C435 629 446 641 460 641H466C480 641 491 629 490 615L482 500C481 493 480 486 478 479L471 452L454 458Z" fill="url(#pantsMain)"/>
+  <path d="M305 446C312 434 323 428 337 428" stroke="#FFF7EF" stroke-width="8" stroke-linecap="round"/>
+  <path d="M463 446C456 434 445 428 431 428" stroke="#FFF7EF" stroke-width="8" stroke-linecap="round"/>
+  <path d="M330 618H277C272 618 268 622 268 627V632C268 639 274 645 281 645H336C343 645 349 639 349 632V629C349 623 344 618 338 618H330Z" fill="url(#cuff)"/>
+  <path d="M438 618H491C496 618 500 622 500 627V632C500 639 494 645 487 645H432C425 645 419 639 419 632V629C419 623 424 618 430 618H438Z" fill="url(#cuff)"/>
+  <path d="M344 532C330 552 322 574 319 603" stroke="#E8CDB7" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+  <path d="M424 532C438 552 446 574 449 603" stroke="#E8CDB7" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
 </svg>
